@@ -6,20 +6,20 @@
     </a>
 </li>
 
-{{-- @can('browse_auth') --}}
+@can('browse_auth')
     <x-backpack::menu-dropdown title="Manage User" icon="la la-user">
         <x-backpack::menu-dropdown-header title="Authentication" />
-        {{-- @can('browse_user') --}}
+        @can('browse_user')
             <x-backpack::menu-dropdown-item title="Users" icon="la la-user-plus" :link="backpack_url('user')" />
-        {{-- @endcan --}}
-        {{-- @can('browse_roles') --}}
+        @endcan
+        @can('browse_roles')
             <x-backpack::menu-dropdown-item title="Roles" icon="la la-group" :link="backpack_url('role')" />
-        {{-- @endcan --}}
-        {{-- @can('browse_permissions') --}}
+        @endcan
+        @can('browse_permissions')
             <x-backpack::menu-dropdown-item title="Permissions" icon="la la-key" :link="backpack_url('permission')" />
-        {{-- @endcan --}}
+        @endcan
     </x-backpack::menu-dropdown>
-{{-- @endcan --}}
+@endcan
 
 {{-- CMS --}}
 @can('browse_cms')
