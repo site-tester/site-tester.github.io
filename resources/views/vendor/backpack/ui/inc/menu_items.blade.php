@@ -37,6 +37,6 @@
 <x-backpack::menu-item title='Announcements' icon='la la-life-buoy' :link="backpack_url('')" />
 {{-- END CMS --}}
 
-{{-- Notification --}}
+{{-- Notification ToDo--}}
 <x-backpack::menu-item title='Notifications' icon='la la-exclamation-triangle' :link="backpack_url('')" />
 {{-- End Notification --}}
