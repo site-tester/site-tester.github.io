@@ -6,7 +6,7 @@
     <script src="https://kit.fontawesome.com/be5b1ff12e.js" crossorigin="anonymous"></script>
 @endsection
 
-@section('background-color','bg-container')
+@section('background-color', 'bg-container')
 
 @section('content')
     <div class="container-fluid px-0">
@@ -17,7 +17,13 @@
                         <div class="float-end text-end p-5 ">
                             <p class="fs-4">Give Them A Chance</p>
                             <h1 class="fw-bolder">Help Us Save <br> the Citizens of <br> Paranaque.</h1>
-                            <a href="{{route('login')}}" class="btn btn-light text-green rounded fw-bolder">Donate Now</a>
+                                <a href="
+                                @guest
+                                {{ route('login') }}
+                                @else
+                                {{ route('donate-now')}}
+                                @endguest
+                                " class="btn btn-light text-green rounded fw-bolder">Donate Now</a>
                         </div>
                     </div>
                 </div>
@@ -32,20 +38,23 @@
                     <div class="col-12 col-md-4 pb-3">
                         <div class="row text-greener">
                             <div class="col-12 text-center col-md-6 text-md-end counter-number">1.2K</div>
-                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Total Received
+                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Total
+                                Received
                                 Donations</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4 pb-3">
                         <div class="row text-greener">
                             <div class="col-12 text-center col-md-6 text-md-end counter-number">543</div>
-                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Registered Donors</div>
+                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">
+                                Registered Donors</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4 pb-3">
                         <div class="row text-greener">
                             <div class="col-12 text-center col-md-6 text-md-end counter-number">1.1K</div>
-                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Total Goods Delivered
+                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Total
+                                Goods Delivered
                             </div>
                         </div>
                     </div>
@@ -289,7 +298,7 @@
             </ul>
 
             <div class="tab-content shadow rounded">
-                <div id="tab-1" class="tab-pane active bg-greener" role="tabpanel">
+                <div id="tab-1" class="tab-pane fade show active bg-greener" role="tabpanel">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-7  p-5">
                             <h5 class="fw-bolder">Empowering Communities, One Donation at a Time</h5><br>
@@ -300,12 +309,12 @@
                                 the
                                 lives of the vulnerable and those affected by disaster.</p>
                         </div>
-                        <div class="col-12 col-md-5">
-                            <img class="img-fluid" src="https://placehold.co/400" alt="" srcset="">
+                        <div class="col-12 col-md-5 px-0">
+                            <img class="img-fluid " src="https://placehold.co/400" alt="" srcset="">
                         </div>
                     </div>
                 </div>
-                <div id="tab-2" class="tab-pane bg-greener" role="tabpanel">
+                <div id="tab-2" class="tab-pane fade bg-greener" role="tabpanel">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-7 p-5">
                             <h5 class="fw-bolder">Strength in Solidarity</h5><br>
@@ -314,12 +323,12 @@
                                 for disaster relief, where technology and human compassion unite to ensure that no one is
                                 left behind.</p><br><br>
                         </div>
-                        <div class="col-12 col-md-5 ">
+                        <div class="col-12 col-md-5 px-0">
                             <img class="img-fluid" src="https://placehold.co/400" alt="" srcset="">
                         </div>
                     </div>
                 </div>
-                <div id="tab-3" class="tab-pane bg-greener" role="tabpanel">
+                <div id="tab-3" class="tab-pane fade bg-greener" role="tabpanel">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-7 p-5">
                             <h5 class="fw-bolder">Uniting Hearts for a Stronger Community</h5><br>
@@ -328,16 +337,15 @@
                                 guide every action we take. These values are the foundation of our commitment to making a
                                 meaningful difference in the lives of those we serve.</p>
                         </div>
-                        <div class="col-12 col-md-5 ">
+                        <div class="col-12 col-md-5 px-0">
                             <img class="img-fluid" src="https://placehold.co/400" alt="" srcset="">
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="contact"></div>
         </section>
 
-        <section class="container mb-5">
+        <section id="contact" class="container mb-5">
             <div class="row text-center justify-content-center">
                 <h1 class="col-12 fw-bolder mb-4">Contact Us</h1>
                 <div class="col-12 col-md-4 mb-3">
@@ -430,9 +438,7 @@
             </div>
         </section>
 
-        <footer id="footer" class="container-fluid text-center border-top pt-5 mt-5 bg-light">
-            <h5 class="">Copyright © 2024. All Rights Reserved.</h5>
-        </footer>
+
 
         {{-- <div class="row justify-content-center">
         <div class="col-md-8">

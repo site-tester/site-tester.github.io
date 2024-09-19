@@ -13,7 +13,11 @@
         "vite": "^4.5.3"
     },
     "dependencies": {
+        "air-datepicker": "^3.5.3",
         "bootstrap-icons": "^1.11.3",
+        "fullcalendar": "^6.1.15",
+        "jquery-smartcart": "^3.0.1",
+        "moment": "^2.30.1",
         "owl.carousel": "^2.3.4"
     }
 }

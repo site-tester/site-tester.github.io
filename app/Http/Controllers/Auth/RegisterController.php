@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserProfile;
+use DB;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -49,9 +51,12 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
+            'organization' => ['string', 'max:255'],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'contact_number' => ['required', 'regex:/^(09|\+63)\d{9,10}$/'],
+            'address' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'terms_and_conditions' =>['required', 'accepted'],
         ]);
@@ -65,10 +70,25 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        // Create the user record first
+        $user = User::create([
             'name' => $data['first_name'].' '.$data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        $user->save();
+
+        // Create the user profile record, associating it with the newly created user
+        $userProfile = UserProfile::create([
+            'user_id' => $user->id,
+            'contact_number' => $data['contact_number'],
+            'address' => $data['address'],
+            'other_details' => $data['organization'],
+        ]);
+
+        $userProfile->save();
+
+        return $user;
     }
 }

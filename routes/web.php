@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DonationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,14 +20,21 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', [App\Http\Controllers\Controller::class, 'landing'])->name('landing');
+Route::get('/', [Controller::class, 'landing'])->name('landing');
+Route::get('/terms-and-conditions', [Controller::class, 'terms'])->name('terms');
 
-Route::group(['prefix' => 'admin'], function () {
-    Voyager::routes();
-});
+// Route::group(['prefix' => 'admin'], function () {
+//     Voyager::routes();
+// });
 
 Auth::routes(['verify' => true]);
 
 Route::middleware(['verified'])->group(function () {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/profile',[HomeController::class, 'viewProfile'])->name('profile');
+    Route::get('/donate-now',[HomeController::class, 'viewDonateNow'])->name('donate-now');
+    Route::post('/donate', [DonationController::class, 'store'])->name('donate.store');
 });
+
+Route::get('{page}/{subs?}', ['uses' => '\App\Http\Controllers\PageController@index'])
+    ->where(['page' => '^(((?=(?!admin))(?=(?!\/)).))*$', 'subs' => '.*']);

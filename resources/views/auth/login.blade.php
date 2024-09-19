@@ -5,7 +5,7 @@
 @section('background-color','bg-container')
 
 @section('content')
-<div class="container my-5 ">
+<div class="container-fluid my-5 ">
     <div class="row justify-content-center">
         <div class="col-md-6 align-self-end" style="max-width: 500px">
             <img class="img-fluid d-none d-md-block " src="https://placehold.co/500" alt="">
