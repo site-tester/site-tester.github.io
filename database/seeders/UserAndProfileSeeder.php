@@ -15,7 +15,7 @@ class UserAndProfileSeeder extends Seeder
     {
         //
         UserProfile::create([
-            'user_id' => '2',
+            'user_id' => '1',
             'contact_number' => '09123456789',
             'address' => '123 Dos Castillas Street, Barangay 143, Sampaloc, Manila',
             'other_details' => 'We Bear Bears Fondation',

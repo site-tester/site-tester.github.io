@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class CheckIfAdmin
 {
@@ -59,10 +60,16 @@ class CheckIfAdmin
             return $this->respondToUnauthorizedRequest($request);
         }
 
-        if (! $this->checkIfUserIsAdmin(backpack_user())) {
-            return $this->respondToUnauthorizedRequest($request);
+        if (Auth::check() && (auth()->user()->hasRole('Content Manager') || auth()->user()->hasRole('Barangay'))) {
+            return $next($request);
         }
 
-        return $next($request);
+        abort(403, 'Unauthorized access.');
+
+        // if (! $this->checkIfUserIsAdmin(backpack_user())) {
+        //     return $this->respondToUnauthorizedRequest($request);
+        // }
+
+        // return $next($request);
     }
 }

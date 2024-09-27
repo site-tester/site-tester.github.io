@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\ItemRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use App\Models\User;
 
 /**
- * Class UserCrudController
+ * Class ItemCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class UserCrudController extends CrudController
+class ItemCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -22,19 +21,19 @@ class UserCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     *
+     * 
      * @return void
      */
     public function setup()
     {
-        CRUD::setModel(User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
+        CRUD::setModel(\App\Models\Item::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/item');
+        CRUD::setEntityNameStrings('item', 'items');
     }
 
     /**
      * Define what happens when the List operation is loaded.
-     *
+     * 
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -50,36 +49,29 @@ class UserCrudController extends CrudController
 
     /**
      * Define what happens when the Create operation is loaded.
-     *
+     * 
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(UserRequest::class);
-        // CRUD::setFromDb(); // set fields from db columns.
+        CRUD::setValidation(ItemRequest::class);
+        CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-        CRUD::field('name')->validationRules('required|min:255');
-        CRUD::field('email')->validationRules('required|email|unique:users,email');
-        CRUD::field('password')->validationRules('required');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     *
+     * 
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
     protected function setupUpdateOperation()
     {
-        // $this->setupCreateOperation();
-        CRUD::field('name')->validationRules('required|min:5');
-        CRUD::field('email')->validationRules('required|email|unique:users,email,' . CRUD::getCurrentEntryId());
-        CRUD::field('password')->hint('Type a password to change it.');
-
+        $this->setupCreateOperation();
     }
 }

@@ -25,18 +25,25 @@
 @can('browse_cms')
     <x-backpack::menu-dropdown title="Manage Pages" icon="la la-cubes">
         <x-backpack::menu-dropdown-header title="Page CRUD" />
-        <x-backpack::menu-dropdown-item title='Pages' icon='la la-file-text' :link="backpack_url('page')" />
-        <x-backpack::menu-dropdown-item title='Landing' icon='la la-plane' :link="backpack_url('')" />
+        {{-- <x-backpack::menu-dropdown-item title='Pages' icon='la la-file-text' :link="backpack_url('page')" /> --}}
+        {{-- <x-backpack::menu-dropdown-item title='Landing' icon='la la-plane' :link="backpack_url('')" /> --}}
+        <x-backpack::menu-dropdown-item title='Events' icon='la la-trophy' :link="backpack_url('')" />
+        <x-backpack::menu-dropdown-item title='News' icon='la la-newspaper-o' :link="backpack_url('')" />
+        <x-backpack::menu-dropdown-item title='Announcements' icon='la la-life-buoy' :link="backpack_url('')" />
         <x-backpack::menu-dropdown-item title='Terms and Conditions' icon='la la-sticky-note' :link="backpack_url('')" />
 
     </x-backpack::menu-dropdown>
 @endcan
 {{-- <x-backpack::menu-header title="Manage Content" /> --}}
-<x-backpack::menu-item title='Events' icon='la la-trophy' :link="backpack_url('')" />
-<x-backpack::menu-item title='News' icon='la la-newspaper-o' :link="backpack_url('')" />
-<x-backpack::menu-item title='Announcements' icon='la la-life-buoy' :link="backpack_url('')" />
+{{-- <x-backpack::menu-item title='Events' icon='la la-trophy' :link="backpack_url('')" />
+<x-backpack::menu-item title='News' icon='la la-newspaper-o' :link="backpack_url('')" /> --}}
+{{-- <x-backpack::menu-item title='Announcements' icon='la la-life-buoy' :link="backpack_url('')" /> --}}
 {{-- END CMS --}}
 
-{{-- Notification ToDo--}}
+{{-- Notification ToDo --}}
 <x-backpack::menu-item title='Notifications' icon='la la-exclamation-triangle' :link="backpack_url('')" />
 {{-- End Notification --}}
+
+<x-backpack::menu-item title="Barangays" icon="la la-question" :link="backpack_url('barangay')" />
+<x-backpack::menu-item title="Donations" icon="la la-question" :link="backpack_url('donation')" />
+<x-backpack::menu-item title="Items" icon="la la-question" :link="backpack_url('item')" />

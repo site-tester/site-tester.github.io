@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
-class DonationController extends Controller
+class DonationController2 extends Controller
 {
     public function store(Request $request)
     {
