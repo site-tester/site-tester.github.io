@@ -4,6 +4,7 @@ namespace App\Models;
 
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,8 +24,6 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'is_admin',
-        'is_barangay',
         'name',
         'email',
         'password',
@@ -48,4 +47,16 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // public function roles()
+    // {
+    //     return $this->belongsToMany(Role::class, 'model_has_roles');
+    // }
+
+    public static function getBarangayRepresentatives($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->where('name', 'Barangay Representative');
+        });
+    }
 }

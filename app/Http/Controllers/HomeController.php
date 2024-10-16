@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barangay;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Auth;
@@ -35,7 +36,8 @@ class HomeController extends Controller
     }
 
     public function viewDonateNow(){
-        return view('main.donate_now');
+        $barangayLists = Barangay::orderBy('name')->get();
+        return view('main.donate_now', compact('barangayLists'));
     }
 
 }

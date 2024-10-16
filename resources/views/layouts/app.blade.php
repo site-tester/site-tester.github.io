@@ -18,7 +18,9 @@
     <script src="https://kit.fontawesome.com/be5b1ff12e.js" crossorigin="anonymous"></script>
 
     {{-- CSS --}}
-    
+
+    {{-- TinyMCE --}}
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
     <!-- Scripts -->
     @yield('css')
@@ -48,6 +50,7 @@
 
     <script>
         $(document).ready(function() {
+
             $(window).scroll(function() {
                 var navBarHeight = $('.navbar').outerHeight();
                 var scrollTop = $(this).scrollTop()

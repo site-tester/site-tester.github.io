@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         //Role Table
-        $roles = ['Content Manager', 'Barangay', 'Normal User'];
+        $roles = ['Content Manager', 'Barangay Representative', 'Normal User'];
 
         foreach ($roles as $role) {
             Role::create([
@@ -30,12 +30,76 @@ class RoleSeeder extends Seeder
         $normal->assignRole($normalRole);
 
         $barangay = User::where('email', 'barangay@email.com')->first();
-        $barangayRole = Role::where('name', 'Barangay')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
         $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay2@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay3@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay4@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay5@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay6@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay7@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay8@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay9@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay10@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay11@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay12@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay13@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay14@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
+
+        $barangay = User::where('email', 'barangay15@email.com')->first();
+        $barangayRole = Role::where('name', 'Barangay Representative')->first();
+        $barangay->assignRole($barangayRole);
+
+        $barangay2 = User::where('email', 'barangay16@email.com')->first();
+        $barangay2Role = Role::where('name', 'Barangay Representative')->first();
+        $barangay2->assignRole($barangay2Role);
 
         $cms = User::where('email', 'cms@email.com')->first();
         $cmsRole = Role::where('name', 'Content Manager')->first();
         $cms->assignRole($cmsRole);
+
+        // $admin = User::where('email', 'admin@email.com')->first();
+        // $adminRole = Role::where('name', 'System Admin')->first();
+        // $admin->assignRole($adminRole);
 
     }
 }

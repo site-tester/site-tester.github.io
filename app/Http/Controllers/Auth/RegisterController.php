@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserProfile;
-use DB;
+use Spatie\Permission\Models\Role;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -84,10 +84,12 @@ class RegisterController extends Controller
             'user_id' => $user->id,
             'contact_number' => $data['contact_number'],
             'address' => $data['address'],
-            'other_details' => $data['organization'],
+            'other_details' => $data['organization'] ?? null,
         ]);
 
         $userProfile->save();
+
+        $user->assignRole('Normal User');
 
         return $user;
     }

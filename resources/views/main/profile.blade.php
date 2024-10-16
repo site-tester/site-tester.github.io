@@ -27,7 +27,7 @@
 
                 <div class="card shadow">
                     <div class=" ">
-                        <h3 class="p-2">Profile</h3>
+                        <h3 class="py-3 px-4 mb-0">Profile</h3>
                     </div>
                     <form class="row" action="{{-- {{ route('customer.profile.update', Auth::user()->id) }} --}}" method="POST" enctype="multipart/form-data"
                         autocomplete="off">
@@ -42,7 +42,7 @@
                             </div>
                         @endif
 
-                        <div class="col-12 col-lg-3 border-end border-top pe-0">
+                        <div class="col-12 col-lg-3 border-end border-top ">
                             <ul id="myProfileTab" class="nav nav-pills flex-column " role="tablist"
                                 aria-orientation="vertical">
                                 <li class="nav-item ">

@@ -60,7 +60,7 @@ class CheckIfAdmin
             return $this->respondToUnauthorizedRequest($request);
         }
 
-        if (Auth::check() && (auth()->user()->hasRole('Content Manager') || auth()->user()->hasRole('Barangay'))) {
+        if (Auth::check() && (auth()->user()->hasRole('Content Manager') || auth()->user()->hasRole('Barangay Representative'))) {
             return $next($request);
         }
 

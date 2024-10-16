@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ceb60421827d05feca36fc7121e35a0",
+    "content-hash": "ac1baf5f529b4aa64124f3a1026e771c",
     "packages": [
         {
             "name": "backpack/basset",
@@ -176,16 +176,16 @@
         },
         {
             "name": "backpack/pagemanager",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Backpack/PageManager.git",
-                "reference": "9a6868bee1c10ebf3c397b10818faf9a63d1a64c"
+                "reference": "0cdcbab70b6a4e7f3169ee385d30b9c629d052f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Backpack/PageManager/zipball/9a6868bee1c10ebf3c397b10818faf9a63d1a64c",
-                "reference": "9a6868bee1c10ebf3c397b10818faf9a63d1a64c",
+                "url": "https://api.github.com/repos/Laravel-Backpack/PageManager/zipball/0cdcbab70b6a4e7f3169ee385d30b9c629d052f4",
+                "reference": "0cdcbab70b6a4e7f3169ee385d30b9c629d052f4",
                 "shasum": ""
             },
             "require": {
@@ -242,9 +242,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Backpack/PageManager/issues",
-                "source": "https://github.com/Laravel-Backpack/PageManager/tree/3.3.1"
+                "source": "https://github.com/Laravel-Backpack/PageManager/tree/3.3.2"
             },
-            "time": "2024-09-05T09:23:53+00:00"
+            "time": "2024-09-27T09:04:10+00:00"
         },
         {
             "name": "backpack/permissionmanager",
@@ -3382,6 +3382,68 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
+        },
+        {
+            "name": "pestopancake/laravel-backpack-database-notifications",
+            "version": "1.0.9-alpha",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestopancake/laravel-backpack-database-notifications.git",
+                "reference": "73073d5aa7f0128d708ca6b9e60991f5de9f88bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestopancake/laravel-backpack-database-notifications/zipball/73073d5aa7f0128d708ca6b9e60991f5de9f88bf",
+                "reference": "73073d5aa7f0128d708ca6b9e60991f5de9f88bf",
+                "shasum": ""
+            },
+            "require": {
+                "backpack/crud": "^6.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0|^5.0|^4.0|^3.0",
+                "phpunit/phpunit": "~8.0|~7.0|~9.0",
+                "scrutinizer/ocular": "~1.7|~1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Pestopancake\\LaravelBackpackNotifications\\LaravelBackpackNotificationsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pestopancake\\LaravelBackpackNotifications\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "pestopancake",
+                    "email": "pestopancake@gmail.com"
+                }
+            ],
+            "description": "Database notifications interface for Laravel Backpack",
+            "homepage": "https://github.com/pestopancake/laravel-backpack-notifications",
+            "keywords": [
+                "database notifications",
+                "laravel",
+                "laravel backpack",
+                "notifications"
+            ],
+            "support": {
+                "issues": "https://github.com/pestopancake/laravel-backpack-database-notifications/issues",
+                "source": "https://github.com/pestopancake/laravel-backpack-database-notifications/tree/1.0.9-alpha"
+            },
+            "time": "2023-11-28T12:48:35+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -9535,7 +9597,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "pestopancake/laravel-backpack-database-notifications": 15
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

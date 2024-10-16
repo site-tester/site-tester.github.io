@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ItemRequest;
+use App\Models\Barangay;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -21,7 +22,7 @@ class ItemCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -33,13 +34,50 @@ class ItemCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        if (auth()->user()->hasRole('Barangay Representative')) {
+            // Get the barangay_id of the authenticated user
+            $barangayRepId = auth()->user()->id;
+            $barangayId = Barangay::where('barangay_rep_id', $barangayRepId)->first();
+            // dd($barangayId);
+            // Add a filter clause to only show donations related to the user's barangay
+            CRUD::addClause('where', 'barangay_id', $barangayId->id);
+        }
+
+        // CRUD::setFromDb(); // set columns from db columns.
+
+        CRUD::addColumn([
+            'name' => 'donation_id',
+            'label' => 'Donation ID',
+            'entity' => 'donation',
+            'model' => 'App\Models\Donation',
+            'attribute' => 'id',
+            'pivot' => false,
+        ]);
+
+        CRUD::addColumn([
+            'name' => 'name',
+            'label' => 'Item',
+        ]);
+
+        CRUD::addColumn([
+            'name' => 'quantity',
+            'label' => 'Quantity',
+        ]);
+        // CRUD::addColumn([
+        //     'name' => 'donation_id',
+        //     'label' => 'Donor Name',
+        //     'type' => 'relationship',
+        //     'entity' => 'donation',
+        //     'attribute' => 'donor.email',
+        //     'model' => 'App\Models\User',
+        //     'pivot' => false,
+        // ]);
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -49,7 +87,7 @@ class ItemCrudController extends CrudController
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
@@ -66,7 +104,7 @@ class ItemCrudController extends CrudController
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */

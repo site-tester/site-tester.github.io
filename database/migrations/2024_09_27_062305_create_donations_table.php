@@ -15,8 +15,23 @@ return new class extends Migration
             $table->id();
             $table->foreignId('donor_id')->constrained('users');
             $table->foreignId('barangay_id')->constrained('barangays');
-            $table->dateTime('donation_date');
-            $table->enum('status',['Pending', 'To Ship','To Received', 'Delivered', 'Distributed']);
+            $table->string('type');
+            $table->json('items');
+            $table->date('donation_date');
+            $table->time('donation_time');
+            $table->json('images');
+            $table->enum('status', [
+                'Pending Approval',
+                'Approved',
+                'Awaiting Delivery',
+                'Received',
+                'Under Segregation',
+                'Categorized',
+                'In Inventory',
+                'Ready for Distribution',
+                'Distributed',
+                'Completed'
+            ])->default('Pending Approval');
             $table->timestamps();
         });
     }

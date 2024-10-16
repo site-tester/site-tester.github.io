@@ -5,11 +5,12 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Barangay extends Model
 {
     use CrudTrait;
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     /*
     |--------------------------------------------------------------------------
@@ -21,7 +22,12 @@ class Barangay extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-    // protected $fillable = [];
+    protected $fillable = [
+        'name',
+        'barangay_rep_id',
+        'location'
+
+    ];
     // protected $hidden = [];
 
     /*
@@ -35,6 +41,10 @@ class Barangay extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function barangayRep()
+    {
+        return $this->belongsTo(User::class, 'barangay_rep_id','id'); // Adjust the foreign key if necessary
+    }
 
     /*
     |--------------------------------------------------------------------------

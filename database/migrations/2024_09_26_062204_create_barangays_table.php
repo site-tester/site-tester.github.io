@@ -12,10 +12,10 @@ return new class extends Migration {
     {
         Schema::create('barangays', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barangay_rep_id')->constrained('users');
+            $table->foreignId('barangay_rep_id')->nullable()->constrained('users');
             $table->string('name');
             $table->text('location');
-            $table->integer('priority');
+            $table->integer('priority')->nullable();
             $table->timestamps();
         });
     }

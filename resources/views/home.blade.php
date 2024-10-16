@@ -10,20 +10,22 @@
 
 @section('content')
     <div class="container-fluid px-0">
-        <section id="hero" class="text-bg-dark hero">
-            <div class="container-fluid">
+        <section id="hero" class="hero"
+            style="background-image: url('{{ asset('storage/uploads/drrmc/carina.jpg') }}'); background-size:cover;">
+            <div class="container-fluid" style="background: rgba(18,79,31,0.4)">
                 <div class="row align-items-center justify-content-center hero">
                     <div class="col-md-8 ">
+                        {{-- here ^ --}}
                         <div class="float-end text-end p-5 ">
-                            <p class="fs-4">Give Them A Chance</p>
-                            <h1 class="fw-bolder">Help Us Save <br> the Citizens of <br> Paranaque.</h1>
-                                <a href="
+                            <p class="fs-4 text-light">Give Them A Chance</p>
+                            <h1 class="fw-bolder text-light">Help Us Save <br> the Citizens of <br> Paranaque.</h1>
+                            <a href="
                                 @guest
-                                {{ route('login') }}
+{{ route('login') }}
                                 @else
-                                {{ route('donate-now')}}
-                                @endguest
-                                " class="btn btn-light text-green rounded fw-bolder">Donate Now</a>
+                                {{ route('donate-now') }} @endguest
+                                "
+                                class="btn btn-light text-success rounded fw-bolder">Donate Now</a>
                         </div>
                     </div>
                 </div>
@@ -33,28 +35,44 @@
             <i class="bi bi-chevron-up"></i>
         </button>
         <section id="tally" class="p-4">
-            <div class="container">
+            <div class="container border border-success border-2 rounded">
                 <div class="row d-flex justify-content-center">
                     <div class="col-12 col-md-4 pb-3">
-                        <div class="row text-greener">
-                            <div class="col-12 text-center col-md-6 text-md-end counter-number">1.2K</div>
-                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Total
-                                Received
-                                Donations</div>
+                        <div class="row text-greener ">
+                            <div class="col text-center text-nowrap align-self-center">
+                                <div class="counter-number">{{ $donationReceived }}
+                                    <span class="h2 fs-normal">Total Received Donation</span>
+                                    @if ($donationReceived > 1)
+                                        s
+                                    @endif
+                                </div>
+                            </div>
+                            {{-- <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">
+
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-12 col-md-4 pb-3">
                         <div class="row text-greener">
-                            <div class="col-12 text-center col-md-6 text-md-end counter-number">543</div>
-                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">
-                                Registered Donors</div>
+                            <div class="col-12 text-center ">
+                                <div class="counter-number">{{ $registeredDonors }}
+                                    <span class="h2 fs-normal">Registered Donor</span>
+                                    @if ($registeredDonors > 1)
+                                        s
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4 pb-3">
                         <div class="row text-greener">
-                            <div class="col-12 text-center col-md-6 text-md-end counter-number">1.1K</div>
-                            <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">Total
-                                Goods Delivered
+                            <div class="col-12 text-center">
+                                <div class="counter-number">{{ $donationGiven }}
+                                    <span class="h2 fs-normal">Total Goods Delivered</span>
+                                    @if ($donationGiven > 1)
+                                        s
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -68,7 +86,7 @@
                     <div class="col-12 col-md-5">
                         <img class="img-fluid p-5" src="https://placehold.co/100" alt="">
                     </div>
-                    <div class="col-12 col-md-6 bg-greener p-5 pe-5 me-5">
+                    <div class="col-12 col-md-6 bg-greener p-5 h-auto">
                         <div>
                             <h2>Your Donations Means Another Smile</h2><br>
                             <p class="">Last June 26, 2024, our team, in partnership with the local barangay
@@ -79,6 +97,7 @@
                                 lives of those affected, providing them with essential support during this challenging time.
                                 <br><br>
                                 Together, we are making a difference—one donation at a time.
+                                <br><br><br><br><br>
                             </p>
                         </div>
                     </div>
@@ -87,14 +106,14 @@
                     <div class="col-12 col-md-5">
                         <img class="img-fluid p-5" src="https://placehold.co/100" alt="">
                     </div>
-                    <div class="col-12 col-md-6 bg-greener p-5 me-5">
+                    <div class="col-12 col-md-6 bg-greener p-5">
                         <div class=" border-top border-bottom border-success border-3 mb-3">
                             <h2 class="mt-3">Typhoon Carina Ravages</h2>
                             <h1 class="">Paranaque City</h1>
                         </div>
                         <p class="px-2 font-monospace pb-4">July 22, 2024, Parañaque City is currently grappling with severe
-                            flooding as
-                            Typhoon Carina wreaks havoc across the region. The powerful storm has inundated numerous areas,
+                            flooding as Typhoon Carina wreaks havoc across the region. The powerful storm has inundated
+                            numerous areas,
                             causing significant disruptions to daily life. Streets are submerged under several feet of
                             water, and many homes have been affected by the rising tides.</p><br><br>
                     </div>
@@ -104,7 +123,7 @@
                     <div class="col-12 col-md-5">
                         <img class="img-fluid p-5" src="https://placehold.co/100" alt="">
                     </div>
-                    <div class="col-12 col-md-6 bg-greener p-5 me-5">
+                    <div class="col-12 col-md-6 bg-greener p-5 h-100">
                         <h2>Spread Hope: Donate to Make a Difference</h2><br>
                         <p class="font-monospace">July 27, 2024, flood victims from Typhoon Carina received essential relief
                             goods thanks to the
@@ -116,13 +135,13 @@
             </div>
         </section>
 
-        <section id="what2donate" class="container mb-5">
+        <section id="what2donate" class="container-fluid pb-5 pt-3" style="background: rgba(18,79,31,0.1)">
             <div class="my-5">
                 <h1 class="text-greener text-center">WHAT TO DONATE?</h1>
             </div>
-            <div class="row justify-content-center">
+            <div class="m-auto container row justify-content-center">
                 <div class="col-12 col-md-4 mb-3">
-                    <div class="card bg-greener w-75 m-auto shadow-sm">
+                    <div class="card bg-greener w-75 m-auto shadow">
                         <div class="text-center">
                             <div class="donate-icons text-greener my-4">
                                 <svg class="bg-light rounded-circle p-3 " xmlns="http://www.w3.org/2000/svg" width="100"
@@ -146,7 +165,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4 mb-3">
-                    <div class="card bg-light w-75 m-auto shadow-sm">
+                    <div class="card bg-light w-75 m-auto shadow">
                         <div class="text-center">
                             <div class="donate-icons bg-light my-4">
                                 <svg class="text-white bg-greener rounded-circle p-3 " xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +190,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4 mb-3">
-                    <div class="card bg-greener w-75 m-auto shadow-sm">
+                    <div class="card bg-greener w-75 m-auto shadow">
                         <div class="text-center">
                             <div class="donate-icons text-greener my-4">
                                 <svg class="bg-light rounded-circle  p-3" xmlns="http://www.w3.org/2000/svg"
@@ -202,7 +221,7 @@
                 <h1 class="text-uppercase text-greener text-center">Ideas To Get You Started</h1>
                 <p class="text-gray text-center">There are lots of way to make good things happen</p>
             </div>
-            <div class="row m-auto justify-content-center">
+            <div class="container row m-auto justify-content-center">
                 <div class="col-md-5 border px-5 py-3 m-3 bg-container">
                     <div class="row align-items-center">
                         <div class="col-8">
@@ -345,8 +364,8 @@
             </div>
         </section>
 
-        <section id="contact" class="container mb-5">
-            <div class="row text-center justify-content-center">
+        <section id="contact" class="container-fluid py-5" style="background: rgba(18,79,31,0.2)">
+            <div class="container px-5 m-auto row text-center justify-content-center">
                 <h1 class="col-12 fw-bolder mb-4">Contact Us</h1>
                 <div class="col-12 col-md-4 mb-3">
                     <svg class="mb-2" xmlns="http://www.w3.org/2000/svg" width="100" height="100"
@@ -376,7 +395,7 @@
                     </svg>
 
                     <h2 class="">Address</h2>
-                    <h5>Paranaque City</h5>
+                    <h5>{{ $contact->extras['address'] }}</h5>
                 </div>
                 <div class="col-12 col-md-4 mb-3">
                     <svg class="mb-2" xmlns="http://www.w3.org/2000/svg" width="100" height="100"
@@ -408,7 +427,7 @@
                     </svg>
 
                     <h2 class="">Phone</h2>
-                    <h5>Paranaque City</h5>
+                    <h5>{{ $contact->extras['phone'] }}</h5>
                 </div>
                 <div class="col-12 col-md-4 mb-3">
                     <svg class="mb-2" xmlns="http://www.w3.org/2000/svg" width="100" height="100"
@@ -433,7 +452,7 @@
                     </svg>
 
                     <h2 class="">Email</h2>
-                    <h5>Paranaque City</h5>
+                    <h5>{{ $contact->extras['email'] }}</h5>
                 </div>
             </div>
         </section>
@@ -470,7 +489,8 @@
                 // margin: 10,
                 autoplay: true,
                 // autoplayTimeout: 5000,
-                autoplayHoverPause: true
+                autoplayHoverPause: true,
+                dots: false,
             });
         });
     </script>

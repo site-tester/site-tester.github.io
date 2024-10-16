@@ -17,7 +17,7 @@ class Item extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'items';
+    protected $table = 'inventory';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -35,7 +35,10 @@ class Item extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-
+    public function donation()
+    {
+        return $this->belongsTo(Donation::class, 'donation_id', 'id'); // Foreign key in donations table
+    }
     /*
     |--------------------------------------------------------------------------
     | SCOPES

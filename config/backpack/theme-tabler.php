@@ -41,6 +41,7 @@ return [
     'styles' => [
         base_path('vendor/backpack/theme-tabler/resources/assets/css/color-adjustments.css'),
         base_path('vendor/backpack/theme-tabler/resources/assets/css/colors.css'),
+        base_path('resources/css/backpack_custom.css'),
     ],
 
     /**
@@ -69,7 +70,7 @@ return [
          * When false, the theme will only use the "defaultColorMode" set above.
          * In case "defaultColorMode" is null, system is the default.
          */
-        'showColorModeSwitcher' => true,
+        'showColorModeSwitcher' => false,
 
         /**
          * Fix the top-header component (present in "vertical_transparent") and the menu when the layout type is set as "horizontal".

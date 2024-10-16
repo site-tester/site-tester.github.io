@@ -21,12 +21,12 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            // VoyagerDatabaseSeeder::class,
             UserSeeder::class,
             UserAndProfileSeeder::class,
             RoleSeeder::class,
             PermissionSeeder::class,
-            // VoyagerDummyDatabaseSeeder::class,
+            BarangaySeeder::class,
+            PageSeeder::class,
         ]);
     }
 }

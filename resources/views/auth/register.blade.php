@@ -146,7 +146,6 @@
                                     aria-describedby="password-confirm-reg" required >
                             </div>
 
-
                             <div class="form-check mb-3">
                                 <div class="d-flex justify-content-center">
                                     <input id="regCheckbox"
@@ -155,7 +154,7 @@
                                         id="flexCheckDefault">
                                     <label class="form-check-label" for="flexCheckDefault">
                                         &nbsp I accept all
-                                        <a class="link-underline-primary" href="{{ route('terms') }}">Terms and
+                                        <a class="link-underline-primary" href="{{ url('terms-and-conditions') }}">Terms and
                                             Conditions</a>
                                     </label>
                                 </div>

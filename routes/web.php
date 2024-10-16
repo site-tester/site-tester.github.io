@@ -1,11 +1,11 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DonationController;
-use App\Http\Controllers\BarangayController;
-use App\Http\Controllers\DonorController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,43 +18,25 @@ use App\Http\Controllers\DonorController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/test', function () {
+    return view('main.confirmation_page');
+});
 
 Route::get('/', [Controller::class, 'landing'])->name('landing');
-Route::get('/terms-and-conditions', [Controller::class, 'terms'])->name('terms');
-
-// Route::group(['prefix' => 'admin'], function () {
-//     Voyager::routes();
-// });
+// Route::get('/terms-and-conditions', [Controller::class, 'terms'])->name('terms');
 
 Auth::routes(['verify' => true]);
 
 Route::middleware(['verified'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [Controller::class, 'landing'])->name('home');
     Route::get('/dashboard', [HomeController::class, 'index'])->name('donor.dashboard');
     Route::get('/profile', [HomeController::class, 'viewProfile'])->name('profile');
     Route::get('/donate-now', [HomeController::class, 'viewDonateNow'])->name('donate-now');
     Route::post('/donate', [DonationController::class, 'store'])->name('donate.store');
+    Route::get('/my-donation', [DonationController::class, 'myDonation'])->name('my.donation');
+    Route::get('/donation/view/{id}', [DonationController::class, 'show'])->name('donation.modal');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notif.markAsRead');
 });
 
 Route::get('{page}/{subs?}', ['uses' => '\App\Http\Controllers\PageController@index'])
     ->where(['page' => '^(((?=(?!admin))(?=(?!\/)).))*$', 'subs' => '.*']);
-
-// Route::group(['middleware' => ['auth', 'role:Content Manager']], function () {
-//     // Routes only admins can access
-//     // Route::get('/admin/dashboard', function () {
-//     // return redirect()->route('backpack.dashboard'); // Redirect to Backpack dashboard
-//     // })->name('admin.dashboard');
-// });
-
-Route::group(['middleware' => ['auth', 'role:Barangay']], function () {
-    // Routes only trainers can access
-    Route::get('/dashboard', [BarangayController::class, 'dashboard'])->name('trainer.dashboard');
-});
-
-Route::group(['middleware' => ['auth', 'role:Normal User','verified']], function () {
-    // Routes only members can access
-    Route::get('/dashboard', [DonorController::class, 'dashboard'])->name('member.dashboard');
-});

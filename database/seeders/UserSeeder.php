@@ -17,55 +17,158 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         if (User::count() == 0) {
-            // $roleAdmin = Role::where('name', 'super_admin')->firstOrFail();
-            // $roleCMS = Role::where('name', 'content_manager')->firstOrFail();
-            // $roleUser = Role::where('name', 'user')->firstOrFail();
-
-            // User::create([
-            //     'name'           => 'Admin',
-            //     'email'          => 'admin@admin.com',
-            //     'password'       => bcrypt('password'),
-            //     'remember_token' => Str::random(60),
-            //     'role_id'        => $roleAdmin->id,
-            // ]);
-
-            // User::create([
-            //     'name'           => 'Content Manager',
-            //     'email'          => 'cms@email.com',
-            //     'password'       => bcrypt('password'),
-            //     'remember_token' => Str::random(60),
-            //     'role_id'        => $roleCMS->id,
-            // ]);
 
             User::create([
                 'name'           => 'John Doe',
-                'is_admin'       => 0,
-                'is_barangay'    => 0,
                 'email'          => 'jdoe@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
-                // 'role_id'        => $roleUser->id,
+                'email_verified_at' => now(),
             ]);
 
             User::create([
                 'name'           => 'Content Manager',
-                'is_admin'       => 1,
-                'is_barangay'    => 0,
                 'email'          => 'cms@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
-                // 'role_id'        => $roleUser->id,
+                'email_verified_at' => now(),
             ]);
 
             User::create([
                 'name'           => 'Barangay Rep',
-                'is_admin'       => 0,
-                'is_barangay'    => 1,
                 'email'          => 'barangay@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
-                // 'role_id'        => $roleUser->id,
+                'email_verified_at' => now(),
             ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 2',
+                'email'          => 'barangay2@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 3',
+                'email'          => 'barangay3@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 4',
+                'email'          => 'barangay4@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 5',
+                'email'          => 'barangay5@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 6',
+                'email'          => 'barangay6@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 7',
+                'email'          => 'barangay7@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 8',
+                'email'          => 'barangay8@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 9',
+                'email'          => 'barangay9@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 10',
+                'email'          => 'barangay10@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 11',
+                'email'          => 'barangay11@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 12',
+                'email'          => 'barangay12@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 13',
+                'email'          => 'barangay13@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 14',
+                'email'          => 'barangay14@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 15',
+                'email'          => 'barangay15@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            User::create([
+                'name'           => 'Barangay Rep 16',
+                'email'          => 'barangay16@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
+
+            // User::create([
+            //     'name'           => 'System Admin',
+            //     'email'          => 'admin@email.com',
+            //     'password'       => bcrypt('password'),
+            //     'remember_token' => Str::random(60),
+            //     'email_verified_at' => now(),
+            // ]);
         }
     }
 }

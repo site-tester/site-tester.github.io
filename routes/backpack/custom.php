@@ -20,6 +20,27 @@ Route::group([
     Route::crud('barangay', 'BarangayCrudController');
     Route::crud('donation', 'DonationCrudController');
     Route::crud('item', 'ItemCrudController');
+    // Route::crud('notification', 'NotificationCrudController');
+    Route::crud('notification', 'CustomNotificationCrudController');
+    // Notifications
+    Route::get('notification/unreadcount', [
+        'uses' => 'NotificationCrudController@unreadCount',
+        'as' => 'crud.notification.unreadcount',
+    ]);
+    Route::get('notification/dismissall', [
+        'uses' => 'NotificationCrudController@dismissAll',
+        'as' => 'crud.notification.dismissall',
+    ]);
+    Route::get('notification/{notification_id}/dismiss', [
+        'uses' => 'NotificationCrudController@dismiss',
+        'as' => 'crud.notification.dismiss',
+    ]);
+    Route::get('notification/{notification_id}/read', [
+        'uses' => 'CustomNotificationCrudController@readDonationNotification',
+        'as' => 'notification.read',
+    ]);
+
+
 }); // this should be the absolute last line of this file
 
 /**

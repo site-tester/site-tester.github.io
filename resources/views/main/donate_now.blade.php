@@ -16,8 +16,16 @@
 
 @section('content')
     <div class="container-fluid m-auto w-75  mt-5">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="card shadow">
-
             <div class="text-center mt-4">
                 <h1 class="text-greener"><strong class="display-3">Donation</strong> Form</h1>
                 <hr class="col-1 m-auto text-greener border-3 opacity-50    ">
@@ -59,36 +67,43 @@
                         </li>
                     </ul>
 
-                    <div class="tab-content align-items-center overflow-auto">
-                        <div id="step-0" class="tab-pane  mx-2 mx-md-5 donation-type" role="tabpanel"
+                    <div class="tab-content overflow-auto">
+                        <div id="step-0" class="tab-pane mx-2 mx-md-5 donation-type" role="tabpanel"
                             aria-labelledby="step-0">
-                            <div class="text-center m-auto mx-md-5">
-                                <input type="radio" class="btn-check" name="barangay" id="barangay" value="barangay1"
-                                    autocomplete="off" checked>
-                                <label class="btn p-3 btn-donate-now w-100  m-2 fs-1" for="barangay">Barangay 1</label>
+                            <div class="row align-items-center">
+                                @foreach ($barangayLists as $barangay)
+                                    <div class="col-6 mb-3"> <!-- Adjust columns as per your requirement -->
+                                        <div class="text-center h-100">
+                                            <input type="radio" class="btn-check" name="barangay"
+                                                id="barangay-{{ $barangay->id }}" value="{{ $barangay->id }}"
+                                                autocomplete="off" checked>
+                                            <label class="btn p-3 px-5 btn-donate-now w-100 h-100 m-2 fs-3"
+                                                for="barangay-{{ $barangay->id }}">
+                                                {{ $barangay->name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-
-                            <div class="text-center m-auto mx-md-5">
-                                <input type="radio" class="btn-check" name="barangay" id="barangay2" value="barangay2"
-                                    autocomplete="off" checked>
-                                <label class="btn p-3 btn-donate-now w-100  m-2 fs-1" for="barangay2">Barangay 2</label>
-                            </div>
-
                         </div>
                         <div id="step-1" class="tab-pane  mx-2 mx-md-5 donation-type" role="tabpanel"
                             aria-labelledby="step-1">
-                            <div class="text-center m-auto mx-md-5">
-                                <input type="radio" class="btn-check " name="donation_type" id="food" value="food"
-                                    autocomplete="off" checked>
-                                <label class="btn p-3 btn-donate-now w-100  m-2 fs-1" for="food">FOOD</label>
-
-                                <input type="radio" class="btn-check " name="donation_type" id="nonfood" value="nonfood"
-                                    autocomplete="off">
-                                <label class="btn p-3 btn-donate-now w-100  m-2 fs-1" for="nonfood">NON-FOOD</label>
-
-                                <input type="radio" class="btn-check " name="donation_type" id="medical" value="medical"
-                                    autocomplete="off">
-                                <label class="btn p-3 btn-donate-now w-100  m-2 fs-1" for="medical">MEDICAL</label>
+                            <div class="text-center row align-items-center">
+                                <div class="col">
+                                    <input type="radio" class="btn-check " name="donation_type" id="food"
+                                        value="food" autocomplete="off" checked>
+                                    <label class="btn p-3 btn-donate-now w-100  m-2 fs-3" for="food">FOOD</label>
+                                </div>
+                                <div class="col">
+                                    <input type="radio" class="btn-check " name="donation_type" id="nonfood"
+                                        value="nonfood" autocomplete="off">
+                                    <label class="btn p-3 btn-donate-now w-100  m-2 fs-3" for="nonfood">NON-FOOD</label>
+                                </div>
+                                <div class="col">
+                                    <input type="radio" class="btn-check " name="donation_type" id="medical"
+                                        value="medical" autocomplete="off">
+                                    <label class="btn p-3 btn-donate-now w-100  m-2 fs-3" for="medical">MEDICAL</label>
+                                </div>
                             </div>
                             <div class="text-center mt-3 m-auto">
                                 <p><strong>NOTE: </strong> We only accept clothing, personal hygiene items, blankets and
@@ -96,13 +111,14 @@
                             </div>
                         </div>
                         <div id="step-2" class="tab-pane item-container" role="tabpanel" aria-labelledby="step-2">
-                            <div class="row m-auto w-100">
+                            <div class="row m-auto w-100 px-5">
                                 <div class="row">
                                     <input type="hidden" name="donation-basket-array">
                                     <div id="donation-basket" class="border rounded">
                                         <div class="row donation-basket-item border-bottom align-items-center text-center">
                                             <div class="col fw-bold p-2">Item</div>
                                             <div class="col-3 fw-bold">Qty</div>
+                                            {{-- <div class="col-3 fw-bold food" hidden>Expiration Date</div> --}}
                                             <div class="col-3 fw-bold"></div>
                                         </div>
                                     </div>
@@ -188,7 +204,7 @@
                     enableDoneStateNavigation: true // Enable/Disable the done state navigation
                 },
                 keyboard: {
-                    keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+                    keyNavigation: false, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
                     keyLeft: [37], // Left key code
                     keyRight: [39] // Right key code
                 },
@@ -274,8 +290,10 @@
             });
 
             $('#schedule_time').timepicker({
-                timeFormat: 'hh:mm p',
-                interval: 60,
+                timeFormat: 'HH:mm',
+                interval: 30,
+                minTime: '08:00', // Minimum time
+                maxTime: '16:59', // Maximum time
                 dynamic: true,
                 dropdown: true,
                 scrollbar: true

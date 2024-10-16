@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;900&display=swap');
+
+
 :root{
   --sw-border-color:  #eeeeee;
   --sw-toolbar-btn-color:  #ffffff;
-  --sw-toolbar-btn-background-color:  #124F1F !important;
+  --sw-toolbar-btn-background-color:  #428851e5 !important;
   --sw-anchor-default-primary-color:  #f8f9fa;
   --sw-anchor-default-secondary-color:  #b0b0b1;
-  --sw-anchor-active-primary-color:  #124F1F !important;
+  --sw-anchor-active-primary-color:  #428851e5 !important;
   --sw-anchor-active-secondary-color:  #ffffff;
   --sw-anchor-done-primary-color:  #5BBA6F !important;
   --sw-anchor-done-secondary-color:  #fefefe;
@@ -23,6 +26,7 @@
 }
 
 body {
+  font-family: 'Saira Condensed', 'sans-serif';
   display: flex !important;
   flex-direction: column;
 }
@@ -44,12 +48,12 @@ main{
 }
 
 .bg-green:active {
-  background-color: #124F1F !important;
+  background-color: #428851e5 !important;
   color: #fff !important;
 }
 
 .bg-greener {
-  background-color: #124F1F !important;
+  background-color: #428851e5 !important;
   color: #fff !important;
 }
 
@@ -58,7 +62,7 @@ main{
 }
 
 .text-greener {
-  color: #124F1F !important;
+  color: #428851e5 !important;
 }
 
 .bg-container {
@@ -66,7 +70,7 @@ main{
 }
 
 .nav-text-bg {
-  background-color: #124F1F !important;
+  background-color: #428851e5 !important;
 }
 
 .navbar-brand {
@@ -90,7 +94,7 @@ main{
 }
 
 .nav-text-bg .nav-item .dropdown-item:hover {
-  color: #124F1F !important;
+  color: #428851e5 !important;
 }
 
 .move-up-button {
@@ -98,7 +102,7 @@ main{
   bottom: 20px;
   right: 20px;
   background-color: #5BBA6F;
-  border: 1px solid #124F1F;
+  border: 1px solid #428851e5;
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -114,6 +118,7 @@ main{
 
 .hero {
   height: 75vh;
+  background-image: url('{{ asset("storage/uploads/drrmc/about_us_banner.jpg") }}');
 }
 
 .hero p+h1+a {
@@ -135,27 +140,27 @@ main{
 
 /* Navs */
 .nav-tabs .nav-link {
-  border-bottom-color: #124F1F;
+  border-bottom-color: #428851e5;
   background-color: #5BBA6F;
   color: #fff;
 }
 
 .nav-tabs .nav-link.active {
-  border-bottom-color: #124F1F;
-  background-color: #124F1F;
+  border-bottom-color: #428851e5;
+  background-color: #428851e5;
   color: #fff;
 }
 
 .nav-pills .nav-link {
-  border-bottom-color: #124F1F;
+  border-bottom-color: #428851e5;
   background-color: light;
-  color: #124F1F;
+  color: #428851e5;
   border-radius: 0%;
 }
 
 .nav-pills .nav-link.active {
-  border-bottom-color: #124F1F;
-  background-color: #124F1F;
+  border-bottom-color: #428851e5;
+  background-color: #428851e5;
   color: #fff;
   border-radius: 0%;
 }
@@ -189,7 +194,7 @@ main{
 
 .donation-type label:hover{
   border: #dbe0e5 solid 1px !important;
-  color: #124F1F !important;
+  color: #428851e5 !important;
 }
 
 .donation-type .btn-check:checked + .btn, :not(.btn-check) + .btn:active, .btn:first-child:active, .btn.active, .btn.show{
@@ -329,4 +334,8 @@ main{
 
 #images {
   display: none;
+}
+
+.btn.bg-greener.bordered{
+  border: #5BBA6F solid 2px;
 }
