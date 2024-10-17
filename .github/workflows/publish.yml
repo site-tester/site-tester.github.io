@@ -36,6 +36,7 @@ jobs:
           source: "./"  # Copies the entire Laravel project
           target: ${{ secrets.HOSTINGER_APP_PATH }}  # Path to your subdomain directory
           rm: true  # Remove old files before deploying
+          port: ${{ secrets.HOSTINGER_SSH_PORT }}
 
       - name: Run SSH Commands
         uses: appleboy/ssh-action@v0.1.5
@@ -43,6 +44,7 @@ jobs:
           host: ${{ secrets.HOSTINGER_SSH_HOST }}
           username: ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT }}
           script: |
             cd ${{ secrets.HOSTINGER_APP_PATH }}
             composer install --optimize-autoloader --no-dev
