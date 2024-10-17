@@ -30,21 +30,21 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.HOSTINGER_SSH_HOST }}
-          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          host: 45.84.205.136 # ${{ secrets.HOSTINGER_SSH_HOST }}
+          username: u992745133 # ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           source: "./"  # Copies the entire Laravel project
           target: ${{ secrets.HOSTINGER_APP_PATH }}  # Path to your subdomain directory
           rm: true  # Remove old files before deploying
-          port: ${{ secrets.HOSTINGER_SSH_PORT }}
+          port: 65002 # ${{ secrets.HOSTINGER_SSH_PORT }}
 
       - name: Run SSH Commands
         uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.HOSTINGER_SSH_HOST }}
-          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          host: 45.84.205.136 # ${{ secrets.HOSTINGER_SSH_HOST }}
+          username: u992745133 # ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          port: ${{ secrets.HOSTINGER_SSH_PORT }}
+          port: 65002 # ${{ secrets.HOSTINGER_SSH_PORT }}
           script: |
             cd ${{ secrets.HOSTINGER_APP_PATH }}
             composer install --optimize-autoloader --no-dev
