@@ -154,7 +154,7 @@ return [
     |
     */
 
-    'providers' => array_merge([
+    'providers' => [
 
         /*
          * Laravel Framework Service Providers...
@@ -194,12 +194,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        // Barryvdh\Debugbar\ServiceProvider::class,
         Pestopancake\LaravelBackpackNotifications\LaravelBackpackNotificationsServiceProvider::class,
 
-    ], env('APP_ENV') !== 'production' ? [
-        Barryvdh\Debugbar\ServiceProvider::class,
-    ] : []),
+    ],
 
     /*
     |--------------------------------------------------------------------------
