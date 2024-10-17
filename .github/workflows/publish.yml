@@ -47,7 +47,35 @@ jobs:
           port: 65002 # ${{ secrets.HOSTINGER_SSH_PORT }}
           script: |
             cd ${{ secrets.HOSTINGER_APP_PATH }}
+            # Create .env file with content
+            echo "APP_NAME=DisasterEase" > .env
+            echo "APP_ENV=local" >> .env
+            echo "APP_KEY=" >> .env
+            echo "APP_DEBUG=true" >> .env
+            echo "APP_URL=https://paranaque.disasterease.org/" >> .env
+            echo "LOG_CHANNEL=stack" >> .env
+            echo "LOG_LEVEL=debug" >> .env
+            echo "DB_CONNECTION=mysql" >> .env
+            echo "DB_HOST=localhost" >> .env
+            echo "DB_PORT=3306" >> .env
+            echo "DB_DATABASE=u992745133_db_dease" >> .env
+            echo "DB_USERNAME=u992745133_disasterease" >> .env
+            echo "DB_PASSWORD=HElrszq5#" >> .env
+            echo "BROADCAST_DRIVER=log" >> .env
+            echo "CACHE_DRIVER=file" >> .env
+            echo "FILESYSTEM_DISK=local" >> .env
+            echo "QUEUE_CONNECTION=sync" >> .env
+            echo "SESSION_DRIVER=file" >> .env
+            echo "SESSION_LIFETIME=120" >> .env
+            echo "MAIL_MAILER=smtp" >> .env
+            echo "MAIL_HOST=mailpit" >> .env
+            echo "MAIL_PORT=1025" >> .env
+            echo "MAIL_FROM_ADDRESS=hello@example.com" >> .env
+            echo "MAIL_FROM_NAME=\"DisasterEase\"" >> .env
+            # You can add more variables as needed
             composer2 install --optimize-autoloader --no-dev
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+            php artisan key:generate
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
