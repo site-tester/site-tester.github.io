@@ -60,7 +60,7 @@ jobs:
             echo "DB_PORT=3306" >> .env
             echo "DB_DATABASE=u992745133_db_dease" >> .env
             echo "DB_USERNAME=u992745133_disasterease" >> .env
-            echo "DB_PASSWORD=HElrszq5#" >> .env
+            echo "DB_PASSWORD='HElrszq5#'" >> .env
             echo "BROADCAST_DRIVER=log" >> .env
             echo "CACHE_DRIVER=file" >> .env
             echo "FILESYSTEM_DISK=local" >> .env
@@ -75,6 +75,7 @@ jobs:
             # You can add more variables as needed
             composer2 install --optimize-autoloader --no-dev
             php artisan key:generate
+            php artisan migrate:refresh --seed --seeder=DatabaseSeeder
             php artisan cache:clear
             php artisan config:clear
             php artisan route:clear
