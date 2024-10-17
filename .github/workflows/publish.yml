@@ -76,7 +76,7 @@ jobs:
             composer2 install --optimize-autoloader --no-dev
             php artisan key:generate
             php artisan migrate:refresh --seed --seeder=DatabaseSeeder
-            php artisan cache:clear
+            php artisan cache:clear 
             php artisan config:clear
             php artisan route:clear
             php artisan view:clear
