@@ -49,7 +49,7 @@ jobs:
             cd ${{ secrets.HOSTINGER_APP_PATH }}
             # Create .env file with content
             echo "APP_NAME=DisasterEase" > .env
-            echo "APP_ENV=local" >> .env
+            echo "APP_ENV=production" >> .env
             echo "APP_KEY=" >> .env
             echo "APP_DEBUG=true" >> .env
             echo "APP_URL=https://paranaque.disasterease.org/" >> .env
@@ -76,7 +76,7 @@ jobs:
             composer2 install --optimize-autoloader --no-dev
             php artisan key:generate
             php artisan migrate:refresh --seed --seeder=DatabaseSeeder
-            php artisan cache:clear 
+            php artisan cache:clear
             php artisan config:clear
             php artisan route:clear
             php artisan view:clear
