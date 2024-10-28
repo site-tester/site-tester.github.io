@@ -25,8 +25,8 @@ class Barangay extends Model
     protected $fillable = [
         'name',
         'barangay_rep_id',
-        'location'
-
+        'flood_frequency',
+        'flood_risk_score',
     ];
     // protected $hidden = [];
 
@@ -35,7 +35,16 @@ class Barangay extends Model
     | FUNCTIONS
     |--------------------------------------------------------------------------
     */
-
+    public function getFloodRiskIcon()
+    {
+        if ($this->flood_risk_score > 7) {
+            return '<i class="fas fa-flood" style="color: red;"></i>'; // High risk
+        } elseif ($this->flood_risk_score > 3) {
+            return '<i class="fas fa-tint" style="color: orange;"></i>'; // Medium risk
+        } else {
+            return '<i class="fas fa-water" style="color: green;"></i>'; // Low risk
+        }
+    }
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
@@ -43,9 +52,8 @@ class Barangay extends Model
     */
     public function barangayRep()
     {
-        return $this->belongsTo(User::class, 'barangay_rep_id','id'); // Adjust the foreign key if necessary
+        return $this->belongsTo(User::class, 'barangay_rep_id', 'id'); // Adjust the foreign key if necessary
     }
-
     /*
     |--------------------------------------------------------------------------
     | SCOPES

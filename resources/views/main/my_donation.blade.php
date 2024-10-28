@@ -39,16 +39,13 @@
 @section('content')
     <div class="container p-5 pb-0">
         @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show mx-5 mb-0" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <div class="alert alert-success alert-dismissible fade show mx-5 mb-0" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         @endif
         <div class="card shadow m-5">
             <div class="row p-4">
-                <div class="col-2">
-                    <img src="" alt="">
-                </div>
                 <div class="col">
                     <h4>{{ Auth::user()->name }}</h4>
                     <h5><i class="bi bi-clock p-1"></i> Last Donated: {{ $lastDonated }}</h5>
@@ -75,6 +72,10 @@
                             data-bs-target="#v-pills-history" type="button" role="tab" aria-controls="v-pills-history"
                             aria-selected="false">Donation History
                         </button>
+                        <button class="nav-link text-nowrap text-end" id="v-pills-transparency-tab" data-bs-toggle="pill"
+                            data-bs-target="#v-pills-transparency" type="button" role="tab"
+                            aria-controls="v-pills-transparency" aria-selected="false">Transparency Board
+                        </button>
                     </div>
                     <div class="tab-content w-100 h-100" id="v-pills-tabContent">
                         <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel"
@@ -85,20 +86,20 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-12 col-md-4 mb-3">
-                                                <div class="text-center border rounded mx-5">
+                                                <div class="text-center my-3 mx-5">
                                                     <h1>{{ $historyDonations->count() }}</h1>
                                                     <p class="text-uppercase">Total Number of Donations</p>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-4 mb-3">
-                                                <div class="text-center border rounded mx-5">
+                                                <div class="text-center my-3 mx-5">
                                                     <h1>{{ $historyDonations->where('status', 'Pending Approval')->count() }}
                                                     </h1>
                                                     <p class="text-uppercase">Total Number of Pending Donations</p>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-4 mb-3">
-                                                <div class="text-center border rounded mx-5">
+                                                <div class="text-center my-3 mx-5">
                                                     <h1>{{ $recentDonations->where('status', 'Completed')->count() }}</h1>
                                                     <p class="text-uppercase">Total Number of Completed Donations</p>
                                                 </div>
@@ -187,10 +188,12 @@
                                 </table>
                             </div>
                         </div>
+
                         <div class="tab-pane fade w-100 border" id="v-pills-history" role="tabpanel"
                             aria-labelledby="v-pills-history-tab" tabindex="0">
                             <div class="p-3">
-                                <h5 class="m-0">{{ $historyDonations->count() }} Total Donations</h5>
+                                <h5 class="m-0"><i class="bi bi-box2-heart"></i> {{ $historyDonations->count() }}
+                                    Total Donations</h5>
                                 <table id="historyTable" class="border rounded-table mt-0" style="width:100%">
                                     <thead>
                                         <tr class="">
@@ -269,15 +272,17 @@
                                 </table>
                             </div>
                         </div>
+
                         <div class="tab-pane fade w-100 border" id="v-pills-notification" role="tabpanel"
                             aria-labelledby="v-pills-notification-tab" tabindex="0">
                             <div class="p-3">
-                                <h5 class="m-0"> Notifications</h5>
-                                <table id="notificationTable" class="table table-striped border rounded-table mt-0" style="width:100%">
+                                <h5 class="m-0"><i class="bi bi-bell"></i> Notifications</h5>
+                                <table id="notificationTable" class="table table-striped border rounded-table mt-0"
+                                    style="width:100%">
                                     <thead>
                                         <tr class="">
-                                            <th class="text-center">Donation ID</th>
-                                            <th class="text-center">Notification</th>
+                                            <th class="text-center">Notification ID</th>
+                                            <th class="text-center">Message</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -289,18 +294,25 @@
                                                 dd($notification->id);
                                             @endphp --}}
                                             <tr>
-                                                <td class="text-center">{{ $notification->data['donation_id'] }}</td>
-                                                <td class="text-center">{{ $notification->data['message'] }}</td>
-                                                <td class="text-center">{{ $notification->created_at }}</td>
+                                                <td class="text-center">{{ $notification->id }}</td>
                                                 <td class="text-center">
-                                                    @if (is_null($notification->read_at)) <!-- Check if the notification is unread -->
-                                                        <form action="{{ route('notif.markAsRead', $notification->id) }}" method="POST">
+                                                    {!! $notification->data['message'] !!}
+                                                </td>
+                                                <td class="text-center">{{ $notification->created_at->format('M/d/Y') }}
+                                                </td>
+                                                <td class="text-center">
+                                                    @if (is_null($notification->read_at))
+                                                        <!-- Check if the notification is unread -->
+                                                        <form action="{{ route('notif.markAsRead', $notification->id) }}"
+                                                            method="POST">
                                                             @csrf
                                                             @method('POST')
-                                                            <button type="submit" class="btn btn-info">Mark as Read</button>
+                                                            <button type="submit" class="btn btn-info">Mark as
+                                                                Read</button>
                                                         </form>
                                                     @else
-                                                        <span class="btn btn-success disabled">Read</span> <!-- Show "Read" badge if already read -->
+                                                        <span class="btn btn-success disabled">Read</span>
+                                                        <!-- Show "Read" badge if already read -->
                                                     @endif
                                                 </td>
 
@@ -310,6 +322,78 @@
                                 </table>
                             </div>
                         </div>
+
+                        <div class="tab-pane fade w-100 border" id="v-pills-transparency" role="tabpanel"
+                            aria-labelledby="v-pills-transparency-tab" tabindex="0">
+                            <div class="p-3">
+                                <h5 class="m-0 mb-3"><i class="bi bi-clipboard-heart"></i> Transparency Board</h5>
+                                <div class="row mt-2 mx-2 align-items-center">
+                                    <div class="col mx-1">
+                                        <div class=" row mb-2">
+                                            <h6>Filter by Barangay:</h6> {{-- All barangay, Barangay 1,2,3.... --}}
+                                            <select id="barangayFilter" class="form-select ">
+                                                <option value="" selected>All Barangays</option>
+                                                <!-- Dynamically generate options for barangays -->
+                                                @foreach ($barangays as $barangay)
+                                                    <option value="{{ $barangay->id }}">{{ $barangay->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col mx-1">
+                                        <div class="row mb-2">
+                                            <h6>Activity by Time:</h6> {{-- Quarterly 1,2,3,4 or anually --}}
+                                            <select id="timeFilter" class="form-select">
+                                                <option value="">Select Time Period</option>
+                                                <option value="Q1">Q1 (Jan-Mar)</option>
+                                                <option value="Q2">Q2 (Apr-Jun)</option>
+                                                <option value="Q3">Q3 (Jul-Sep)</option>
+                                                <option value="Q4">Q4 (Oct-Dec)</option>
+                                                <option value="Annual" selected>Annual</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col mx-1">
+                                        <div class="row mb-2">
+                                            <h6>Filter by Year:</h6>
+                                            <select id="yearFilter" class="form-select">
+                                                <option value="">Select Year</option>
+                                                @for ($year = now()->year; $year >= $firstDonationYear; $year--)
+                                                    <option value="{{ $year }}">{{ $year }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <button id="filterButton" class="btn bg-greener mt-3">Apply Filters</button>
+                                    </div>
+                                </div>
+                                <small class="text-secondary fs-6 float-end">*Apply Filter First</small>
+                                <div id="donationResults">
+                                    <table id="transparencyTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="fs-6">Barangay</th>
+                                                <th class="fs-6">Donation ID</th>
+                                                <th class="fs-6">Donor Name</th>
+                                                <th class="fs-6">Date of Donation</th>
+                                                <th class="fs-6">Donation Type</th>
+                                                <th class="fs-6">Itemized List</th>
+                                                <th class="fs-6">Quantity/Volume</th>
+                                                <th class="fs-6">Status</th>
+                                                <th class="fs-6">Last Updated</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamic rows will be appended here -->
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -356,6 +440,106 @@
             $('#notificationTable').DataTable({
                 ordering: false,
             });
+            $('#transparencyTable').DataTable({
+                responsive: true,
+                searching: false,
+                ordering: false,
+                lengthChange: false,
+            });
+            $('#filterButton').on('click', function() {
+                const barangayId = $('#barangayFilter').val();
+                const timePeriod = $('#timeFilter').val();
+                const year = $('#yearFilter').val();
+
+                $.ajax({
+                    url: '/transparency-board',
+                    method: 'GET',
+                    data: {
+                        barangay_id: barangayId,
+                        time_period: timePeriod,
+                        year: year
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        const $tbody = $('#donationResults tbody');
+                        $tbody.empty(); // Clear previous results
+
+                        if (response.donations.length === 0) {
+                            // Show 'No Data Available' message if there's no data
+                            const noDataMessage = `
+                        <tr>
+                            <td colspan="9" class="text-center">No data available in table</td>
+                        </tr>`;
+                            $tbody.append(noDataMessage);
+                        } else {
+                            $.each(response.donations, function(index, donation) {
+                                const itemList = donation.items.join('<br>');
+                                const quantityList = donation.quantities.join('<br>');
+
+                                const donationEntry = `
+                        <tr>
+                            <td class="h6">${donation.barangay_name}</td>
+                            <td class="h6">${donation.id}</td>
+                            <td class="h6">${donation.anonymous == 'true' ? 'Anonymous Donor' : donation.donor_name}</td>
+                            <td class="h6">${new Date(donation.donation_date).toLocaleDateString()}</td>
+                            <td class="h6">${donation.donation_type}</td>
+                            <td class="h6">${itemList}</td>
+                            <td class="h6">${quantityList}</td>
+                            <td class="h6">${donation.status}</td>
+                            <td class="h6">${new Date(donation.updated_at).toLocaleDateString()}</td>
+                        </tr>`;
+                                $tbody.append(donationEntry);
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data:', error);
+                    }
+                });
+            });
+
+            function fetchDonations() {
+                const barangayId = $('#barangayFilter').val();
+                const timePeriod = $('#timeFilter').val();
+                const year = $('#yearFilter').val();
+
+                $.ajax({
+                    url: '/transparency-board',
+                    method: 'GET',
+                    data: {
+                        barangay_id: barangayId,
+                        time_period: timePeriod,
+                        year: year
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        const $tbody = $('#donationResults tbody');
+                        $tbody.empty(); // Clear previous results
+
+                        $.each(response.donations, function(index, donation) {
+                            const itemList = donation.items.join(', ');
+                            const quantityList = donation.quantities.join(', ');
+
+                            const donationEntry = `
+                        <tr>
+                            <td>D-${donation.id}</td>
+                            <td>${donation.donor_name}</td>
+                            <td>${new Date(donation.donation_date).toLocaleDateString()}</td>
+                            <td>${donation.donation_type}</td>
+                            <td>${donation.barangay_name}</td>
+                            <td>${itemList}</td>
+                            <td>${quantityList}</td>
+                            <td>${donation.status}</td>
+                            <td>${new Date(donation.updated_at).toLocaleDateString()}</td>
+                        </tr>`;
+                            $tbody.append(donationEntry);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data:', error);
+                    }
+                });
+            }
         });
 
         function loadDonationDetails(donationId) {
@@ -364,46 +548,55 @@
 
             // Make an AJAX request to get the donation details
             fetch('/donation/view/' + donationId)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    let donationItems = JSON.parse(data.items);
+                    let donationItems = data.items; // Items are already an array of objects
+
                     // Build a table for donation items
                     let itemsHtml = `
-                    <table class="table table-striped px-5">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+                <table class="table table-striped px-5">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Expiration or Condition</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
                     donationItems.forEach(item => {
                         itemsHtml += `
-                        <tr>
-                            <td>${item.name}</td>
-                            <td>${item.quantity}</td>
-                        </tr>
-                    `;
+                    <tr>
+                        <td>${item.item_name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.expiration_date ?? item.condition ?? 'N/A'}</td>
+                    </tr>
+                `;
                     });
 
                     itemsHtml += `</tbody></table>`;
+
                     // Populate the modal with the donation details
                     let detailsHtml = `
-                    <p><strong>Donation ID:</strong> ${data.id}</p>
-                    <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
-                    <p><strong>Donation Status:</strong> ${data.status}</p>
-                    <p><strong>Donation Items:</strong></p>
-                    ${itemsHtml}
-                    <!-- Add other fields as needed -->
-                `;
+                <p><strong>Donation ID:</strong> ${data.id}</p>
+                <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
+                <p><strong>Donation Status:</strong> ${data.status}</p>
+                <p><strong>Donation Items:</strong></p>
+                ${itemsHtml}
+                <!-- Add other fields as needed -->
+            `;
 
                     document.getElementById('donationDetailsContent').innerHTML = detailsHtml;
                 })
                 .catch(error => {
                     console.error('Error fetching donation details:', error);
                     document.getElementById('donationDetailsContent').innerHTML = 'Error loading details.';
-                });
+                })
         }
     </script>
 @endsection

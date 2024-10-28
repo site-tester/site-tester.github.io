@@ -39,6 +39,10 @@ class Item extends Model
     {
         return $this->belongsTo(Donation::class, 'donation_id', 'id'); // Foreign key in donations table
     }
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'barangay_id', 'id'); // Foreign key in barangay table
+    }
     /*
     |--------------------------------------------------------------------------
     | SCOPES

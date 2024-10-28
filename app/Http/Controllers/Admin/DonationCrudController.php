@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\DonationRequest;
 use App\Models\Barangay;
+use App\Models\Donation;
 use App\Models\User;
 use App\Notifications\DonorDonationStatusNotification;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Carbon\Carbon;
 
 /**
  * Class DonationCrudController
@@ -33,6 +35,7 @@ class DonationCrudController extends CrudController
         CRUD::setModel(\App\Models\Donation::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/donation');
         CRUD::setEntityNameStrings('donation', 'donations');
+        $this->crud->addButtonFromView('top', 'print_button', 'print_button');
     }
 
     /**
@@ -44,6 +47,31 @@ class DonationCrudController extends CrudController
     protected function setupListOperation()
     {
         // CRUD::setFromDb(); // set columns from db columns.
+        CRUD::setListView('vendor.backpack.crud.donation_list');
+
+        $this->data['overviewData'] = [
+            'pendingDonation' => Donation::where('status', 'Pending Approval')->count(),
+            'thisDayDonation' => Donation::whereDate('created_at', now()->toDateString())->count(),
+            'approvedDonation' => Donation::whereDate('updated_at', now()->toDateString())->where('status', 'Approved')->count(),
+        ];
+
+        // Apply custom filters based on query parameters
+        if (request()->has('status')) {
+            $status = request('status');
+            if ($status === 'pending') {
+                CRUD::addClause('where', 'status', 'Pending Approval');
+            } elseif ($status === 'approved') {
+                CRUD::addClause('where', 'status', 'Approved');
+                CRUD::addClause('whereDate', 'updated_at', now()->toDateString());
+            }
+        }
+
+        if (request()->has('date')) {
+            $date = request('date');
+            if ($date === 'today') {
+                CRUD::addClause('whereDate', 'created_at', now()->toDateString());
+            }
+        }
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -120,6 +148,8 @@ class DonationCrudController extends CrudController
             ],
         ]);
         CRUD::removeButton('create');
+
+        return view(CRUD::getListView(), $this->data);
     }
 
     /**
@@ -242,23 +272,43 @@ class DonationCrudController extends CrudController
         ]);
 
         CRUD::addField([
-            'name' => 'items',
-            'label' => 'Items',
-            'type' => 'hidden',
-        ]);
-
-        CRUD::addField([
-            'name' => 'items',
+            'name' => 'donationUpdateItems',
             'label' => 'Donation Items',
             'type' => 'custom_html',
-            'value' => $this->formatItems($this->crud->getCurrentEntry()->items, 'border'), // Pass an empty array initially or provide default data
+            'value' => '
+                <label for="donationUpdateItems" class="form-label">Donation Items</label>
+                <div>' . view('vendor.backpack.crud.columns.update_custom_table', ['donationItems' => CRUD::getCurrentEntry()->donationItems])->render() . '</div>',
         ]);
 
         CRUD::addField([
-            'name' => 'images',
-            'label' => 'Images',
-            'type' => 'custom_html',
-            'value' => $this->formatImages($this->crud->getCurrentEntry()->images, 'border', '<label>Donation Images</label>'), // Pass an empty array initially or provide default data
+            'name' => 'donation_date',
+            'label' => 'Appointment Date',
+            'type' => 'date',
+            'attributes' => [
+                'min' => Carbon::now()->format('Y-m-d'),
+            ]
+        ]);
+
+        $this->crud->addField([
+            'name' => 'donation_time',
+            'label' => "Appointment Time",
+            'type' => 'select_from_array',
+            'options' => [
+                '09:00 AM - 10:00 AM' => '9:00 AM - 10:00 AM',
+                '10:00 AM - 11:00 AM' => '10:00 AM - 11:00 AM',
+                '11:00 AM - 12:00 PM' => '11:00 AM - 12:00 PM',
+                '01:00 PM - 02:00 PM' => '01:00 PM - 02:00 PM',
+                '02:00 PM - 03:00 PM' => '02:00 PM - 03:00 PM',
+                '03:00 PM - 04:00 PM' => '03:00 PM - 04:00 PM',
+                '04:00 PM - 05:00 PM' => '04:00 PM - 05:00 PM',
+                '05:00 PM - 06:00 PM' => '05:00 PM - 06:00 PM',
+                '06:00 PM - 07:00 PM' => '06:00 PM - 07:00 PM',
+                '07:00 PM - 08:00 PM' => '07:00 PM - 08:00 PM',
+                '08:00 PM - 09:00 PM' => '08:00 PM - 09:00 PM',
+                '09:00 PM - 10:00 PM' => '09:00 PM - 10:00 PM',
+            ],
+            'allows_null' => false,
+            'value' => $this->crud->getCurrentEntry()->donation_time, // Default or saved value
         ]);
 
         // Field for Status
@@ -281,6 +331,23 @@ class DonationCrudController extends CrudController
             'allows_multiple' => false, // Set to true if you want to allow multiple selections
         ]);
 
+        CRUD::addField([
+            'name' => 'proof_document',
+            'label' => 'Proof Document',
+            'type' => 'upload',
+            'wrapper' => [
+                'class' => 'form-group d-none', // Start hidden
+            ],
+        ]);
+
+        CRUD::addField([
+            'name' => 'remarks',
+            'label' => 'Remarks',
+            'type' => 'textarea',
+            'wrapper' => [
+                'class' => 'form-group d-none', // Start hidden
+            ],
+        ]);
 
     }
 
@@ -395,32 +462,30 @@ class DonationCrudController extends CrudController
             ],
             [
                 'name' => 'type',
-                'label' => 'Donation Type',
+                'label' => 'Type',
                 'type' => 'text',
             ],
             [
-                'name' => 'items',
+                'name' => 'donationItems',
                 'label' => 'Item/s',
                 'type' => 'custom_html',
-                'value' => $this->formatItems($this->crud->getCurrentEntry()->items, ''), // Call a method to format the JSON data
-                'escaped' => false,
-            ],
-            [
-                'name' => 'images',
-                'label' => 'Image/s',
-                'type' => 'custom_html',
-                'value' => $this->formatImages($this->crud->getCurrentEntry()->images, '', ''), // Call a method to format the JSON data
-                // 'escaped' => false,
+                'value' => function ($entry) {
+                    return view('vendor.backpack.crud.columns.custom_table', ['entry' => $entry])->render();
+                }
+
             ],
             [
                 'name' => 'donation_date',
-                'label' => 'Donation Date',
-                'type' => 'date',
+                'label' => 'Appointment Date',
+                'type' => 'text',
+                'value' => function ($entry) {
+                    return \Carbon\Carbon::parse($entry->donation_date)->format('Y-m-d');
+                },
             ],
             [
                 'name' => 'donation_time',
-                'label' => 'Donation Time',
-                'type' => 'time',
+                'label' => 'Appointment Time',
+                'type' => 'text',
             ],
             [
                 'name' => 'created_at',

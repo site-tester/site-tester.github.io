@@ -13,12 +13,10 @@
             <ul class="col navbar-nav ms-auto">
                 @guest
                     <li class="nav-item"><a class="btn" href="/">Home</a></li>
-                    <li class="nav-item"><a class="btn" href="/#carousel">Events</a></li>
                     <li class="nav-item"><a class="btn" href="{{ url('/about-us') }}">About</a></li>
                     <li class="nav-item"><a class="btn" href="{{ url('/contact-us') }}">Contact</a></li>
                 @else
                     <li class="nav-item"><a class="btn" href="/">Home</a></li>
-                    <li class="nav-item"><a class="btn text-nowrap" href="/">Transparency Board</a></li>
                     <li class="nav-item"><a class="btn" href="{{ url('/about-us') }}">About</a></li>
                     <li class="nav-item"><a class="btn" href="{{ url('/contact-us') }}">Contact</a></li>
 
@@ -71,6 +69,12 @@
                                         @endif
                                     </a>
                                 </li> --}}
+                                <li>
+                                    <a href="{{route('my.donation')}}" class="dropdown-item">
+                                        <i class="bi bi-chat-right-heart"></i>&nbsp;
+                                        Ask for Help
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="{{route('my.donation')}}" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg"
                                             width="14.41" height="14.41" viewBox="0 0 14 14">

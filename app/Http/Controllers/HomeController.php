@@ -35,9 +35,11 @@ class HomeController extends Controller
         return view('main.profile',compact('profile'));
     }
 
-    public function viewDonateNow(){
+    public function viewDonateNow(Request $request){
+        $donation_type = $request->donation_type;
+        $barangayID = $request->barangay;
         $barangayLists = Barangay::orderBy('name')->get();
-        return view('main.donate_now', compact('barangayLists'));
+        return view('main.donationForm', compact('barangayLists', 'donation_type', 'barangayID'));
     }
 
 }

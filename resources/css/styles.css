@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;900&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
 
 :root{
@@ -26,7 +27,8 @@
 }
 
 body {
-  font-family: 'Saira Condensed', 'sans-serif';
+  font-family: 'Fredoka', 'sans-serif';
+  font-size: 1.2rem !important;
   display: flex !important;
   flex-direction: column;
 }
@@ -198,6 +200,12 @@ main{
 }
 
 .donation-type .btn-check:checked + .btn, :not(.btn-check) + .btn:active, .btn:first-child:active, .btn.active, .btn.show{
+  background-color: #5BBA6F !important;
+  color: #fff !important;
+  border: #5BBA6F solid 1px;
+}
+
+.donationForm .btn-check:checked + .btn, :not(.btn-check) + .btn:active, .btn:first-child:active, .btn.active, .btn.show{
   background-color: #5BBA6F !important;
   color: #fff !important;
   border: #5BBA6F solid 1px;

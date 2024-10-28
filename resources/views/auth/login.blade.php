@@ -17,7 +17,7 @@
 
                     <div class="card-body p-5">
                         <div class="mb-5">
-                            <h1 class='text-green'>Welcome to the Family!</h1>
+                            <h1 class='text-green'>Welcome to DisasterEase!</h1>
                             <h6>We are so glad to see you here.</h6>
                         </div>
 
@@ -40,7 +40,7 @@
 
                             <div class="row mb-3">
                                 <div class="input-group w-75 mx-auto">
-                                    <span class="input-group-text" id="email-reg"><i class="bi bi-person-lock"></i></span>
+                                    <span class="input-group-text" id="email-reg"><i class="bi bi-eye-slash-fill"></i></span>
                                     <input id="password" type="password"
                                         class="form-control @error('password') is-invalid @enderror" name="password"
                                         required autocomplete="current-password" placeholder="Password">

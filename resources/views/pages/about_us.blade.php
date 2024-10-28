@@ -21,7 +21,7 @@
             width: 100%;
             height: 400px;
             /* Adjust the height based on your preference */
-            background-image: url('{{ asset('storage/uploads/drrmc/about_us_banner.jpg') }}');
+            background-image: url('{{ asset('storage/uploads/drrmc/aboutUsBanner.jpg') }}');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -139,7 +139,7 @@
                                 </div>
                                 <div class="col-lg-6 ">
                                     <div class="detail-box p-4">
-                                        <img class="img-fluid" src="{{ url(asset('storage/uploads/drrmc/donations.jpg')) }}" alt="">
+                                        <img class="img-fluid" src="{{ url(asset('storage/uploads/drrmc/donation.jpg')) }}" alt="">
                                     </div>
                                 </div>
                             </div>

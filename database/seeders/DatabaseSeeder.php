@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             BarangaySeeder::class,
             PageSeeder::class,
+            FloodSeeder::class,
         ]);
     }
 }

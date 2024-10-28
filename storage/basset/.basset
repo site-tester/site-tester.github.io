@@ -1,0 +1,11 @@
+{
+    "resources/css/backpack_custom.css": "/resources/css/backpack_custom.css",
+    "vendor/backpack/basset/tests/Helpers/basset-test.js": "/vendor/backpack/basset/tests/Helpers/basset-test.js",
+    "vendor/backpack/crud/src/resources/assets/css/common.css": "/vendor/backpack/crud/src/resources/assets/css/common.css",
+    "vendor/backpack/crud/src/resources/assets/img/spinner.svg": "/vendor/backpack/crud/src/resources/assets/img/spinner.svg",
+    "vendor/backpack/crud/src/resources/assets/js/common.js": "/vendor/backpack/crud/src/resources/assets/js/common.js",
+    "vendor/backpack/theme-tabler/resources/assets/css/color-adjustments.css": "/vendor/backpack/theme-tabler/resources/assets/css/color-adjustments.css",
+    "vendor/backpack/theme-tabler/resources/assets/css/colors.css": "/vendor/backpack/theme-tabler/resources/assets/css/colors.css",
+    "vendor/backpack/theme-tabler/resources/assets/css/style.css": "/vendor/backpack/theme-tabler/resources/assets/css/style.css",
+    "vendor/backpack/theme-tabler/resources/assets/js/tabler.js": "/vendor/backpack/theme-tabler/resources/assets/js/tabler.js"
+}

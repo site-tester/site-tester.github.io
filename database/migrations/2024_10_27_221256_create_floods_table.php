@@ -10,12 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('monitorings', function (Blueprint $table) {
+        Schema::create('floods', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('donation_id')->constrained('donations');
-            $table->string('status'); // 'pending', 'in transit', 'completed'
-            $table->text('remarks')->nullable();
-            $table->foreignId('updated_by')->constrained('users'); // ID of admin or manager
+            $table->foreignId('barangay_id')->constrained('barangays');
+            $table->string('flood_level');
+            $table->integer('severity_score');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitorings');
+        Schema::dropIfExists('floods');
     }
 };

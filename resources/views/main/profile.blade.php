@@ -68,7 +68,7 @@
                             <div id="profile-details-tab" class="tab-pane fade show active mb-4 p-3 p-md-4" role="tabpanel">
                                 <div class="">
                                     <!-- Profile picture card-->
-                                    <div class="border-0 mb-4 mb-xl-0 p-3 p-md-4">
+                                    {{-- <div class="border-0 mb-4 mb-xl-0 p-3 p-md-4">
                                         <div class="text-center">
                                             <!-- Profile picture image-->
                                             <img class="img-fluid rounded-circle mb-2"
@@ -81,7 +81,7 @@
                                             <!-- Profile picture upload button-->
                                             <input class="btn btn-outline-secondary m-auto" type="file" name="avatar">
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     {{-- Full Name --}}
                                     <div class="form-floating mb-3">
                                         <input class="form-control" id="ProfileName" name="name" type="text"

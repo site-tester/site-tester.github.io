@@ -249,14 +249,5 @@
         });
     </script>
 
-    <script src="https://cdn.tiny.cloud/1/21r5xzy4i5d7qutbbzs1td03zy7lvjj6b5e0mg3s3bg6ftzz/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea[name=terms_and_conditions]', // Replace this CSS selector to match the placeholder element for TinyMCE
-            plugins: 'code table lists',
-            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | code | table'
-        });
-    </script>
-
     @include('crud::inc.form_fields_script')
 @endsection

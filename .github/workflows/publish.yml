@@ -72,7 +72,6 @@ jobs:
             echo "MAIL_PORT=1025" >> .env
             echo "MAIL_FROM_ADDRESS=hello@example.com" >> .env
             echo "MAIL_FROM_NAME=\"DisasterEase\"" >> .env
-            # You can add more variables as needed
             composer2 install --optimize-autoloader --no-dev
             php artisan key:generate
             php artisan migrate:refresh --seed --seeder=DatabaseSeeder

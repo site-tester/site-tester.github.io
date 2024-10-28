@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->foreignId('barangay_rep_id')->nullable()->constrained('users');
             $table->string('name');
             $table->text('location');
-            $table->integer('priority')->nullable();
+            $table->integer('flood_frequency')->default(0);
+            $table->decimal('flood_risk_score', 3, 1)->nullable();
             $table->timestamps();
         });
     }

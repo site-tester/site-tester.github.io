@@ -59,4 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $q->where('name', 'Barangay Representative');
         });
     }
+    public function profile(){
+        return $this->belongsTo(UserProfile::class,'id','user_id');
+    }
 }

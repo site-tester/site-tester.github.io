@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
+            $table->string('anonymous')->nullable()->default(false);
             $table->foreignId('donor_id')->constrained('users');
-            $table->foreignId('barangay_id')->constrained('barangays');
+            $table->foreignId('barangay_id');
             $table->string('type');
-            $table->json('items');
+            // $table->json('items');
             $table->date('donation_date');
-            $table->time('donation_time');
-            $table->json('images');
+            $table->string('donation_time');
+            $table->string('proof_document')->nullable();
+            $table->string('remarks')->nullable();
             $table->enum('status', [
                 'Pending Approval',
                 'Approved',

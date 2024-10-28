@@ -12,10 +12,12 @@ return new class extends Migration {
     {
         Schema::create('distributions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barangay_id')->constrained('barangays');
-            $table->foreignId('item_id')->constrained('items');
+            $table->foreignId('barangay_id');
+            // ->constrained('barangays')
+            $table->foreignId('item_id');
             $table->integer('quantity');
-            $table->foreignId('distributed_by')->constrained('users'); // ID of person or agency
+            $table->foreignId('distributed_by')->constrained('users'); // ID of barangay rep from
+            $table->foreignId('distributed_to')->constrained('users'); // ID of barangay 
             $table->date('distribution_date');
             $table->text('remarks')->nullable();
             $table->timestamps();

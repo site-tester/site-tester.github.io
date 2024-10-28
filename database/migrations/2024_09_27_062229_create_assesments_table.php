@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('assesments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barangay_id')->constrained('barangays');
+            $table->foreignId('barangay_id');
             $table->integer('damage_level');
             $table->float('vulnerable_population_percentage',10,2);
             $table->integer('access_to_needs');

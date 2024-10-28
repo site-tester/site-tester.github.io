@@ -19,9 +19,6 @@
 
     {{-- CSS --}}
 
-    {{-- TinyMCE --}}
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-
     <!-- Scripts -->
     @yield('css')
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/styles.css', 'resources/css/theme.css'])

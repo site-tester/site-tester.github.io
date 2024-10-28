@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('priorities', function (Blueprint $table) {
+        Schema::create('donation_status_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barangay_id')->constrained('barangays');
-            $table->integer('urgency_score');
-            $table->enum('priority_level', ['Urgent', 'Moderate', 'Stable']);
-            $table->longText('reason');
+            $table->string('donor_id');
+            $table->string('barangay_id');
+            $table->string('donation_id');
+            $table->string('status');
+            $table->string('status_change_proof');
+            $table->string('status_change_remarks');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('priorities');
+        Schema::dropIfExists('donation_status_logs');
     }
 };

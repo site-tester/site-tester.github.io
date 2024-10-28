@@ -53,5 +53,33 @@
 		  </form>
 	</div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusField = document.querySelector('select[name="status"]');
+        const proofDocumentField = document.querySelector('input[name="proof_document"]').closest('.form-group');
+        const remarksField = document.querySelector('textarea[name="remarks"]').closest('.form-group');
+
+        // Function to toggle fields based on selected status
+        function toggleFields() {
+            const selectedValue = statusField.value;
+
+            // Reset visibility
+            proofDocumentField.classList.add('d-none');
+            remarksField.classList.add('d-none');
+
+            // Show fields based on specific status values
+            if (selectedValue !== 'Pending Approval') {
+                proofDocumentField.classList.remove('d-none');
+                remarksField.classList.remove('d-none');
+            }
+        }
+
+        // Event listener for status change
+        statusField.addEventListener('change', toggleFields);
+
+        // Initial toggle to set the fields correctly on page load
+        toggleFields();
+    });
+</script>
 @endsection
 

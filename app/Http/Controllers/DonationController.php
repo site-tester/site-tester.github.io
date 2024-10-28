@@ -5,65 +5,112 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Barangay;
 use App\Models\Donation;
+use App\Models\DonationItem;
 use App\Models\Notification;
 use App\Models\User;
 use App\Notifications\DonationReceived;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class DonationController extends Controller
 {
+
     public function store(Request $request)
     {
-        // dd($request->all());
-        // Validate the form input
-        $validator = Validator::make($request->all(), [
-            'barangay' => 'required|exists:barangays,id',
-            'donation_type' => 'required|string',
-            'donation-basket-array' => 'required',
-            'schedule_date' => 'required|date',
-            'schedule_time' => 'required|date_format:H:i',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            // Store donation
+            $donation = new Donation();
+            $donation->anonymous = $request->anonymous;
+            $donation->donor_id = Auth::id();
+            $donation->barangay_id = $request->barangay;
+            $donation->type = $request->donation_type;
+            $donation->donation_date = $request->schedule_date;
+            $donation->donation_time = $request->time_slot;
+            $donation->status = 'Pending Approval';
+            $donation->save();
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+            // Decode JSON arrays
+            if ($request->donation_type == "Food") {
+                $foodNames = $request->food_name;
+                $foodQuantities = $request->food_quantity;
+                $foodExpirations = $request->food_expiration;
+                $foodImages = $request->food_image; // array of uploaded food images
 
-        // Handle the donation basket
-        $donationBasket = $request->input('donation-basket-array');
+                for ($i = 0; $i < count($foodNames); $i++) {
+                    $name = $foodNames[$i];
+                    $quantity = $foodQuantities[$i];
+                    $expiration = Carbon::createFromFormat('m/d/Y', $foodExpirations[$i]);
+                    $image = $foodImages[$i]; // Handle image upload logic here
 
-        // Handle file uploads
-        $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('uploads/donations', 'public');
-                $imagePaths[] = $path;
+                    // Save the food donation item
+                    DonationItem::create([
+                        'donation_id' => $donation->id,
+                        'item_name' => $name,
+                        'quantity' => $quantity,
+                        'expiration_date' => $expiration,
+                        'image_path' => $image->store('uploads/donations'),
+                    ]);
+                }
+            } elseif ($request->donation_type == "NonFood") {
+                $foodNames = $request->nonfood_name;
+                $foodQuantities = $request->nonfood_quantity;
+                $foodCondition = $request->nonfood_condition;
+                $foodImages = $request->nonfood_image; // array of uploaded nonfood images
+
+                for ($i = 0; $i < count($foodNames); $i++) {
+                    $name = $foodNames[$i];
+                    $quantity = $foodQuantities[$i];
+                    $condition = $foodCondition[$i];
+                    $image = $foodImages[$i]; // Handle image upload logic here
+
+                    // Save the food donation item
+                    DonationItem::create([
+                        'donation_id' => $donation->id,
+                        'item_name' => $name,
+                        'quantity' => $quantity,
+                        'condition' => $condition,
+                        'image_path' => $image->store('uploads/donations'),
+                    ]);
+                }
+            } elseif ($request->donation_type == "Medical") {
+                $foodNames = $request->medical_name;
+                $foodQuantities = $request->medical_quantity;
+                $foodCondition = $request->medical_condition;
+                $foodImages = $request->medical_image; // array of uploaded nonfood images
+
+                for ($i = 0; $i < count($foodNames); $i++) {
+                    $name = $foodNames[$i];
+                    $quantity = $foodQuantities[$i];
+                    $condition = $foodCondition[$i];
+                    $image = $foodImages[$i]; // Handle image upload logic here
+
+                    // Save the food donation item
+                    DonationItem::create([
+                        'donation_id' => $donation->id,
+                        'item_name' => $name,
+                        'quantity' => $quantity,
+                        'condition' => $condition,
+                        'image_path' => $image->store('uploads/donations'),
+                    ]);
+                }
             }
+
+            return response()->json(['success' => true, 'redirect_url' => route('donation.confirmation.page')]);
+            // $toSee = $request->food_name;
+            // return response()->json($toSee);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
 
-
-        $brgyRepId = Barangay::find($request->barangay);
-        $donation = Donation::create([
-            'donor_id' => Auth::id(),
-            'barangay_id' => $brgyRepId->barangay_rep_id,
-            'type' => $request->donation_type,
-            'items' => $donationBasket,
-            'donation_date' => $request->schedule_date,
-            'donation_time' => $request->schedule_time,
-            'images' => $imagePaths,
-            'status' => 'Pending Approval'
-        ]);
-
-        // Notification Driver
-        $brgy = User::find($brgyRepId->barangay_rep_id);
-        $brgy->notify(new DonationReceived($donation));
-
-        // Return success response
-        return view('main.confirmation_page')->with('success', 'Donation submitted successfully!');
+    public function donationConfimationView()
+    {
+        return view('main.confirmation_page');
     }
 
     public function myDonation()
@@ -91,9 +138,15 @@ class DonationController extends Controller
         $firstDonated = $firstDonatedConvert;
         // $this->getHumanReadableDonationTime($firstDonatedConvert);
 
+        $barangays = Barangay::all();
+
         $donationNotification = Auth::user()->notifications()->orderBy('created_at', 'desc')->get(); // Or whatever logic you're using to retrieve notifications
+
+        $firstDonationYear = Donation::query()
+            ->orderBy('created_at', 'asc') // Assuming 'donation_date' is the date field
+            ->value(DB::raw('YEAR(donation_date)')) ?? now()->year;
         // dd($donationNotification);
-        return view('main.my_donation', compact('recentDonations', 'historyDonations', 'lastDonated', 'firstDonated', 'donationNotification'));
+        return view('main.my_donation', compact('recentDonations', 'historyDonations', 'lastDonated', 'firstDonated', 'donationNotification', 'barangays', 'firstDonationYear'));
     }
 
     public function getHumanReadableDonationTime($donationDate)
@@ -108,10 +161,17 @@ class DonationController extends Controller
     public function show($id)
     {
         // Find the donation by ID
-        $donation = Donation::findOrFail($id);
+        $donation = Donation::with('donationItems')->findOrFail($id);
+
+        $data = [
+            'id' => $donation->id,
+            'created_at' => $donation->created_at,
+            'status' => $donation->status,
+            'items' => $donation->donationItems, // Assuming donationItems is the relationship name
+        ];
 
         // Return the donation details as JSON
-        return response()->json($donation);
+        return response()->json($data);
     }
 
 }

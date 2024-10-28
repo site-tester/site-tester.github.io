@@ -15,6 +15,7 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            'browse_dashboard',
             // Auth
             'browse_auth',
             'read_auth',
@@ -186,6 +187,7 @@ class PermissionSeeder extends Seeder
             'read_donation_history',
             'generate_donation_report',
             'update_donation_log',
+            'browse_dashboard',
         ];
 
         $cmsPermissions = [
@@ -244,11 +246,12 @@ class PermissionSeeder extends Seeder
             'edit_barangay',
             'add_barangay',
             'delete_barangay',
-            'browse_notification',
-            'read_notification',
-            'edit_notification',
-            'add_notification',
-            'delete_notification',
+            // 'browse_notification',
+            // 'read_notification',
+            // 'edit_notification',
+            // 'add_notification',
+            // 'delete_notification',
+
         ];
 
         // $cmsPermissions = [

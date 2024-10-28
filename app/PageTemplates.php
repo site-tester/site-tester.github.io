@@ -272,4 +272,91 @@ trait PageTemplates
             'store_in' => 'extras',
         ]);
     }
+
+    private function mission()
+    {
+        $this->crud->addField([   // CustomHTML
+            'name' => 'contents_separator',
+            'type' => 'custom_html',
+            'value' => '<br><h2>Mission</h2><hr class="mb-2">',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'mission_header',
+            'label' => 'Mission Header',
+            'type' => 'text',
+            'attributes' => [
+                'placeholder' => 'Mission Header',
+            ],
+            'fake' => true,
+            'store_in' => 'extras',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'content',
+            'label' => 'Mission Content',
+            'type' => 'summernote',
+            'attributes' => [
+                'placeholder' => 'Mission Content',
+            ],
+        ]);
+    }
+
+    private function vision()
+    {
+        $this->crud->addField([   // CustomHTML
+            'name' => 'contents_separator',
+            'type' => 'custom_html',
+            'value' => '<br><h2>Vision</h2><hr class="mb-2">',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'vision_header',
+            'label' => 'Vision Header',
+            'type' => 'text',
+            'attributes' => [
+                'placeholder' => 'Vision Header',
+            ],
+            'fake' => true,
+            'store_in' => 'extras',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'content',
+            'label' => 'Vision Content',
+            'type' => 'summernote',
+            'attributes' => [
+                'placeholder' => 'Vision Content',
+            ],
+        ]);
+    }
+
+    private function values()
+    {
+        $this->crud->addField([   // CustomHTML
+            'name' => 'contents_separator',
+            'type' => 'custom_html',
+            'value' => '<br><h2>Values</h2><hr class="mb-2">',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'values_header',
+            'label' => 'Values Header',
+            'type' => 'text',
+            'attributes' => [
+                'placeholder' => 'Values Header',
+            ],
+            'fake' => true,
+            'store_in' => 'extras',
+        ]);
+
+        $this->crud->addField([
+            'name' => 'content',
+            'label' => 'Values Content',
+            'type' => 'summernote',
+            'attributes' => [
+                'placeholder' => 'Values Content',
+            ],
+        ]);
+    }
 }

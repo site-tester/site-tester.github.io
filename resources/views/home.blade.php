@@ -11,7 +11,7 @@
 @section('content')
     <div class="container-fluid px-0">
         <section id="hero" class="hero"
-            style="background-image: url('{{ asset('storage/uploads/drrmc/carina.jpg') }}'); background-size:cover;">
+            style="background-image: url('{{ asset('storage/uploads/drrmc/homeBanner.jpg') }}'); background-size:cover;">
             <div class="container-fluid" style="background: rgba(18,79,31,0.4)">
                 <div class="row align-items-center justify-content-center hero">
                     <div class="col-md-8 ">
@@ -21,9 +21,9 @@
                             <h1 class="fw-bolder text-light">Help Us Save <br> the Citizens of <br> Paranaque.</h1>
                             <a href="
                                 @guest
-{{ route('login') }}
+                                    {{ route('login') }}
                                 @else
-                                {{ route('donate-now') }} @endguest
+                                    {{ route('donate-now') }} @endguest
                                 "
                                 class="btn btn-light text-success rounded fw-bolder">Donate Now</a>
                         </div>
@@ -80,11 +80,11 @@
             </div>
         </section>
 
-        <section id="carousel" class="container card">
+        <section id="carousel" class="container card bg-greener">
             <div class="owl-carousel ">
                 <div class="row align-items-center">
                     <div class="col-12 col-md-5">
-                        <img class="img-fluid p-5" src="https://placehold.co/100" alt="">
+                        <img class="img-fluid p-5" src="{{ asset('storage/uploads/drrmc/banner3.jpg') }}" alt="">
                     </div>
                     <div class="col-12 col-md-6 bg-greener p-5 h-auto">
                         <div>
@@ -104,7 +104,7 @@
                 </div>
                 <div class="row align-items-center ">
                     <div class="col-12 col-md-5">
-                        <img class="img-fluid p-5" src="https://placehold.co/100" alt="">
+                        <img class="img-fluid p-5" src="{{ asset('storage/uploads/drrmc/banner1.jpg') }}" alt="">
                     </div>
                     <div class="col-12 col-md-6 bg-greener p-5">
                         <div class=" border-top border-bottom border-success border-3 mb-3">
@@ -121,7 +121,7 @@
                 </div>
                 <div class="row align-items-center ">
                     <div class="col-12 col-md-5">
-                        <img class="img-fluid p-5" src="https://placehold.co/100" alt="">
+                        <img class="img-fluid p-5" src="{{ asset('storage/uploads/drrmc/banner2.jpg') }}" alt="">
                     </div>
                     <div class="col-12 col-md-6 bg-greener p-5 h-100">
                         <h2>Spread Hope: Donate to Make a Difference</h2><br>
@@ -329,7 +329,7 @@
                                 lives of the vulnerable and those affected by disaster.</p>
                         </div>
                         <div class="col-12 col-md-5 px-0">
-                            <img class="img-fluid " src="https://placehold.co/400" alt="" srcset="">
+                            <img class="img-fluid " src="{{ asset('storage/uploads/drrmc/mission.jpg') }}" alt="" srcset="">
                         </div>
                     </div>
                 </div>
@@ -343,7 +343,7 @@
                                 left behind.</p><br><br>
                         </div>
                         <div class="col-12 col-md-5 px-0">
-                            <img class="img-fluid" src="https://placehold.co/400" alt="" srcset="">
+                            <img class="img-fluid" src="{{ asset('storage/uploads/drrmc/vision.jpg') }}" alt="" srcset="">
                         </div>
                     </div>
                 </div>
@@ -357,7 +357,7 @@
                                 meaningful difference in the lives of those we serve.</p>
                         </div>
                         <div class="col-12 col-md-5 px-0">
-                            <img class="img-fluid" src="https://placehold.co/400" alt="" srcset="">
+                            <img class="img-fluid" src="{{ asset('storage/uploads/drrmc/value.jpg') }}" alt="" srcset="">
                         </div>
                     </div>
                 </div>
