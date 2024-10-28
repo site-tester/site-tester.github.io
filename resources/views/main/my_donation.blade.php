@@ -281,7 +281,7 @@
                                     style="width:100%">
                                     <thead>
                                         <tr class="">
-                                            <th class="text-center">Notification ID</th>
+                                            {{-- <th class="text-center">Notification ID</th> --}}
                                             <th class="text-center">Message</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Action</th>
@@ -294,7 +294,7 @@
                                                 dd($notification->id);
                                             @endphp --}}
                                             <tr>
-                                                <td class="text-center">{{ $notification->id }}</td>
+                                                {{-- <td class="text-center">{{ $notification->id }}</td> --}}
                                                 <td class="text-center">
                                                     {!! $notification->data['message'] !!}
                                                 </td>
@@ -374,7 +374,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="fs-6">Barangay</th>
-                                                <th class="fs-6">Donation ID</th>
+                                                <th class="fs-6">Brgy. Rep.</th>
                                                 <th class="fs-6">Donor Name</th>
                                                 <th class="fs-6">Date of Donation</th>
                                                 <th class="fs-6">Donation Type</th>
@@ -479,7 +479,7 @@
                                 const donationEntry = `
                         <tr>
                             <td class="h6">${donation.barangay_name}</td>
-                            <td class="h6">${donation.id}</td>
+                            <td class="h6">${donation.barangay_rep}</td>
                             <td class="h6">${donation.anonymous == 'true' ? 'Anonymous Donor' : donation.donor_name}</td>
                             <td class="h6">${new Date(donation.donation_date).toLocaleDateString()}</td>
                             <td class="h6">${donation.donation_type}</td>

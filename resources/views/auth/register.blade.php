@@ -8,7 +8,7 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-5 d-flex align-items-center">
-                <img class="img-fluid d-none d-md-block" src="https://placehold.co/500" alt="">
+                <img class="img-fluid d-none d-md-block" src="{{asset('storage/uploads/drrmc/login register.png')}}" alt="">
             </div>
 
             <div class="col-md-6">

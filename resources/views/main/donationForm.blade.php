@@ -327,51 +327,8 @@
                                                     for="time15">3:00 PM - 4:00 PM</label>
                                             </div>
 
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time16"
-                                                    value="04:00 PM - 05:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
-                                                    for="time16">4:00 PM - 5:00 PM</label>
-                                            </div>
                                         </div>
-                                        <label class="form-label h5 mb-0">Evening</label><br>
-                                        <small class="fs-6 mt-0">5:00 PM to 10:00 PM</small>
-                                        <div class="row mb-1">
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time17"
-                                                    value="05:00 PM - 06:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
-                                                    for="time17">5:00 PM - 6:00 PM</label>
-                                            </div>
-
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time18"
-                                                    value="06:00 PM - 07:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
-                                                    for="time18">6:00 PM - 7:00 PM</label>
-                                            </div>
-
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time19"
-                                                    value="7:00 PM - 8:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
-                                                    for="time19">7:00 PM - 8:00 PM</label>
-                                            </div>
-
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time20"
-                                                    value="8:00 PM - 9:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
-                                                    for="time20">8:00 PM - 9:00 PM</label>
-                                            </div>
-
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time21"
-                                                    value="9:00 PM - 10:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
-                                                    for="time21">9:00 PM - 10:00 PM</label>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
 
                                 </div>

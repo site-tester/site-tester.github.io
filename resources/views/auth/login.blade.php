@@ -4,11 +4,17 @@
 
 @section('background-color', 'bg-container')
 
+@section('css')
+<style>
+
+</style>
+@endsection
+
 @section('content')
     <div class="container-fluid my-5 ">
         <div class="row justify-content-center">
             <div class="col-md-6 align-self-end" style="max-width: 500px">
-                <img class="img-fluid d-none d-md-block " src="https://placehold.co/500" alt="">
+                <img class="img-fluid d-none d-md-block " src="{{asset('storage/uploads/drrmc/login register.png')}}" alt="">
             </div>
 
             <div class="col-md-6 align-self-center" style="max-width: 500px">
@@ -39,11 +45,13 @@
                             </div>
 
                             <div class="row mb-3">
-                                <div class="input-group w-75 mx-auto">
-                                    <span class="input-group-text" id="email-reg"><i class="bi bi-eye-slash-fill"></i></span>
-                                    <input id="password" type="password"
+                                <div class="input-group w-75 mx-auto password-section">
+
+                                    <span class="input-group-text" ><i id="togglePassword" class="fa fa-eye"></i></span>
+                                    <input id="password-field" type="password"
                                         class="form-control @error('password') is-invalid @enderror" name="password"
                                         required autocomplete="current-password" placeholder="Password">
+
 
                                     @error('password')
                                         <span class="invalid-feedback" role="alert">
@@ -59,7 +67,7 @@
                                         <input class="form-check-input" type="checkbox" name="remember" id="remember"
                                             {{ old('remember') ? 'checked' : '' }}>
 
-                                        <label class="form-check-label" for="remember">
+                                        <label class="form-label fs-5" for="remember">
                                             {{ __('Remember Me') }}
                                         </label>
                                     </div>
@@ -90,4 +98,29 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function () {
+
+  //  Toggle  Password Start
+  $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+  $("#togglePassword").click(function() {
+     const passwordInput = $("#password-field");
+     const type = passwordInput.attr("type");
+
+     if (type === "password") {
+         passwordInput.attr("type", "text");
+         $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+     } else {
+         passwordInput.attr("type", "password");
+         $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+     }
+ });
+ //  Toggle  Password End
+
+});
+</script>
+
 @endsection

@@ -43,7 +43,7 @@ class TrainFloodModel extends Command
             $samples[] = [$barangay->flood_frequency]; // Use only flood frequency as feature
             $labels[] = $this->getDynamicRiskScore($barangay->flood_frequency, $maxFrequency);
         }
-        // dd($samples, $labels);
+
         // Train the model
         $model = new SVR(Kernel::LINEAR);
         $model->train($samples, $labels);

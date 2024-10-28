@@ -26,6 +26,8 @@ class DashboardController extends Controller
         $individualDonor = $this->individualDonor();
         $organizationDonor = $this->organizationDonor();
         $donorTypesCount = $this->getDonorTypesCount();
+        $getDonationTypesCount = $this->getDonationTypesCount();
+        $barangayDonations = $this->getDonationsByBarangay();
 
         return view('vendor.backpack.ui.dashboard', [
             'totalDonors' => $totalUsers,
@@ -34,6 +36,8 @@ class DashboardController extends Controller
             'individualDonor' => $individualDonor,
             'organizationDonor' => $organizationDonor,
             'donorTypesCount' => $donorTypesCount,
+            'getDonationTypesCount' => $getDonationTypesCount,
+            'barangayDonations' => $barangayDonations,
         ]);
     }
 
@@ -83,16 +87,43 @@ class DashboardController extends Controller
     }
 
     private function getDonorTypesCount()
-{
-    // Count individual donors where `other_details` is null
-    $individualCount = UserProfile::whereNull('other_details')->count();
+    {
+        // Count individual donors where `other_details` is null
+        $individualCount = UserProfile::whereNull('other_details')->count();
 
-    // Count organization donors where `other_details` is not null
-    $organizationCount = UserProfile::whereNotNull('other_details')->count();
+        // Count organization donors where `other_details` is not null
+        $organizationCount = UserProfile::whereNotNull('other_details')->count();
 
-    return [
-        'individual' => $individualCount,
-        'organization' => $organizationCount,
-    ];
-}
+        return [
+            'individual' => $individualCount,
+            'organization' => $organizationCount,
+        ];
+    }
+
+    private function getDonationTypesCount()
+    {
+        // Count individual donors where `other_details` is null
+        $FoodDonationCount = Donation::where('type', 'Food')->count();
+
+        // Count organization donors where `other_details` is not null
+        $NonFoodDonationCount = Donation::where('type', 'NonFood')->count();
+
+        $MedicalDonationCount = Donation::where('type', 'Medical')->count();
+
+        return [
+            'FoodDonationCount' => $FoodDonationCount,
+            'NonFoodDonationCount' => $NonFoodDonationCount,
+            'MedicalDonationCount' => $MedicalDonationCount,
+        ];
+    }
+
+    private function getDonationsByBarangay()
+    {
+        return Donation::join('barangays', 'donations.barangay_id', '=', 'barangays.id')
+            ->selectRaw('barangays.name as barangay_name, COUNT(*) as donation_count')
+            ->groupBy('barangays.name')
+            ->orderByDesc('donation_count')
+            ->pluck('donation_count', 'barangay_name')
+            ->toArray();
+    }
 }

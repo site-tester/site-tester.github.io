@@ -41,10 +41,8 @@
                         <div class="row text-greener ">
                             <div class="col text-center text-nowrap align-self-center">
                                 <div class="counter-number">{{ $donationReceived }}
-                                    <span class="h2 fs-normal">Total Received Donation</span>
-                                    @if ($donationReceived > 1)
-                                        s
-                                    @endif
+                                    <span class="h2 fs-normal">Total Received Donation{{$donationReceived > 1 ?'s': '' }}
+                                </span>
                                 </div>
                             </div>
                             {{-- <div class="col-12 text-center text-md-start col-md-6 align-self-center fw-bolder fs-4">
@@ -56,10 +54,8 @@
                         <div class="row text-greener">
                             <div class="col-12 text-center ">
                                 <div class="counter-number">{{ $registeredDonors }}
-                                    <span class="h2 fs-normal">Registered Donor</span>
-                                    @if ($registeredDonors > 1)
-                                        s
-                                    @endif
+                                    <span class="h2 fs-normal">Registered Donor{{$registeredDonors > 1 ?'s': '' }}
+                                </span>
                                 </div>
                             </div>
                         </div>
@@ -68,10 +64,8 @@
                         <div class="row text-greener">
                             <div class="col-12 text-center">
                                 <div class="counter-number">{{ $donationGiven }}
-                                    <span class="h2 fs-normal">Total Goods Delivered</span>
-                                    @if ($donationGiven > 1)
-                                        s
-                                    @endif
+                                    <span class="h2 fs-normal">Total Goods Delivered{{$donationGiven > 1 ?'s': '' }}
+                                </span>
                                 </div>
                             </div>
                         </div>

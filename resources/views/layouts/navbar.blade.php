@@ -69,12 +69,12 @@
                                         @endif
                                     </a>
                                 </li> --}}
-                                <li>
+                                {{-- <li>
                                     <a href="{{route('my.donation')}}" class="dropdown-item">
                                         <i class="bi bi-chat-right-heart"></i>&nbsp;
                                         Ask for Help
                                     </a>
-                                </li>
+                                </li> --}}
                                 <li>
                                     <a href="{{route('my.donation')}}" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg"
                                             width="14.41" height="14.41" viewBox="0 0 14 14">
