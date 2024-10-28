@@ -40,7 +40,7 @@ class DonationRequestNotification extends Notification
     {
         return [
             'title' => 'New Donation Request',
-            'message' => 'A new donation request for a Fire Disaster has been posted. <a href="' . route('donate-now', [
+            'message' => 'A new ' . $this->donation->preffered_donation_type . ' donation request has been posted by Barangay ' . $this->barangay->name . ' <a href="' . route('donate-now', [
                 'donation_type' => $this->donation->preffered_donation_type,
                 'barangay' => $this->barangay->id
             ]) . '">Click here</a> to view donation form.',
