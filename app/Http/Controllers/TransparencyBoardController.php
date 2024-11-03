@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Donation;
 use App\Models\DonationItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransparencyBoardController extends Controller
 {
@@ -16,7 +17,7 @@ class TransparencyBoardController extends Controller
         $timePeriod = $request->input('time_period');
         $year = $request->input('year') ?? now()->year;
 
-        $query = Donation::with(['barangay', 'donor', 'donationItems']);
+        $query = Donation::where('donor_id', Auth::id())->with(['barangay', 'donor', 'donationItems']);
 
         // Apply barangay, year, and time filters as needed
         if ($barangayId) {

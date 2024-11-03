@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('anonymous')->nullable()->default(false);
             $table->foreignId('donor_id')->constrained('users');
             $table->foreignId('barangay_id');
+            $table->string('coordinator')->nullable();
             $table->string('type');
             // $table->json('items');
             $table->date('donation_date');
@@ -25,14 +26,9 @@ return new class extends Migration
             $table->enum('status', [
                 'Pending Approval',
                 'Approved',
-                'Awaiting Delivery',
+                'Rejected',
                 'Received',
-                'Under Segregation',
-                'Categorized',
-                'In Inventory',
-                'Ready for Distribution',
                 'Distributed',
-                'Completed'
             ])->default('Pending Approval');
             $table->timestamps();
         });

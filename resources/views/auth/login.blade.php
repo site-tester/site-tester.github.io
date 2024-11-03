@@ -5,16 +5,23 @@
 @section('background-color', 'bg-container')
 
 @section('css')
-<style>
+    <style>
 
-</style>
+    </style>
 @endsection
 
 @section('content')
     <div class="container-fluid my-5 ">
+        @if (session('status'))
+            <div class="alert alert-success mx-auto w-50">
+                {{ session('status') }}
+            </div>
+        @endif
         <div class="row justify-content-center">
+
             <div class="col-md-6 align-self-end" style="max-width: 500px">
-                <img class="img-fluid d-none d-md-block " src="{{asset('storage/uploads/drrmc/login register.png')}}" alt="">
+                <img class="img-fluid d-none d-md-block " src="{{ asset('storage/uploads/drrmc/login register.png') }}"
+                    alt="">
             </div>
 
             <div class="col-md-6 align-self-center" style="max-width: 500px">
@@ -32,10 +39,12 @@
 
                             <div class="row mb-3">
                                 <div class="input-group w-75 mx-auto">
-                                    <span class="input-group-text" id="email-reg"><i class="bi bi-envelope-at"></i></span>
+                                    <span class="input-group-text" id="email-reg"><i class="bi bi-envelope-at"
+                                            style="font-size: 14px"></i></span>
                                     <input id="email" type="email"
                                         class="form-control @error('email') is-invalid @enderror" name="email"
-                                        value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email Address">
+                                        value="{{ old('email') }}" required autocomplete="email" autofocus
+                                        placeholder="Email Address">
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -47,7 +56,8 @@
                             <div class="row mb-3">
                                 <div class="input-group w-75 mx-auto password-section">
 
-                                    <span class="input-group-text" ><i id="togglePassword" class="fa fa-eye"></i></span>
+                                    <span class="input-group-text"><i id="togglePassword" class="fa fa-eye"
+                                            style="font-size: 12px"></i></span>
                                     <input id="password-field" type="password"
                                         class="form-control @error('password') is-invalid @enderror" name="password"
                                         required autocomplete="current-password" placeholder="Password">
@@ -101,26 +111,26 @@
 @endsection
 
 @section('scripts')
-<script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function() {
 
-  //  Toggle  Password Start
-  $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
-  $("#togglePassword").click(function() {
-     const passwordInput = $("#password-field");
-     const type = passwordInput.attr("type");
+            //  Toggle  Password Start
+            $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+            $("#togglePassword").click(function() {
+                const passwordInput = $("#password-field");
+                const type = passwordInput.attr("type");
 
-     if (type === "password") {
-         passwordInput.attr("type", "text");
-         $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
-     } else {
-         passwordInput.attr("type", "password");
-         $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
-     }
- });
- //  Toggle  Password End
+                if (type === "password") {
+                    passwordInput.attr("type", "text");
+                    $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+                } else {
+                    passwordInput.attr("type", "password");
+                    $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+                }
+            });
+            //  Toggle  Password End
 
-});
-</script>
+        });
+    </script>
 
 @endsection

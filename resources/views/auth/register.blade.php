@@ -8,7 +8,8 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-5 d-flex align-items-center">
-                <img class="img-fluid d-none d-md-block" src="{{asset('storage/uploads/drrmc/login register.png')}}" alt="">
+                <img class="img-fluid d-none d-md-block" src="{{ asset('storage/uploads/drrmc/login register.png') }}"
+                    alt="">
             </div>
 
             <div class="col-md-6">
@@ -33,7 +34,8 @@
 
                             <div class="input-org input-group mb-3 d-none">
                                 <span class="input-group-text" id="org"><i class="bi bi-building"></i></span>
-                                <input  type="text" class="form-control @error('organization') is-invalid @enderror org-input"
+                                <input type="text"
+                                    class="form-control @error('organization') is-invalid @enderror org-input"
                                     name="organization" placeholder="{{ __('Organization Name') }}"
                                     aria-label="{{ __('Email Address') }}" aria-describedby="org"
                                     value="{{ old('organization') }}" required autocomplete="organization" disabled>
@@ -99,8 +101,9 @@
                                     <div class="input-group">
                                         <span class="input-group-text" id="contact-number-reg"><i
                                                 class="bi bi-telephone"></i></span>
-                                        <input type="text" class="form-control @error('contact_number') is-invalid @enderror" name="contact_number"
-                                            placeholder="{{ __('Contact Number') }}"
+                                        <input type="text"
+                                            class="form-control @error('contact_number') is-invalid @enderror"
+                                            name="contact_number" placeholder="{{ __('Contact Number') }}"
                                             aria-label="{{ __('Contact Number') }}" aria-describedby="contact-number-reg"
                                             value="{{ old('contact_number') }}" required autocomplete="tel">
                                         @error('contact_number')
@@ -115,9 +118,8 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="address-reg"><i class="bi bi-house-door"></i></span>
                                 <input type="text" class="form-control @error('address') is-invalid @enderror"
-                                    name="address" placeholder="{{ __('Address') }}"
-                                    aria-label="{{ __('Address') }}" aria-describedby="address-reg" required
-                                    autocomplete="address">
+                                    name="address" placeholder="{{ __('Address') }}" aria-label="{{ __('Address') }}"
+                                    aria-describedby="address-reg" required autocomplete="address">
                                 @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -126,8 +128,8 @@
                             </div>
 
                             <div class="input-group mb-3">
-                                <span class="input-group-text" id="password-reg"><i class="bi bi-eye-slash"></i></span>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                <span class="input-group-text" id="password-reg"><i id="togglePassword" class="fa fa-eye" style="font-size: 12px"></i></span>
+                                <input id="password-field" type="password" class="form-control @error('password') is-invalid @enderror"
                                     name="password" placeholder="{{ __('Password') }}"
                                     aria-label="{{ __('Password') }}" aria-describedby="password-reg" required
                                     autocomplete="new-password">
@@ -139,22 +141,22 @@
                             </div>
 
                             <div class="input-group mb-4">
-                                <span class="input-group-text" id="password-confirm-reg"><i
-                                        class="bi bi-eye-slash-fill"></i></span>
-                                <input type="password" class="form-control" name="password_confirmation"
+                                <span class="input-group-text" id="password-confirm-reg"><i id="toggleConfirmPassword"
+                                        class="fa-solid fa-eye" style="font-size: 12px"></i></span>
+                                <input id="confirm-password-field" type="password" class="form-control" name="password_confirmation"
                                     placeholder="{{ __('Confirm Password') }}" aria-label="{{ __('Confirm Password') }}"
-                                    aria-describedby="password-confirm-reg" required >
+                                    aria-describedby="password-confirm-reg" required>
                             </div>
 
                             <div class="form-check mb-3">
                                 <div class="d-flex justify-content-center">
                                     <input id="regCheckbox"
                                         class="form-check-input @error('terms_and_conditions') is-invalid @enderror"
-                                        type="checkbox" name="terms_and_conditions"
-                                        id="flexCheckDefault">
+                                        type="checkbox" name="terms_and_conditions" id="flexCheckDefault">
                                     <label class="form-check-label" for="flexCheckDefault">
                                         &nbsp I accept all
-                                        <a class="link-underline-primary" href="{{ url('terms-and-conditions') }}">Terms and
+                                        <a class="link-underline-primary" href="{{ url('terms-and-conditions') }}">Terms
+                                            and
                                             Conditions</a>
                                     </label>
                                 </div>
@@ -210,6 +212,38 @@
                     $('#your-input-id').removeAttr('checked');
                 }
             });
+
+            //  Toggle  Password Start
+            $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+            $("#togglePassword").click(function() {
+                const passwordInput = $("#password-field");
+                const type = passwordInput.attr("type");
+
+                if (type === "password") {
+                    passwordInput.attr("type", "text");
+                    $("#togglePassword").removeClass("fa fa-eye-slash").addClass("fa fa-eye");
+                } else {
+                    passwordInput.attr("type", "password");
+                    $("#togglePassword").removeClass("fa fa-eye").addClass("fa fa-eye-slash");
+                }
+            });
+            //  Toggle  Password End
+
+            //  Toggle  Password Start
+            $("#toggleConfirmPassword").removeClass("fa-solid fa-eye").addClass("fa-solid fa-eye-slash");
+            $("#toggleConfirmPassword").click(function() {
+                const passwordInput = $("#confirm-password-field");
+                const type = passwordInput.attr("type");
+
+                if (type === "password") {
+                    passwordInput.attr("type", "text");
+                    $("#toggleConfirmPassword").removeClass("fa-solid fa-eye-slash").addClass("fa-solid fa-eye");
+                } else {
+                    passwordInput.attr("type", "password");
+                    $("#toggleConfirmPassword").removeClass("fa-solid fa-eye").addClass("fa-solid fa-eye-slash");
+                }
+            });
+            //  Toggle  Password End
         });
     </script>
 @endsection

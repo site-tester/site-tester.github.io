@@ -60,11 +60,6 @@ class RequestDonation extends Model
     protected static function booted()
     {
         static::saved(function ($donation) {
-            // if ($donation->status !== 'Pending Approval') {
-            //     // Need Code Here to save about status update proof in Donation Status Log (Model: DonationStatusLog)
-            //     $donation->changeDonationStatusLog($donation);
-            // }
-
             if ($donation->status === 'Publish') {
                 $donors = User::role('Normal User')->get();
                 $barangay = Barangay::where('barangay_rep_id', Auth::id())->firstOrFail();

@@ -118,31 +118,15 @@ class DonationCrudController extends CrudController
                     if ($column['text'] == 'Approved') {
                         return 'badge text-bg-success'; // Green indicates approval
                     }
-                    if ($column['text'] == 'Awaiting Delivery') {
-                        return 'badge text-bg-info'; // Blue indicates a process in motion
+                    if ($column['text'] == 'Rejected') {
+                        return 'badge text-bg-warning'; // Yellow indicates a warning
                     }
                     if ($column['text'] == 'Received') {
                         return 'badge text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
                     }
-                    if ($column['text'] == 'Under Segregation') {
-                        return 'badge text-bg-primary'; // Primary indicates an active process
-                    }
-                    if ($column['text'] == 'Categorized') {
-                        return 'badge text-bg-secondary'; // Grey indicates a state of readiness (categorized but not yet distributed)
-                    }
-                    if ($column['text'] == 'In Inventory') {
-                        return 'badge text-bg-dark'; // Dark indicates stored and available for future use
-                    }
-                    if ($column['text'] == 'Ready for Distribution') {
-                        return 'badge text-bg-primary'; // Primary to indicate it's actively ready for distribution
-                    }
                     if ($column['text'] == 'Distributed') {
                         return 'badge text-bg-success'; // Green indicates the process is complete
                     }
-                    if ($column['text'] == 'Completed') {
-                        return 'badge text-bg-dark'; // Dark indicates closure/completion
-                    }
-
                     return 'badge badge-default';
                 },
             ],
@@ -220,14 +204,9 @@ class DonationCrudController extends CrudController
             'options' => [
                 'Pending Approval' => 'Pending Approval',
                 'Approved' => 'Approved',
-                'Awaiting Delivery' => 'Awaiting Delivery',
+                'Rejected' => 'Rejected',
                 'Received' => 'Received',
-                'Under Segregation' => 'Under Segregation',
-                'Categorized' => 'Categorized',
-                'In Inventory' => 'In Inventory',
-                'Ready for Distribution' => 'Ready for Distribution',
                 'Distributed' => 'Distributed',
-                'Completed' => 'Completed',
             ],
             'allows_multiple' => false, // Set to true if you want to allow multiple selections
         ]);
@@ -300,12 +279,6 @@ class DonationCrudController extends CrudController
                 '01:00 PM - 02:00 PM' => '01:00 PM - 02:00 PM',
                 '02:00 PM - 03:00 PM' => '02:00 PM - 03:00 PM',
                 '03:00 PM - 04:00 PM' => '03:00 PM - 04:00 PM',
-                '04:00 PM - 05:00 PM' => '04:00 PM - 05:00 PM',
-                '05:00 PM - 06:00 PM' => '05:00 PM - 06:00 PM',
-                '06:00 PM - 07:00 PM' => '06:00 PM - 07:00 PM',
-                '07:00 PM - 08:00 PM' => '07:00 PM - 08:00 PM',
-                '08:00 PM - 09:00 PM' => '08:00 PM - 09:00 PM',
-                '09:00 PM - 10:00 PM' => '09:00 PM - 10:00 PM',
             ],
             'allows_null' => false,
             'value' => $this->crud->getCurrentEntry()->donation_time, // Default or saved value
@@ -319,14 +292,9 @@ class DonationCrudController extends CrudController
             'options' => [
                 'Pending Approval' => 'Pending Approval',
                 'Approved' => 'Approved',
-                'Awaiting Delivery' => 'Awaiting Delivery',
+                'Rejected' => 'Rejected',
                 'Received' => 'Received',
-                'Under Segregation' => 'Under Segregation',
-                'Categorized' => 'Categorized',
-                'In Inventory' => 'In Inventory',
-                'Ready for Distribution' => 'Ready for Distribution',
                 'Distributed' => 'Distributed',
-                'Completed' => 'Completed',
             ],
             'allows_multiple' => false, // Set to true if you want to allow multiple selections
         ]);
@@ -366,38 +334,6 @@ class DonationCrudController extends CrudController
         return $response;
     }
 
-    // public function update()
-    // {
-
-    //     $response = parent::update(); // Perform the update
-    //     dd('Update method is called');
-    //     $donation = $this->crud->getCurrentEntry(); // Get the updated entry
-
-    //     // Check if the status has been updated to "In Inventory"
-    //     if ($donation->status === 'In Inventory') {
-    //         $this->addItemsToInventory($donation);
-    //     }
-
-    //     return  $response; // Return the original response
-    // }
-
-    // protected function addItemsToInventory($donation)
-    // {
-    //     $items = json_decode($donation->items, true); // Decode the items JSON
-
-    //     // Loop through each item and add it to the inventory table
-    //     foreach ($items as $item) {
-    //         \DB::table('inventory')->insert([
-    //             'item_name' => $item['name'],
-    //             'quantity' => $item['quantity'],
-    //             'donation_id' => $donation->id, // Link the donation ID to the inventory item
-    //             'barangay_id' => $donation->barangay_id, // Reference the barangay
-    //             'created_at' => now(),
-    //             'updated_at' => now(),
-    //         ]);
-    //     }
-    // }
-
     public function setupShowOperation()
     {
         $this->crud->setColumns([
@@ -415,29 +351,14 @@ class DonationCrudController extends CrudController
                         if ($column['text'] == 'Approved') {
                             return 'badge text-bg-success'; // Green indicates approval
                         }
-                        if ($column['text'] == 'Awaiting Delivery') {
-                            return 'badge text-bg-info'; // Blue indicates a process in motion
+                        if ($column['text'] == 'Rejected') {
+                            return 'badge text-bg-danger'; // Yellow indicates a warning
                         }
                         if ($column['text'] == 'Received') {
                             return 'badge text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
                         }
-                        if ($column['text'] == 'Under Segregation') {
-                            return 'badge text-bg-primary'; // Primary indicates an active process
-                        }
-                        if ($column['text'] == 'Categorized') {
-                            return 'badge text-bg-secondary'; // Grey indicates a state of readiness (categorized but not yet distributed)
-                        }
-                        if ($column['text'] == 'In Inventory') {
-                            return 'badge text-bg-dark'; // Dark indicates stored and available for future use
-                        }
-                        if ($column['text'] == 'Ready for Distribution') {
-                            return 'badge text-bg-primary'; // Primary to indicate it's actively ready for distribution
-                        }
                         if ($column['text'] == 'Distributed') {
                             return 'badge text-bg-success'; // Green indicates the process is complete
-                        }
-                        if ($column['text'] == 'Completed') {
-                            return 'badge text-bg-dark'; // Dark indicates closure/completion
                         }
 
                         return 'badge badge-default';

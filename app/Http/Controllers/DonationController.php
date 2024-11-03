@@ -53,8 +53,9 @@ class DonationController extends Controller
                         'item_name' => $name,
                         'quantity' => $quantity,
                         'expiration_date' => $expiration,
-                        'image_path' => $image->store('uploads/donations'),
+                        'image_path' => $image->store('uploads/donations','public'),
                     ]);
+
                 }
             } elseif ($request->donation_type == "NonFood") {
                 $foodNames = $request->nonfood_name;
@@ -74,7 +75,7 @@ class DonationController extends Controller
                         'item_name' => $name,
                         'quantity' => $quantity,
                         'condition' => $condition,
-                        'image_path' => $image->store('uploads/donations'),
+                        'image_path' => $image->store('uploads/donations','public'),
                     ]);
                 }
             } elseif ($request->donation_type == "Medical") {
@@ -86,7 +87,7 @@ class DonationController extends Controller
                 for ($i = 0; $i < count($foodNames); $i++) {
                     $name = $foodNames[$i];
                     $quantity = $foodQuantities[$i];
-                    $condition = $foodCondition[$i];
+                    $condition = Carbon::createFromFormat('m/d/Y', $foodCondition[$i]);
                     $image = $foodImages[$i]; // Handle image upload logic here
 
                     // Save the food donation item
@@ -94,8 +95,8 @@ class DonationController extends Controller
                         'donation_id' => $donation->id,
                         'item_name' => $name,
                         'quantity' => $quantity,
-                        'condition' => $condition,
-                        'image_path' => $image->store('uploads/donations'),
+                        'expiration_date' => $condition,
+                        'image_path' => $image->store('uploads/donations','public'),
                     ]);
                 }
             }
@@ -147,6 +148,114 @@ class DonationController extends Controller
             ->value(DB::raw('YEAR(donation_date)')) ?? now()->year;
         // dd($donationNotification);
         return view('main.my_donation', compact('recentDonations', 'historyDonations', 'lastDonated', 'firstDonated', 'donationNotification', 'barangays', 'firstDonationYear'));
+    }
+
+    public function myDonationNotification()
+    {
+        $recentDonations = Donation::where('donor_id', Auth::user()->id)->orderBy('created_at', 'desc')->limit(5)->get();
+        $historyDonations = Donation::where('donor_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+
+        if ($historyDonations->isNotEmpty()) {
+            // Get the first donation's created_at time and format it
+            $lastDonatedConvert = $historyDonations->first()->created_at->diffForHumans();
+        } else {
+            // No donations found
+            $lastDonatedConvert = 'No Donations';
+        }
+        $lastDonated = $lastDonatedConvert;
+
+        if ($historyDonations->isNotEmpty()) {
+            // Get the first donation's created_at time and format it
+            $firstDonatedConvert = $historyDonations->last()->created_at->diffForHumans();
+        } else {
+            // No donations found
+            $firstDonatedConvert = '(Not Donated Yet)';
+        }
+        // $firstDonatedConvert = $historyDonations->last()->created_at;
+        $firstDonated = $firstDonatedConvert;
+        // $this->getHumanReadableDonationTime($firstDonatedConvert);
+
+        $barangays = Barangay::all();
+
+        $donationNotification = Auth::user()->notifications()->orderBy('created_at', 'desc')->get(); // Or whatever logic you're using to retrieve notifications
+
+        $firstDonationYear = Donation::query()
+            ->orderBy('created_at', 'asc') // Assuming 'donation_date' is the date field
+            ->value(DB::raw('YEAR(donation_date)')) ?? now()->year;
+        // dd($donationNotification);
+        return view('main.my_donation_notification', compact('recentDonations', 'historyDonations', 'lastDonated', 'firstDonated', 'donationNotification', 'barangays', 'firstDonationYear'));
+    }
+
+    public function myDonationHistory()
+    {
+        $recentDonations = Donation::where('donor_id', Auth::user()->id)->orderBy('created_at', 'desc')->limit(5)->get();
+        $historyDonations = Donation::where('donor_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+
+        if ($historyDonations->isNotEmpty()) {
+            // Get the first donation's created_at time and format it
+            $lastDonatedConvert = $historyDonations->first()->created_at->diffForHumans();
+        } else {
+            // No donations found
+            $lastDonatedConvert = 'No Donations';
+        }
+        $lastDonated = $lastDonatedConvert;
+
+        if ($historyDonations->isNotEmpty()) {
+            // Get the first donation's created_at time and format it
+            $firstDonatedConvert = $historyDonations->last()->created_at->diffForHumans();
+        } else {
+            // No donations found
+            $firstDonatedConvert = '(Not Donated Yet)';
+        }
+        // $firstDonatedConvert = $historyDonations->last()->created_at;
+        $firstDonated = $firstDonatedConvert;
+        // $this->getHumanReadableDonationTime($firstDonatedConvert);
+
+        $barangays = Barangay::all();
+
+        $donationNotification = Auth::user()->notifications()->orderBy('created_at', 'desc')->get(); // Or whatever logic you're using to retrieve notifications
+
+        $firstDonationYear = Donation::query()
+            ->orderBy('created_at', 'asc') // Assuming 'donation_date' is the date field
+            ->value(DB::raw('YEAR(donation_date)')) ?? now()->year;
+        // dd($donationNotification);
+        return view('main.my_donation_history', compact('recentDonations', 'historyDonations', 'lastDonated', 'firstDonated', 'donationNotification', 'barangays', 'firstDonationYear'));
+    }
+
+    public function myDonationTransparency()
+    {
+        $recentDonations = Donation::where('donor_id', Auth::user()->id)->orderBy('created_at', 'desc')->limit(5)->get();
+        $historyDonations = Donation::where('donor_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+
+        if ($historyDonations->isNotEmpty()) {
+            // Get the first donation's created_at time and format it
+            $lastDonatedConvert = $historyDonations->first()->created_at->diffForHumans();
+        } else {
+            // No donations found
+            $lastDonatedConvert = 'No Donations';
+        }
+        $lastDonated = $lastDonatedConvert;
+
+        if ($historyDonations->isNotEmpty()) {
+            // Get the first donation's created_at time and format it
+            $firstDonatedConvert = $historyDonations->last()->created_at->diffForHumans();
+        } else {
+            // No donations found
+            $firstDonatedConvert = '(Not Donated Yet)';
+        }
+        // $firstDonatedConvert = $historyDonations->last()->created_at;
+        $firstDonated = $firstDonatedConvert;
+        // $this->getHumanReadableDonationTime($firstDonatedConvert);
+
+        $barangays = Barangay::all();
+
+        $donationNotification = Auth::user()->notifications()->orderBy('created_at', 'desc')->get(); // Or whatever logic you're using to retrieve notifications
+
+        $firstDonationYear = Donation::query()
+            ->orderBy('created_at', 'asc') // Assuming 'donation_date' is the date field
+            ->value(DB::raw('YEAR(donation_date)')) ?? now()->year;
+        // dd($donationNotification);
+        return view('main.my_donation_transparency', compact('recentDonations', 'historyDonations', 'lastDonated', 'firstDonated', 'donationNotification', 'barangays', 'firstDonationYear'));
     }
 
     public function getHumanReadableDonationTime($donationDate)

@@ -115,7 +115,7 @@ class Donation extends Model
                 $donation->changeDonationStatusLog($donation);
             }
 
-            if ($donation->status === 'In Inventory') {
+            if ($donation->status === 'Received') {
                 $donation->addItemsToInventory($donation->id);
             }
         });
@@ -130,6 +130,7 @@ class Donation extends Model
                 'donation_id' => $item->donation_id, // Link the donation ID to the inventory item
                 'barangay_id' => $item->donation->barangay->id, // Reference the barangay
                 'name' => $item->item_name,
+                'donation_type' => $item->donation->type,
                 'quantity' => $item->quantity,
                 'expiration_date' => $item->expiration_date ? $item->expiration_date : null,
                 'condition' => $item->condition ? $item->condition : null,

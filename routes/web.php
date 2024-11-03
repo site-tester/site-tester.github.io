@@ -33,10 +33,14 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/home', [Controller::class, 'landing'])->name('home');
     Route::get('/dashboard', [HomeController::class, 'index'])->name('donor.dashboard');
     Route::get('/profile', [HomeController::class, 'viewProfile'])->name('profile');
+    Route::post('/update-profile', [HomeController::class, 'updateProfile'])->name('profile.update');
     Route::get('/donate-now', [HomeController::class, 'viewDonateNow'])->name('donate-now');
     Route::post('/donate', [DonationController::class, 'store'])->name('donate.store');
     Route::get('/donation-confirmed', [DonationController::class, 'donationConfimationView'])->name('donation.confirmation.page');
     Route::get('/my-donation', [DonationController::class, 'myDonation'])->name('my.donation');
+    Route::get('/my-donation-notification', [DonationController::class, 'myDonationNotification'])->name('my.donation.notification');
+    Route::get('/my-donation-history', [DonationController::class, 'myDonationHistory'])->name('my.donation.history');
+    Route::get('/my-donation-transparency', [DonationController::class, 'myDonationTransparency'])->name('my.donation.transparency');
     Route::get('/donation/view/{id}', [DonationController::class, 'show'])->name('donation.modal');
     Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notif.markAsRead');
     Route::post('/submit-donation', [DonationController::class, 'submitDonation'])->name('submit.donation');

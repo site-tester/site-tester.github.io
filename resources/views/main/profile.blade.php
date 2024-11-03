@@ -29,8 +29,7 @@
                     <div class=" ">
                         <h3 class="py-3 px-4 mb-0">Profile</h3>
                     </div>
-                    <form class="row" action="{{-- {{ route('customer.profile.update', Auth::user()->id) }} --}}" method="POST" enctype="multipart/form-data"
-                        autocomplete="off">
+                    <form class="row" action="{{route('profile.update') }}" method="POST" autocomplete="off">
                         @csrf
                         @if ($errors->any())
                             <div class="alert alert-danger">
@@ -51,8 +50,8 @@
                                 </li>
                                 @isset($profile->other_details)
                                     <li class="nav-item ">
-                                        <h5><a class="nav-link w-100 float-end text-end rounded-start"
-                                                href="#profile-org-tab" role="tab" data-bs-toggle="tab">Organization</a>
+                                        <h5><a class="nav-link w-100 float-end text-end rounded-start" href="#profile-org-tab"
+                                                role="tab" data-bs-toggle="tab">Organization</a>
                                         </h5>
                                     </li>
                                 @endisset
@@ -67,21 +66,7 @@
                             <!-- Account details -->
                             <div id="profile-details-tab" class="tab-pane fade show active mb-4 p-3 p-md-4" role="tabpanel">
                                 <div class="">
-                                    <!-- Profile picture card-->
-                                    {{-- <div class="border-0 mb-4 mb-xl-0 p-3 p-md-4">
-                                        <div class="text-center">
-                                            <!-- Profile picture image-->
-                                            <img class="img-fluid rounded-circle mb-2"
-                                                src="{{ asset('storage/' . Auth::user()->avatar) }}" alt=""
-                                                style="width:70%;">
-                                            <!-- Profile picture help block-->
-                                            <div class="small font-italic text-muted mb-4">JPG,JPEG or PNG no larger than 2
-                                                MB
-                                            </div>
-                                            <!-- Profile picture upload button-->
-                                            <input class="btn btn-outline-secondary m-auto" type="file" name="avatar">
-                                        </div>
-                                    </div> --}}
+
                                     {{-- Full Name --}}
                                     <div class="form-floating mb-3">
                                         <input class="form-control" id="ProfileName" name="name" type="text"
@@ -168,31 +153,29 @@
                             </div>
                             {{-- Others --}}
                             @isset($profile->other_details)
-                            <div id="profile-org-tab" class="tab-pane fade mb-4 p-3 p-md-4">
-                                <div class="">
-                                    <!-- Form Group (Phone Number)-->
-                                    <div class=" form-floating mb-3">
-                                        <input class="form-control" id="org-name" name="organization" type="text"
-                                            value="{{ $profile->other_details }}">
-                                        <label class="small mb-1" for="organization">Organization name</label>
-                                        @error('organization')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                                <div id="profile-org-tab" class="tab-pane fade mb-4 p-3 p-md-4">
+                                    <div class="">
+                                        <!-- Form Group (Phone Number)-->
+                                        <div class=" form-floating mb-3">
+                                            <input class="form-control" id="org-name" name="organization" type="text"
+                                                value="{{ $profile->other_details }}">
+                                            <label class="small mb-1" for="organization">Organization name</label>
+                                            @error('organization')
+                                                <span class="invalid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
 
-                                    <div class="my-4">
-                                        <button class="btn bg-green btn-lg" type="submit">{{ __('Save') }}</button>
+                                        <div class="my-4">
+                                            <button class="btn bg-green btn-lg" type="submit">{{ __('Save') }}</button>
+                                        </div>
+                                        <!-- Save changes button-->
                                     </div>
-                                    <!-- Save changes button-->
-
                                 </div>
-                            </div>
                             @endisset
                         </div>
+                    </form>
                 </div>
             </div>
-
-            </form>
         </div>
     </div>
 @endsection

@@ -31,7 +31,7 @@ class ItemCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Item::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/item');
-        CRUD::setEntityNameStrings('item', 'items');
+        CRUD::setEntityNameStrings('inventory', 'inventories');
         $this->crud->addButtonFromView('bottom', 'print_button', 'print_button');
     }
 
@@ -47,27 +47,21 @@ class ItemCrudController extends CrudController
 
         $this->data['overviewData'] = [
             'totalItems' => Item::count(),
-            // 'thisDayDonation' => Donation::whereDate('created_at', now()->toDateString())->count(),
-            // 'approvedDonation' => Donation::whereDate('updated_at', now()->toDateString())->where('status', 'Approved')->count(),
+            'totalFood' => Item::where('donation_type', 'Food')->count(),
+            'totalNonFood' => Item::where('donation_type', 'NonFood')->count(),
+            'totalMedical' => Item::where('donation_type', 'Medical')->count(),
         ];
 
-        // Apply custom filters based on query parameters
-        // if (request()->has('status')) {
-        //     $status = request('status');
-        //     if ($status === 'pending') {
-        //         CRUD::addClause('where', 'status', 'Pending Approval');
-        //     } elseif ($status === 'approved') {
-        //         CRUD::addClause('where', 'status', 'Approved');
-        //         CRUD::addClause('whereDate', 'updated_at', now()->toDateString());
-        //     }
-        // }
-
-        // if (request()->has('date')) {
-        //     $date = request('date');
-        //     if ($date === 'today') {
-        //         CRUD::addClause('whereDate', 'created_at', now()->toDateString());
-        //     }
-        // }
+        if (request()->has('type')) {
+            $type = request('type');
+            if ($type === 'food') {
+                CRUD::addClause('where', 'donation_type', 'Food');
+            }elseif ($type === 'nonfood') {
+                CRUD::addClause('where', 'donation_type', 'NonFood');
+            }elseif ($type === 'medical') {
+                CRUD::addClause('where', 'donation_type', 'Medical');
+            }
+        }
 
         if (auth()->user()->hasRole('Barangay Representative')) {
             // Get the barangay_id of the authenticated user

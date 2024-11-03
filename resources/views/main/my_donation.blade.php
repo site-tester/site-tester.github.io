@@ -3,7 +3,7 @@
 @section('title', 'Donation Confirmation')
 
 @section('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+    <link href="https://cdn.datatables.net/v/dt/dt-2.1.8/r-3.0.3/datatables.min.css" rel="stylesheet">
     <style>
         .nav .nav-item button.active {
             background-color: transparent;
@@ -37,7 +37,7 @@
 @endsection
 
 @section('content')
-    <div class="container p-5 pb-0">
+    <div class="container p-0 p-md-5 pb-0">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show mx-5 mb-0" role="alert">
                 {{ session('success') }}
@@ -53,30 +53,22 @@
                 </div>
             </div>
             <div class="row border-top m-0">
-                <div class="d-flex align-items-start mx-0 px-0 ">
-                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <button class="nav-link text-nowrap active text-end" id="v-pills-dashboard-tab"
-                            data-bs-toggle="pill" data-bs-target="#v-pills-dashboard" type="button" role="tab"
-                            aria-controls="v-pills-dashboard" aria-selected="true">Dashboard
-                        </button>
-                        <button class="nav-link text-nowrap text-end" id="v-pills-notification-tab" data-bs-toggle="pill"
-                            data-bs-target="#v-pills-notification" type="button" role="tab"
-                            aria-controls="v-pills-notification" aria-selected="true">Notifications
+                <div class=" mx-0 px-0 ">
+                    <div class="nav nav-pills" id="pills-tab" role="tablist">
+                        <a class="nav-link active text-nowrap" href="{{ route('my.donation') }}" role="tab" aria-selected="true">Dashboard</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.notification') }}" role="tab" aria-selected="false">Notifications
                             @if (Auth::user()->unreadNotifications->count() > 0)
                                 <span class="text-bg-danger badge text-center">
                                     {{ Auth::user()->unreadNotifications->count() }}
                                 </span>
                             @endif
-                        </button>
-                        <button class="nav-link text-nowrap text-end" id="v-pills-history-tab" data-bs-toggle="pill"
-                            data-bs-target="#v-pills-history" type="button" role="tab" aria-controls="v-pills-history"
-                            aria-selected="false">Donation History
-                        </button>
-                        <button class="nav-link text-nowrap text-end" id="v-pills-transparency-tab" data-bs-toggle="pill"
-                            data-bs-target="#v-pills-transparency" type="button" role="tab"
-                            aria-controls="v-pills-transparency" aria-selected="false">Transparency Board
-                        </button>
+                        </a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.history') }}" role="tab" aria-selected="false">Donation History</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.transparency') }}" role="tab" aria-selected="false">Transparency Board</a>
                     </div>
+
+
+                    {{-- Tab Contents --}}
                     <div class="tab-content w-100 h-100" id="v-pills-tabContent">
                         <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel"
                             aria-labelledby="v-pills-dashboard-tab" tabindex="0">
@@ -129,37 +121,17 @@
                                                 @php
                                                     $badgeClass = 'text-bg-success'; // Green indicates approval
                                                 @endphp
-                                            @elseif ($donation->status === 'Awaiting Delivery')
+                                            @elseif ($donation->status === 'Rejected')
                                                 @php
-                                                    $badgeClass = 'text-bg-info'; // Blue indicates a process in motion
+                                                    $badgeClass = 'text-bg-warning'; // Blue indicates a process in motion
                                                 @endphp
                                             @elseif ($donation->status === 'Received')
                                                 @php
                                                     $badgeClass = 'text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
                                                 @endphp
-                                            @elseif ($donation->status === 'Under Segregation')
-                                                @php
-                                                    $badgeClass = 'badge text-bg-primary'; // Primary indicates an active process
-                                                @endphp
-                                            @elseif ($donation->status === 'Categorized')
-                                                @php
-                                                    $badgeClass = 'text-bg-secondary'; // Grey indicates a state of readiness (categorized but not yet distributed)
-                                                @endphp
-                                            @elseif ($donation->status === 'In Inventory')
-                                                @php
-                                                    $badgeClass = 'text-bg-dark'; // Dark indicates stored and available for future use
-                                                @endphp
-                                            @elseif ($donation->status === 'Ready for Distribution')
-                                                @php
-                                                    $badgeClass = 'text-bg-primary'; // Primary to indicate it's actively ready for distribution
-                                                @endphp ?>
                                             @elseif ($donation->status === 'Distributed')
                                                 @php
                                                     $badgeClass = 'text-bg-success'; // Green indicates the process is complete
-                                                @endphp ?>
-                                            @elseif ($donation->status === 'Completed')
-                                                @php
-                                                    $badgeClass = 'text-bg-dark'; // Dark indicates closure/completion
                                                 @endphp ?>
                                             @else
                                                 @php
@@ -215,37 +187,17 @@
                                                 @php
                                                     $badgeClass = 'text-bg-success'; // Green indicates approval
                                                 @endphp
-                                            @elseif ($donation->status === 'Awaiting Delivery')
+                                            @elseif ($donation->status === 'Rejected')
                                                 @php
-                                                    $badgeClass = 'text-bg-info'; // Blue indicates a process in motion
+                                                    $badgeClass = 'text-bg-warning'; // Blue indicates a process in motion
                                                 @endphp
                                             @elseif ($donation->status === 'Received')
                                                 @php
                                                     $badgeClass = 'text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
                                                 @endphp
-                                            @elseif ($donation->status === 'Under Segregation')
-                                                @php
-                                                    $badgeClass = 'badge text-bg-primary'; // Primary indicates an active process
-                                                @endphp
-                                            @elseif ($donation->status === 'Categorized')
-                                                @php
-                                                    $badgeClass = 'text-bg-secondary'; // Grey indicates a state of readiness (categorized but not yet distributed)
-                                                @endphp
-                                            @elseif ($donation->status === 'In Inventory')
-                                                @php
-                                                    $badgeClass = 'text-bg-dark'; // Dark indicates stored and available for future use
-                                                @endphp
-                                            @elseif ($donation->status === 'Ready for Distribution')
-                                                @php
-                                                    $badgeClass = 'text-bg-primary'; // Primary to indicate it's actively ready for distribution
-                                                @endphp
                                             @elseif ($donation->status === 'Distributed')
                                                 @php
                                                     $badgeClass = 'text-bg-success'; // Green indicates the process is complete
-                                                @endphp
-                                            @elseif ($donation->status === 'Completed')
-                                                @php
-                                                    $badgeClass = 'text-bg-dark'; // Dark indicates closure/completion
                                                 @endphp
                                             @else
                                                 @php
@@ -328,7 +280,7 @@
                             <div class="p-3">
                                 <h5 class="m-0 mb-3"><i class="bi bi-clipboard-heart"></i> Transparency Board</h5>
                                 <div class="row mt-2 mx-2 align-items-center">
-                                    <div class="col mx-1">
+                                    <div class="col-12 col-md-4 mx-1">
                                         <div class=" row mb-2">
                                             <h6>Filter by Barangay:</h6> {{-- All barangay, Barangay 1,2,3.... --}}
                                             <select id="barangayFilter" class="form-select ">
@@ -340,7 +292,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col mx-1">
+                                    <div class="col-12 col-md-2 mx-1">
                                         <div class="row mb-2">
                                             <h6>Activity by Time:</h6> {{-- Quarterly 1,2,3,4 or anually --}}
                                             <select id="timeFilter" class="form-select">
@@ -353,7 +305,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col mx-1">
+                                    <div class="col-12 col-md-3 mx-1">
                                         <div class="row mb-2">
                                             <h6>Filter by Year:</h6>
                                             <select id="yearFilter" class="form-select">
@@ -364,8 +316,8 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <button id="filterButton" class="btn bg-greener mt-3">Apply Filters</button>
+                                    <div class="col-12 col-md">
+                                        <button id="filterButton" class="btn bg-greener">Apply Filters</button>
                                     </div>
                                 </div>
                                 <small class="text-secondary fs-6 float-end">*Apply Filter First</small>
@@ -425,27 +377,48 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.8/r-3.0.3/datatables.min.js"></script>
     <script>
         $(document).ready(function() {
+
             $('#dashboardTable').DataTable({
                 searching: false,
                 lengthChange: false,
                 paging: false,
                 ordering: false,
-            });
-            $('#historyTable').DataTable({
-                ordering: false,
-            });
-            $('#notificationTable').DataTable({
-                ordering: false,
-            });
-            $('#transparencyTable').DataTable({
                 responsive: true,
-                searching: false,
-                ordering: false,
-                lengthChange: false,
+                autoWidth: false,
             });
+            // $('#historyTable').DataTable({
+            //     ordering: false,
+            //     responsive: true,
+            //     autoWidth: false,
+            // });
+            // $('#notificationTable').DataTable({
+            //     ordering: false,
+            //     responsive: true,
+            //     autoWidth: false,
+            // });
+            // $('#transparencyTable').DataTable({
+            //     responsive: true,
+            //     autoWidth: false,
+            //     searching: false,
+            //     ordering: false,
+            //     lengthChange: false,
+            // });
+
+            $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+                var targetTab = $(e.target).attr("href"); // Get the target tab
+                var table = $(targetTab).find('table').DataTable(); // Get the DataTable instance
+                if ($.fn.DataTable.isDataTable(table.table().node())) {
+                    table.destroy(); // Destroy if already initialized
+                }
+                $(targetTab).find('table').DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                });
+            });
+
             $('#filterButton').on('click', function() {
                 const barangayId = $('#barangayFilter').val();
                 const timePeriod = $('#timeFilter').val();
@@ -565,6 +538,7 @@
                             <th>Item</th>
                             <th>Quantity</th>
                             <th>Expiration or Condition</th>
+                            <th>Image</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -575,6 +549,7 @@
                         <td>${item.item_name}</td>
                         <td>${item.quantity}</td>
                         <td>${item.expiration_date ?? item.condition ?? 'N/A'}</td>
+                        <td><img src="/storage/${item.image_path}" alt="Donation Image" height="100"></td>
                     </tr>
                 `;
                     });

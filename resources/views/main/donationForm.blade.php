@@ -10,17 +10,19 @@
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
+    <link href="https://cdn.datatables.net/v/dt/dt-2.1.8/r-3.0.3/datatables.min.css" rel="stylesheet">
 
     <style>
-        .select2-container .select2-selection--single{
+        .select2-container .select2-selection--single {
             justify-content: center;
             height: 45px;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered{
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
             height: 100% !important;
         }
-        .select2-container--default .select2-selection--single .select2-selection__arrow{
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 100%;
         }
     </style>
@@ -55,15 +57,15 @@
                 <h3 class="mb-3">Your information</h3>
                 <div class="mb-3 p-md-5 bg-secondary-subtle">
                     <div class="mb-3 px-3">
-                        <div class="mb-3">
+                        <div class="">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label for="" class="form-label">Full Name</label>
                                     <input type="text" class="form-control" placeholder="{{ Auth::user()->name }}"
                                         readonly />
                                 </div>
                                 @if (Auth::user()->profile->other_details)
-                                    <div class="col">
+                                    <div class="col-12 col-md-6 mb-3">
                                         <label for="" class="form-label">Organization</label>
                                         <input type="text" class="form-control"
                                             placeholder="{{ Auth::user()->profile->other_details ? Auth::user()->profile->other_details : '-' }}"
@@ -72,16 +74,16 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Phone</label>
                                         <input type="text" class="form-control"
                                             placeholder="{{ Auth::user()->profile->contact_number }}" readonly />
                                     </div>
                                 </div>
-                                <div class="col">
+                                <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Email</label>
                                         <input type="text" class="form-control" placeholder="{{ Auth::user()->email }}"
@@ -116,7 +118,8 @@
 
                                 <select id="barangaySelect" name="barangay_id" class="w-100 ">
                                     @foreach ($barangayLists as $barangay)
-                                        <option value="{{ $barangay['id'] }}" data-risk="{{ $barangay->flood_risk_score }}" {{$barangayID === $barangay['id'] ? 'selected': ''}}>
+                                        <option value="{{ $barangay['id'] }}" data-risk="{{ $barangay->flood_risk_score }}"
+                                            {{ $barangayID === $barangay['id'] ? 'selected' : '' }}>
                                             {{ $barangay['name'] }}
                                         </option>
                                     @endforeach
@@ -124,124 +127,198 @@
                                 <div class="ms-3 mt-2 small text-muted">
                                     <strong>Legend:</strong>
                                     <ul>
-                                        <li><span class="text-danger"><i class="fas fa-house-flood-water"></i> High Risk Area</span></li>
-                                        <li><span class="text-warning"><i class="fas fa-tint"></i> Moderate Risk Area</span></li>
-                                        <li><span class="text-success"><i class="fas fa-water"></i> Low Risk Area</span></li>
+                                        <li><span class="text-danger"><i class="fas fa-house-flood-water"></i> High Risk
+                                                Area</span></li>
+                                        <li><span class="text-warning"><i class="fas fa-tint"></i> Moderate Risk Area</span>
+                                        </li>
+                                        <li><span class="text-success"><i class="fas fa-water"></i> Low Risk Area</span>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="mb-3 donationForm">
                                 <label for="" class="m-0 form-label row h4 mb-2">Donation Type</label>
-                                <div class="btn-group btn-group-lg mb-3 w-100" role="group"
+                                {{-- <div class="btn-group btn-group-lg mb-3 w-100" role="group"
                                     aria-label="Basic checkbox toggle button group">
                                     <input type="radio" class="btn-check" name="donation_type" id="btncheck1"
-                                        autocomplete="off" value="Food" {{$donation_type === 'Food'? 'checked' :'' }}/>
+                                        autocomplete="off" value="Food"
+                                        {{ $donation_type === 'Food' ? 'checked' : '' }} />
                                     <label class="btn btn-donate-now border border-dark text-nowrap"
                                         for="btncheck1">Food</label>
 
                                     <input type="radio" class="btn-check" name="donation_type" id="btncheck2"
-                                        autocomplete="off" value="NonFood" {{$donation_type === 'Nonfood'? 'checked' :'' }}/>
+                                        autocomplete="off" value="NonFood"
+                                        {{ $donation_type === 'Nonfood' ? 'checked' : '' }} />
                                     <label class="btn btn-donate-now border border-dark text-nowrap"
                                         for="btncheck2">Non-Food</label>
 
                                     <input type="radio" class="btn-check" name="donation_type" id="btncheck3"
-                                        autocomplete="off" value="Medical" {{$donation_type === 'Medical'? 'checked' :'' }}/>
+                                        autocomplete="off" value="Medical"
+                                        {{ $donation_type === 'Medical' ? 'checked' : '' }} />
                                     <label class="btn btn-donate-now border border-dark text-nowrap"
                                         for="btncheck3">Medical</label>
+                                </div> --}}
+
+                                <div class="row">
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <input type="radio" class="btn-check" name="donation_type" id="btncheck1"
+                                            autocomplete="off" value="Food"
+                                            {{ $donation_type === 'Food' ? 'checked' : '' }} />
+                                        <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
+                                            for="btncheck1">Food</label>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <input type="radio" class="btn-check" name="donation_type" id="btncheck2"
+                                            autocomplete="off" value="NonFood"
+                                            {{ $donation_type === 'Nonfood' ? 'checked' : '' }} />
+                                        <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
+                                            for="btncheck2">Non-Food</label>
+                                    </div>
+
+                                    <div class="col-12 col-md-4 mb-3">
+                                        <input type="radio" class="btn-check" name="donation_type" id="btncheck3"
+                                            autocomplete="off" value="Medical"
+                                            {{ $donation_type === 'Medical' ? 'checked' : '' }} />
+                                        <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
+                                            for="btncheck3">Medical</label>
+                                    </div>
                                 </div>
+
 
                                 <div class="">
                                     <input type="hidden" name="donation-food-basket-array">
                                     <input type="hidden" name="donation-nonfood-basket-array">
                                     <input type="hidden" name="donation-medical-basket-array">
+                                    <div id="expirationNote" class="alert alert-warning" style="display: block;">
+                                        Please ensure that donated food items and medical supplies have an expiration date
+                                        of at least 1 year from the donation date. Items expiring sooner will not be
+                                        accepted.
+                                    </div>
                                     <div id="foodInputs" class="d-block">
                                         <h5>Food Donation</h5>
-                                        <div id="donation-food-basket" class="border rounded">
-                                            <div
-                                                class="row mx-0 donation-food-basket-item border border-dark align-items-center text-center">
-                                                <div class="col fw-bold p-2">Item</div>
-                                                <div class="col-1 fw-bold text-nowrap">Qty</div>
-                                                <div class="col-2 fw-bold text-nowrap">Exp Date</div>
-                                                <div class="col-2 fw-bold text-nowrap">Image</div>
-                                                <div class="col-2 fw-bold"> </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mx-1">
-                                            <input class="col m-1 donation_food_item_name rounded fs-6" type="text"
-                                                placeholder="Item">
-                                            <input class="col-2 m-1 donation_food_item_quantity rounded fs-6"
-                                                min="1" type="number" placeholder="Qty">
-                                            <input class="col-2 m-1 donation_food_item_exp rounded fs-6" type="text"
-                                                placeholder="Exp. Date">
-                                            <input class="col-2 m-1 donation_food_item_image btn fs-6" type="file"
-                                                accept="image/*" name="donation_food_item_image">
-                                            <div class="col-1 m-1 add-to-donation-food-basket btn btn-success">+</div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr class="donation-food-basket-item">
+                                                        <th class="fw-bold">Item</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Qty</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Exp Date</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
+                                                        <th style="width: 5%;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="donation-food-basket">
+                                                    <!-- Dynamic food donation items will go here -->
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td><input class="form-control donation_food_item_name"
+                                                                type="text" placeholder="Item"></td>
+                                                        <td><input class="form-control donation_food_item_quantity"
+                                                                min="1" type="number" placeholder="Qty"></td>
+                                                        <td><input class="form-control donation_food_item_exp"
+                                                                type="text" placeholder="Exp. Date"></td>
+                                                        <td><input class="form-control donation_food_item_image"
+                                                                type="file" accept="image/*"
+                                                                name="donation_food_item_image"></td>
+                                                        <td><button type="button"
+                                                                class="btn btn-success add-to-donation-food-basket">+</button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
 
                                     <!-- Table inputs for Non-Food -->
                                     <div id="nonFoodInputs" class="d-none">
                                         <h5>Non-Food Donation</h5>
-                                        <div id="donation-nonfood-basket" class="border rounded">
-                                            <div
-                                                class="row mx-0 donation-nonfood-basket-item border border-dark align-items-center text-center">
-                                                <div class="col fw-bold p-2">Item</div>
-                                                <div class="col-1 fw-bold text-nowrap">Qty</div>
-                                                <div class="col-2 fw-bold text-nowrap">Condition</div>
-                                                <div class="col-2 fw-bold text-nowrap">Image</div>
-                                                <div class="col-2 fw-bold"></div>
-                                            </div>
-                                        </div>
-                                        <div class="row mx-1">
-                                            <input class="col m-1 donation_nonfood_item_name rounded fs-6" type="text"
-                                                placeholder="Item">
-                                            <input class="col-2 m-1 donation_nonfood_item_quantity rounded fs-6"
-                                                type="number" placeholder="Qty" min="1">
-                                            <select class="col-2 m-1 donation_nonfood_item_condition rounded fs-6"
-                                                id="conditionSelect">
-                                                <option value="" disabled selected hidden>Condition</option>
-                                                <option value="New">New</option>
-                                                <option value="Used Like New">Used Like New</option>
-                                                <option value="Used Good">Used New</option>
-                                                <option value="Used Fair">Used Fair</option>
-                                            </select>
-                                            <input class="col-2 m-1 donation_nonfood_item_image rounded btn"
-                                                type="file" accept="image/*" name="donation_nonfood_item_image">
-                                            <div class="col-1 m-1 add-to-donation-nonfood-basket btn btn-success">+</div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr class="donation-nonfood-basket-item">
+                                                        <th class="fw-bold">Item</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Qty</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Condition</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
+                                                        <th style="width: 5%;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="donation-nonfood-basket">
+                                                    <!-- Dynamic non-food donation items will go here -->
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td><input class="form-control donation_nonfood_item_name"
+                                                                type="text" placeholder="Item"></td>
+                                                        <td><input class="form-control donation_nonfood_item_quantity"
+                                                                type="number" placeholder="Qty" min="1"></td>
+                                                        <td>
+                                                            <select class="form-control donation_nonfood_item_condition"
+                                                                id="conditionSelect">
+                                                                <option value="" disabled selected hidden>Condition
+                                                                </option>
+                                                                <option value="New">New</option>
+                                                                <option value="Used Like New">Used Like New</option>
+                                                                <option value="Used Good">Used Good</option>
+                                                                <option value="Used Fair">Used Fair</option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input class="form-control donation_nonfood_item_image"
+                                                                type="file" accept="image/*"
+                                                                name="donation_nonfood_item_image"></td>
+                                                        <td><button type="button"
+                                                                class="btn btn-success add-to-donation-nonfood-basket">+</button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
 
+
                                     <div id="medicalInputs" class="d-none">
                                         <h5>Medical Donation</h5>
-                                        <div id="donation-medical-basket" class="border rounded">
-                                            <div
-                                                class="row mx-0 donation-medical-basket-item border border-dark align-items-center text-center">
-                                                <div class="col fw-bold p-2">Item</div>
-                                                <div class="col-1 fw-bold text-nowrap">Qty</div>
-                                                <div class="col-2 fw-bold text-nowrap">Condition</div>
-                                                <div class="col-2 fw-bold text-nowrap">Image</div>
-                                                <div class="col-2 fw-bold"> </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mx-1">
-                                            <input class="col m-1 donation_medical_item_name rounded fs-6" type="text"
-                                                placeholder="Item">
-                                            <input class="col-2 m-1 donation_medical_item_quantity rounded fs-6"
-                                                min="1" type="number" placeholder="Qty">
-                                            <select class="col-2 m-1 donation_medical_item_condition rounded fs-6"
-                                                id="conditionMedicalSelect">
-                                                <option value="" disabled selected hidden>Condition</option>
-                                                <option value="New">New</option>
-                                                <option value="Used Like New">Used Like New</option>
-                                                <option value="Used Good">Used New</option>
-                                                <option value="Used Fair">Used Fair</option>
-                                            </select>
-                                            <input class="col-2 m-1 donation_medical_item_image btn fs-6" type="file"
-                                                accept="image/*" name="donation_food_item_image">
-                                            <div class="col-1 m-1 add-to-donation-medical-basket btn btn-success">+</div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr class="donation-medical-basket-item">
+                                                        <th class="fw-bold" style="width:100px;">Item</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Qty</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Condition</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
+                                                        <th style="width: 5%;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="donation-medical-basket">
+                                                    <!-- Dynamic medical donation items will go here -->
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td><input class="form-control donation_medical_item_name"
+                                                                type="text" placeholder="Item"></td>
+                                                        <td><input class="form-control donation_medical_item_quantity"
+                                                                min="1" type="number" placeholder="Qty"></td>
+                                                        <td><input class="form-control donation_medical_item_exp"
+                                                                type="text" placeholder="Exp. Date">
+                                                        </td>
+                                                        <td><input class="form-control donation_medical_item_image"
+                                                                type="file" accept="image/*"
+                                                                name="donation_food_item_image"></td>
+                                                        <td><button type="button"
+                                                                class="btn btn-success add-to-donation-medical-basket">+</button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
+                                    <small id="additionalNote" class="fw-bold text-end " style="display: block;">
+                                        * If the expiration date of an item is different from others, please add it as a new
+                                        item.
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -261,19 +338,6 @@
                                         <small class="fs-6">9:00 AM to 12:00 PM</small>
                                         <div class="row mb-1">
                                             <!-- Time slot radio buttons -->
-                                            {{-- <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time7"
-                                                    value="07:00 AM - 08:00 AM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-light fs-6 text-nowrap w-100"
-                                                    for="time7">7:00 AM - 8:00 AM</label>
-                                            </div>
-
-                                            <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time8"
-                                                    value="08:00 AM - 09:00 AM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-light fs-6 text-nowrap w-100"
-                                                    for="time8">8:00 AM - 9:00 AM</label>
-                                            </div> --}}
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                                 <input type="radio" class="btn-check" name="time_slot" id="time9"
@@ -299,12 +363,6 @@
                                         <label class="form-label h5 mb-0">Afternoon</label><br>
                                         <small class="fs-6">1:00 PM to 5:00 PM</small>
                                         <div class="row mb-1">
-                                            {{-- <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time12"
-                                                    value="12:00 PM - 01:00 PM" autocomplete="off">
-                                                <label class="btn btn-donate-now border border-light fs-6 text-nowrap w-100"
-                                                    for="time12">12:00 PM - 1:00 PM</label>
-                                            </div> --}}
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                                 <input type="radio" class="btn-check" name="time_slot" id="time13"
@@ -328,7 +386,7 @@
                                             </div>
 
                                         </div>
-                                        
+
                                     </div>
 
                                 </div>
@@ -357,9 +415,62 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script>
         $(document).ready(function() {
-            // $('#barangaySelect').select2({
-            //     placeholder: 'Select a Barangay',
-            // });
+
+            // Get the current time
+            const now = new Date();
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+
+            // Define an array of time slots and their button IDs
+            const timeSlots = [{
+                    id: 'time9',
+                    start: '09:00',
+                    end: '10:00'
+                },
+                {
+                    id: 'time10',
+                    start: '10:00',
+                    end: '11:00'
+                },
+                {
+                    id: 'time11',
+                    start: '11:00',
+                    end: '12:00'
+                },
+                {
+                    id: 'time13',
+                    start: '13:00',
+                    end: '14:00'
+                },
+                {
+                    id: 'time14',
+                    start: '14:00',
+                    end: '15:00'
+                },
+                {
+                    id: 'time15',
+                    start: '15:00',
+                    end: '16:00'
+                }
+            ];
+
+            // Function to disable time slots if they're past the current time
+            function disablePastTimeSlots() {
+                $.each(timeSlots, function(index, slot) {
+                    const [slotEndHours, slotEndMinutes] = slot.end.split(':').map(Number);
+
+                    // Check if the slot time has already passed
+                    if (currentHours > slotEndHours ||
+                        (currentHours === slotEndHours && currentMinutes > slotEndMinutes)) {
+                        // Disable the radio button and style the label
+                        $('#' + slot.id).prop('disabled', true);
+                        $('label[for="' + slot.id + '"]').addClass('disabled'); // Optional styling
+                    }
+                });
+            }
+
+            // Call the function to disable past time slots
+            // disablePastTimeSlots();
 
             const $foodInputs = $('#foodInputs');
             const $nonFoodInputs = $('#nonFoodInputs');
@@ -369,18 +480,24 @@
                 $foodInputs.removeClass('d-none');
                 $nonFoodInputs.addClass('d-none');
                 $medicalInputs.addClass('d-none');
+                $('#expirationNote').fadeIn();
+                $('#additionalNote').fadeIn();
             });
 
             $('#btncheck2').on('click', function() {
                 $nonFoodInputs.removeClass('d-none');
                 $foodInputs.addClass('d-none');
                 $medicalInputs.addClass('d-none');
+                $('#expirationNote').fadeOut();
+                $('#additionalNote').fadeOut();
             });
 
             $('#btncheck3').on('click', function() {
                 $medicalInputs.removeClass('d-none');
                 $nonFoodInputs.addClass('d-none');
                 $foodInputs.addClass('d-none');
+                $('#expirationNote').fadeIn();
+                $('#additionalNote').fadeIn();
             });
 
             var donationBasketArray = [];
@@ -421,16 +538,13 @@
                     $('[name="donation-food-basket-array"]').val(JSON.stringify(donationBasketArray));
 
                     // Append the new item to the donation basket
-                    var newItem = $(
-                        '<div class="row my-1 mx-0 py-1 donation-food-basket-item border border-dark align-items-center text-center" data-id="' +
-                        uniqueId + '">');
-                    newItem.append('<div class="col">' + donationItemName + '</div>');
-                    newItem.append('<div class="col-2">' + donationItemQuantity + '</div>');
-                    newItem.append('<div class="col-2">' + donationItemExp + '</div>');
-                    newItem.append('<div class="col-3"><img src="' + donationItem.imagePreview +
-                        '" class="img-thumbnail" width="50"/></div>');
-                    newItem.append(
-                        '<div class="col-1"><div class="remove-item btn btn-danger">-</div></div>');
+                    var newItem = $('<tr class="donation-food-basket-item" data-id="' + uniqueId + '">');
+                    newItem.append('<td>' + donationItemName + '</td>');
+                    newItem.append('<td>' + donationItemQuantity + '</td>');
+                    newItem.append('<td>' + donationItemExp + '</td>');
+                    newItem.append('<td><img src="' + donationItem.imagePreview +
+                        '" class="img-thumbnail" width="50"/></td>');
+                    newItem.append('<td><button class="remove-item btn btn-danger">-</button></td>');
                     $('#donation-food-basket').append(newItem);
 
                     // Clear input fields
@@ -493,17 +607,15 @@
                     $('[name="donation-nonfood-basket-array"]').val(JSON.stringify(nonfoodBasketArray));
 
                     // Append the new item to the donation basket
-                    var newItem = $(
-                        '<div class="row my-1 mx-0 py-1 donation-nonfood-basket-item border border-dark align-items-center text-center" data-id="' +
-                        uniqueId + '">');
-                    newItem.append('<div class="col">' + donationItemName + '</div>');
-                    newItem.append('<div class="col-2">' + donationItemQuantity + '</div>');
-                    newItem.append('<div class="col-2">' + donationItemCondition + '</div>');
-                    newItem.append('<div class="col-3"><img src="' + donationItem.imagePreview +
-                        '" class="img-thumbnail" width="50"/></div>');
-                    newItem.append(
-                        '<div class="col-1"><div class="remove-item btn btn-danger">-</div></div>');
+                    var newItem = $('<tr class="donation-nonfood-basket-item" data-id="' + uniqueId + '">');
+                    newItem.append('<td>' + donationItemName + '</td>');
+                    newItem.append('<td>' + donationItemQuantity + '</td>');
+                    newItem.append('<td>' + donationItemCondition + '</td>');
+                    newItem.append('<td><img src="' + donationItem.imagePreview +
+                        '" class="img-thumbnail" width="50"/></td>');
+                    newItem.append('<td><button class="remove-item btn btn-danger">-</button></td>');
                     $('#donation-nonfood-basket').append(newItem);
+
 
                     // Clear input fields
                     $('.donation_nonfood_item_name').val('');
@@ -535,7 +647,7 @@
             $('.add-to-donation-medical-basket').click(function() {
                 var donationItemName = $('.donation_medical_item_name').val();
                 var donationItemQuantity = $('.donation_medical_item_quantity').val();
-                var donationItemCondition = $('.donation_medical_item_condition').val();
+                var donationItemCondition = $('.donation_medical_item_exp').val();
                 var donationItemImage = $('.donation_medical_item_image')[0].files[0]; // Get the image file
 
                 if (donationItemName && donationItemQuantity && donationItemImage &&
@@ -565,22 +677,20 @@
                     $('[name="donation-medical-basket-array"]').val(JSON.stringify(medicalBasketArray));
 
                     // Append the new item to the donation basket
-                    var newItem = $(
-                        '<div class="row my-1 mx-0 py-1 donation-medical-basket-item border border-dark align-items-center text-center" data-id="' +
-                        uniqueId + '">');
-                    newItem.append('<div class="col">' + donationItemName + '</div>');
-                    newItem.append('<div class="col-2">' + donationItemQuantity + '</div>');
-                    newItem.append('<div class="col-2">' + donationItemCondition + '</div>');
-                    newItem.append('<div class="col-3"><img src="' + donationItem.imagePreview +
-                        '" class="img-thumbnail" width="50"/></div>');
-                    newItem.append(
-                        '<div class="col-1"><div class="remove-item btn btn-danger">-</div></div>');
+                    var newItem = $('<tr class="donation-medical-basket-item" data-id="' + uniqueId + '">');
+                    newItem.append('<td>' + donationItemName + '</td>');
+                    newItem.append('<td>' + donationItemQuantity + '</td>');
+                    newItem.append('<td>' + donationItemCondition + '</td>');
+                    newItem.append('<td><img src="' + donationItem.imagePreview +
+                        '" class="img-thumbnail" width="50"/></td>');
+                    newItem.append('<td><button class="remove-item btn btn-danger">-</button></td>');
                     $('#donation-medical-basket').append(newItem);
+
 
                     // Clear input fields
                     $('.donation_medical_item_name').val('');
                     $('.donation_medical_item_quantity').val('');
-                    $('.donation_medical_item_condition').val('');
+                    $('.donation_medical_item_exp').val('');
                     $('.donation_medical_item_image').val('');
 
                     // Remove item event
@@ -661,8 +771,15 @@
                 $(".donation_food_item_exp").datepicker({
                     changeMonth: true,
                     changeYear: true,
-                    minDate: '0d'
+                    minDate: '+1y' // Minimum date set to 1 year from now
                 });
+
+                $(".donation_medical_item_exp").datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    minDate: '+1y' // Minimum date set to 1 year from now
+                });
+
                 $("#schedDate").datepicker({
                     changeMonth: true,
                     changeYear: true,

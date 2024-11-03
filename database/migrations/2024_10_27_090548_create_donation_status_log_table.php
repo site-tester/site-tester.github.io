@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('barangay_id');
             $table->string('donation_id');
             $table->string('status');
-            $table->string('status_change_proof');
-            $table->string('status_change_remarks');
+            $table->string('status_change_proof')->nullable();
+            $table->string('status_change_remarks')->nullable();
             $table->timestamps();
         });
     }
