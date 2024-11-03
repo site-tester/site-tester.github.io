@@ -70,10 +70,10 @@ jobs:
             echo "MAIL_MAILER=smtp" >> .env
             echo "MAIL_HOST=smtp.hostinger.com" >> .env
             echo "MAIL_PORT=465" >> .env
-            echo "MAIL_USERNAME='support@disasterease.com'" >> .env
+            echo "MAIL_USERNAME='support@disasterease.org'" >> .env
             echo "MAIL_PASSWORD='1N7MQ3+aA'" >> .env
             echo "MAIL_ENCRYPTION=ssl" >> .env
-            echo "MAIL_FROM_ADDRESS='support@disasterease.com'" >> .env
+            echo "MAIL_FROM_ADDRESS='support@disasterease.org'" >> .env
             echo "MAIL_FROM_NAME=\"DisasterEase\"" >> .env
             composer2 install --optimize-autoloader --no-dev
             php artisan key:generate

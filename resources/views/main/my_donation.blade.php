@@ -389,23 +389,6 @@
                 responsive: true,
                 autoWidth: false,
             });
-            // $('#historyTable').DataTable({
-            //     ordering: false,
-            //     responsive: true,
-            //     autoWidth: false,
-            // });
-            // $('#notificationTable').DataTable({
-            //     ordering: false,
-            //     responsive: true,
-            //     autoWidth: false,
-            // });
-            // $('#transparencyTable').DataTable({
-            //     responsive: true,
-            //     autoWidth: false,
-            //     searching: false,
-            //     ordering: false,
-            //     lengthChange: false,
-            // });
 
             $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
                 var targetTab = $(e.target).attr("href"); // Get the target tab

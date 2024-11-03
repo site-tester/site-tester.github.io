@@ -33,6 +33,7 @@ class ItemCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/item');
         CRUD::setEntityNameStrings('inventory', 'inventories');
         $this->crud->addButtonFromView('bottom', 'print_button', 'print_button');
+        CRUD::addClause('orderBy', 'expiration_date', 'desc');
     }
 
     /**

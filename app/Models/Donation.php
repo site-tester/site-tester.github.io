@@ -25,6 +25,7 @@ class Donation extends Model
     protected $fillable = [
         'donor_id',
         'barangay_id',
+        'coordinator',
         'type',
         'donation_date',
         'donation_time',

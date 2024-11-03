@@ -203,8 +203,9 @@
                                                 <thead>
                                                     <tr class="donation-food-basket-item">
                                                         <th class="fw-bold">Item</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Qty</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Exp Date</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;"
+                                                            colspan="2">Qty</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Exp. Date</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -218,6 +219,14 @@
                                                                 type="text" placeholder="Item"></td>
                                                         <td><input class="form-control donation_food_item_quantity"
                                                                 min="1" type="number" placeholder="Qty"></td>
+                                                        <td>
+                                                            <select class="form-control donation_food_item_qty_con">
+                                                                <option value="" disabled selected hidden>
+                                                                </option>
+                                                                <option value="Piece/s">Pc/s</option>
+                                                                <option value="Pack/s">Pack/s</option>
+                                                            </select>
+                                                        </td>
                                                         <td><input class="form-control donation_food_item_exp"
                                                                 type="text" placeholder="Exp. Date"></td>
                                                         <td><input class="form-control donation_food_item_image"
@@ -240,8 +249,9 @@
                                                 <thead>
                                                     <tr class="donation-nonfood-basket-item">
                                                         <th class="fw-bold">Item</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Qty</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Condition</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;"
+                                                            colspan="2">Qty</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Condition</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -255,6 +265,14 @@
                                                                 type="text" placeholder="Item"></td>
                                                         <td><input class="form-control donation_nonfood_item_quantity"
                                                                 type="number" placeholder="Qty" min="1"></td>
+                                                        <td>
+                                                            <select class="form-control donation_nonfood_item_qty_con">
+                                                                <option value="" disabled selected hidden>
+                                                                </option>
+                                                                <option value="Piece/s">Pc/s</option>
+                                                                <option value="Pack/s">Pack/s</option>
+                                                            </select>
+                                                        </td>
                                                         <td>
                                                             <select class="form-control donation_nonfood_item_condition"
                                                                 id="conditionSelect">
@@ -286,8 +304,9 @@
                                                 <thead>
                                                     <tr class="donation-medical-basket-item">
                                                         <th class="fw-bold" style="width:100px;">Item</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Qty</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 15%;">Condition</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;"
+                                                            colspan="2">Qty</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Exp. Date</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -301,6 +320,14 @@
                                                                 type="text" placeholder="Item"></td>
                                                         <td><input class="form-control donation_medical_item_quantity"
                                                                 min="1" type="number" placeholder="Qty"></td>
+                                                        <td>
+                                                            <select class="form-control donation_medical_item_qty_con">
+                                                                <option value="" disabled selected hidden>
+                                                                </option>
+                                                                <option value="Piece/s">Pc/s</option>
+                                                                <option value="Pack/s">Pack/s</option>
+                                                            </select>
+                                                        </td>
                                                         <td><input class="form-control donation_medical_item_exp"
                                                                 type="text" placeholder="Exp. Date">
                                                         </td>
@@ -510,15 +537,17 @@
             $('.add-to-donation-food-basket').click(function() {
                 var donationItemName = $('.donation_food_item_name').val();
                 var donationItemQuantity = $('.donation_food_item_quantity').val();
+                var donationItemQtyCon = $('.donation_food_item_qty_con').val();
                 var donationItemExp = $('.donation_food_item_exp').val();
                 var donationItemImage = $('.donation_food_item_image')[0].files[0]; // Get the image file
 
                 if (donationItemName && donationItemQuantity && donationItemExp && donationItemImage) {
                     var uniqueId = new Date().getTime();
 
+                    var formattedQuantity = donationItemQuantity + ' ' + donationItemQtyCon;
+
                     donationFoodFormData.append('food_name[]', donationItemName); // Use array notation
-                    donationFoodFormData.append('food_quantity[]',
-                        donationItemQuantity); // Use array notation
+                    donationFoodFormData.append('food_quantity[]', formattedQuantity); // Use array notation
                     donationFoodFormData.append('food_expiration[]', donationItemExp); // Use array notation
                     donationFoodFormData.append('food_image[]', donationItemImage); // Use array notation
 
@@ -526,7 +555,7 @@
                     var donationItem = {
                         id: uniqueId,
                         name: donationItemName,
-                        quantity: donationItemQuantity,
+                        quantity: formattedQuantity,
                         expiration: donationItemExp,
                         imagePreview: URL.createObjectURL(
                             donationItemImage) // Generate a preview URL for the image
@@ -540,7 +569,7 @@
                     // Append the new item to the donation basket
                     var newItem = $('<tr class="donation-food-basket-item" data-id="' + uniqueId + '">');
                     newItem.append('<td>' + donationItemName + '</td>');
-                    newItem.append('<td>' + donationItemQuantity + '</td>');
+                    newItem.append('<td colspan="2">' + formattedQuantity + '</td>');
                     newItem.append('<td>' + donationItemExp + '</td>');
                     newItem.append('<td><img src="' + donationItem.imagePreview +
                         '" class="img-thumbnail" width="50"/></td>');
@@ -550,6 +579,7 @@
                     // Clear input fields
                     $('.donation_food_item_name').val('');
                     $('.donation_food_item_quantity').val('');
+                    $('.donation_food_item_qty_con').val('');
                     $('.donation_food_item_exp').val('');
                     $('.donation_food_item_image').val('');
 
@@ -577,6 +607,7 @@
             $('.add-to-donation-nonfood-basket').click(function() {
                 var donationItemName = $('.donation_nonfood_item_name').val();
                 var donationItemQuantity = $('.donation_nonfood_item_quantity').val();
+                var donationItemQtyCon = $('.donation_nonfood_item_qty_con').val();
                 var donationItemCondition = $('.donation_nonfood_item_condition').val();
                 var donationItemImage = $('.donation_nonfood_item_image')[0].files[0]; // Get the image file
 
@@ -584,9 +615,11 @@
                     donationItemCondition) {
                     var uniqueId = new Date().getTime();
 
+                    var formattedQuantity = donationItemQuantity + ' ' + donationItemQtyCon;
+
                     // Create FormData to handle the file upload (for server-side upload)
                     donationNonFoodFormData.append('nonfood_name[]', donationItemName);
-                    donationNonFoodFormData.append('nonfood_quantity[]', donationItemQuantity);
+                    donationNonFoodFormData.append('nonfood_quantity[]', formattedQuantity);
                     donationNonFoodFormData.append('nonfood_condition[]', donationItemCondition);
                     donationNonFoodFormData.append('nonfood_image[]',
                         donationItemImage); // Append the image file
@@ -595,7 +628,7 @@
                     var donationItem = {
                         id: uniqueId,
                         name: donationItemName,
-                        quantity: donationItemQuantity,
+                        quantity: formattedQuantity,
                         condition: donationItemCondition,
                         imagePreview: URL.createObjectURL(
                             donationItemImage) // Generate a preview URL for the image
@@ -609,7 +642,7 @@
                     // Append the new item to the donation basket
                     var newItem = $('<tr class="donation-nonfood-basket-item" data-id="' + uniqueId + '">');
                     newItem.append('<td>' + donationItemName + '</td>');
-                    newItem.append('<td>' + donationItemQuantity + '</td>');
+                    newItem.append('<td colspan="2">' + formattedQuantity + '</td>');
                     newItem.append('<td>' + donationItemCondition + '</td>');
                     newItem.append('<td><img src="' + donationItem.imagePreview +
                         '" class="img-thumbnail" width="50"/></td>');
@@ -620,6 +653,7 @@
                     // Clear input fields
                     $('.donation_nonfood_item_name').val('');
                     $('.donation_nonfood_item_quantity').val('');
+                    $('.donation_nonfood_item_qty_con').val('');
                     $('.donation_nonfood_item_condition').val('');
                     $('.donation_nonfood_item_image').val('');
 
@@ -647,6 +681,7 @@
             $('.add-to-donation-medical-basket').click(function() {
                 var donationItemName = $('.donation_medical_item_name').val();
                 var donationItemQuantity = $('.donation_medical_item_quantity').val();
+                var donationItemQtyCon = $('.donation_medical_item_qty_con').val();
                 var donationItemCondition = $('.donation_medical_item_exp').val();
                 var donationItemImage = $('.donation_medical_item_image')[0].files[0]; // Get the image file
 
@@ -654,9 +689,11 @@
                     donationItemCondition) {
                     var uniqueId = new Date().getTime();
 
+                    var formattedQuantity = donationItemQuantity + ' ' + donationItemQtyCon;
+
                     // Create FormData to handle the file upload (for server-side upload)
                     donationMedicalFormData.append('medical_name[]', donationItemName);
-                    donationMedicalFormData.append('medical_quantity[]', donationItemQuantity);
+                    donationMedicalFormData.append('medical_quantity[]', formattedQuantity);
                     donationMedicalFormData.append('medical_condition[]', donationItemCondition);
                     donationMedicalFormData.append('medical_image[]',
                         donationItemImage); // Append the image file
@@ -665,7 +702,7 @@
                     var donationItem = {
                         id: uniqueId,
                         name: donationItemName,
-                        quantity: donationItemQuantity,
+                        quantity: formattedQuantity,
                         condition: donationItemCondition,
                         imagePreview: URL.createObjectURL(
                             donationItemImage) // Generate a preview URL for the image
@@ -679,7 +716,7 @@
                     // Append the new item to the donation basket
                     var newItem = $('<tr class="donation-medical-basket-item" data-id="' + uniqueId + '">');
                     newItem.append('<td>' + donationItemName + '</td>');
-                    newItem.append('<td>' + donationItemQuantity + '</td>');
+                    newItem.append('<td colspan="2">' + formattedQuantity + '</td>');
                     newItem.append('<td>' + donationItemCondition + '</td>');
                     newItem.append('<td><img src="' + donationItem.imagePreview +
                         '" class="img-thumbnail" width="50"/></td>');
@@ -690,6 +727,7 @@
                     // Clear input fields
                     $('.donation_medical_item_name').val('');
                     $('.donation_medical_item_quantity').val('');
+                    $('.donation_medical_item_qty_con').val('');
                     $('.donation_medical_item_exp').val('');
                     $('.donation_medical_item_image').val('');
 

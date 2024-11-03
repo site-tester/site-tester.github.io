@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('donation_id');
             $table->string('item_name');
-            $table->integer('quantity');
+            $table->string('quantity');
             $table->date('expiration_date')->nullable();
             $table->string('condition')->nullable();
             $table->string('image_path');

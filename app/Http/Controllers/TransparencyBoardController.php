@@ -38,7 +38,7 @@ class TransparencyBoardController extends Controller
         // Get donations and include donation items
         $donations = $query->get()->map(function ($donation) {
             return [
-                'barangay_rep' => $donation->barangay->barangayRep->name,
+                'coordinator' => $donation->coordinator ?? '-',
                 'anonymous' => $donation->anonymous,
                 'donor_name' => $donation->donor->name,
                 'donation_date' => $donation->donation_date,

@@ -15,8 +15,8 @@
                 <td>{{ $item->expiration_date ?? ($item->condition ?? 'N/A') }}</td>
                 <td>
                     @if ($item->image_path)
-                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="Item Image" width="100"
-                            height="100">
+                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="Item Image" height="100">
+                        {{-- <img src="/storage/app/public/{{$item->image_path}}" alt="Item Image" height="100"> --}}
                     @else
                         No Image Available
                     @endif

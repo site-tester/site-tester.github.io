@@ -177,23 +177,6 @@
                 responsive: true,
                 autoWidth: false,
             });
-            // $('#historyTable').DataTable({
-            //     ordering: false,
-            //     responsive: true,
-            //     autoWidth: false,
-            // });
-            // $('#notificationTable').DataTable({
-            //     ordering: false,
-            //     responsive: true,
-            //     autoWidth: false,
-            // });
-            // $('#transparencyTable').DataTable({
-            //     responsive: true,
-            //     autoWidth: false,
-            //     searching: false,
-            //     ordering: false,
-            //     lengthChange: false,
-            // });
 
             $('#filterButton').on('click', function() {
                 const barangayId = $('#barangayFilter').val();
@@ -228,7 +211,7 @@
                                 const donationEntry = `
                         <tr>
                             <td class="h6">${donation.barangay_name}</td>
-                            <td class="h6">${donation.barangay_rep}</td>
+                            <td class="h6">${donation.coordinator}</td>
                             <td class="h6">${donation.anonymous == 'true' ? 'Anonymous Donor' : donation.donor_name}</td>
                             <td class="h6">${new Date(donation.donation_date).toLocaleDateString()}</td>
                             <td class="h6">${donation.donation_type}</td>

@@ -87,6 +87,15 @@ class DonationCrudController extends CrudController
         }
 
         CRUD::addColumn([
+            'name' => 'id',
+            'label' => 'Donation ID',
+        ]);
+        CRUD::addColumn([
+            'name' => 'coordinator',
+            'label' => 'Coordinator',
+        ]);
+
+        CRUD::addColumn([
             'name' => 'donor_id',
             'label' => 'Donor Name',
             'entity' => 'donor',
@@ -151,6 +160,7 @@ class DonationCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
 
         // Field for Donor
         CRUD::addField([
@@ -299,6 +309,48 @@ class DonationCrudController extends CrudController
             'allows_multiple' => false, // Set to true if you want to allow multiple selections
         ]);
 
+        // Coordinator Field Wrapper (hidden initially)
+        CRUD::addField([
+            'name' => 'coordinator',
+            'label' => 'Coordinator',
+            'type' => 'text',
+            'wrapper' => [
+                'class' => 'd-none', // Hide by default using Bootstrap class 'd-none'
+                'id' => 'coordinator-wrapper',  // Add an ID to target it in JavaScript
+            ],
+            'default' => isset($this->crud->getCurrentEntry()->coordinator)
+                ? $this->crud->getCurrentEntry()->coordinator
+                : '', // Set default value if coordinator exists
+        ]);
+
+        // JavaScript to control the visibility of the Coordinator field
+        CRUD::addField([
+            'name' => 'script',
+            'type' => 'custom_html',
+            'value' => '
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const statusField = document.querySelector("select[name=\'status\']");
+                const coordinatorWrapper = document.getElementById("coordinator-wrapper");
+
+                // Function to toggle Coordinator visibility
+                function toggleCoordinatorField() {
+                    if (statusField.value === "Distributed") {
+                        coordinatorWrapper.classList.remove("d-none");
+                    } else {
+                        coordinatorWrapper.classList.add("d-none");
+                        coordinatorWrapper.querySelector("input").value = ""; // Clear the value if hidden
+                    }
+                }
+
+                // Trigger toggle on page load and status change
+                toggleCoordinatorField();
+                statusField.addEventListener("change", toggleCoordinatorField);
+            });
+        </script>
+        '
+        ]);
+
         CRUD::addField([
             'name' => 'proof_document',
             'label' => 'Proof Document',
@@ -321,15 +373,20 @@ class DonationCrudController extends CrudController
 
     public function update(DonationRequest $request)
     {
+        // Retrieve the donation entry before the update for comparison
         $donationBeforeUpdate = $this->crud->getCurrentEntry()->fresh();
-        // dd($donation->isDirty('status'));
+        // Perform the update
         $response = $this->traitUpdate();
+        // Retrieve the updated donation entry
         $donationAfterUpdate = $this->crud->getCurrentEntry();
-        // dd($donationBeforeUpdate->status, $donationAfterUpdate->status);
-        // Check if the status was changed and notify the donor
+        // Check if the 'status' field was modified
         if ($donationBeforeUpdate->status !== $donationAfterUpdate->status) {
-            $donor = $donationAfterUpdate->donor; // Assuming donor relationship is defined in Donation model
-            $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate)); // Send notification to the donor
+            // Retrieve the donor if the relationship exists
+            $donor = $donationAfterUpdate->donor;
+            // Send notification to the donor if they exist
+            if ($donor) {
+                $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate));
+            }
         }
         return $response;
     }
@@ -364,6 +421,11 @@ class DonationCrudController extends CrudController
                         return 'badge badge-default';
                     },
                 ],
+            ],
+            [
+                'name' => 'coordinator',
+                'label' => 'Coordinator',
+                'type' => 'text',
             ],
             [
                 'name' => 'donor_id',
