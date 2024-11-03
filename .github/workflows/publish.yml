@@ -47,7 +47,6 @@ jobs:
           port: 65002 # ${{ secrets.HOSTINGER_SSH_PORT }}
           script: |
             cd ${{ secrets.HOSTINGER_APP_PATH }}
-            mv public/* ./
             # Create .env file with content
             echo "APP_NAME=DisasterEase" > .env
             echo "APP_ENV=production" >> .env
