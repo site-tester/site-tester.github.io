@@ -59,14 +59,15 @@ class RequestDonation extends Model
 
     protected static function booted()
     {
-        static::saved(function ($donation) {
-            if ($donation->status === 'Publish') {
+        static::updating(function ($donation) {
+            // Check if the status is being changed to 'Approved'
+            if ($donation->isDirty('status') && $donation->status === 'Approved') {
                 $donors = User::role('Normal User')->get();
-                $barangay = Barangay::where('barangay_rep_id', Auth::id())->firstOrFail();
-                foreach ($donors as $donor){
+                $barangay = Barangay::where('id', $donation->barangay)->first();
+
+                foreach ($donors as $donor) {
                     $donor->notify(new DonationRequestNotification($donation, $barangay));
                 }
-
             }
         });
     }

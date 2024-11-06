@@ -60,3 +60,20 @@
 	</div>
 </div>
 @endsection
+
+@push('after_scripts')
+    {{-- Include the CDN script here --}}
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+
+    {{-- Optional custom script --}}
+    <script>
+        $(document).ready(function() {
+            // Your custom script to initialize the plugin
+            // $('[data-fancybox="gallery"]').fancybox();
+            Fancybox.bind("[data-fancybox]", {
+                // Your custom options
+            });
+        });
+    </script>
+@endpush

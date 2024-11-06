@@ -24,12 +24,16 @@
         @endif
         <div class="container w-75">
             <div class="my-5 ">
-
+                @if (session('status'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                    @endif
                 <div class="card shadow">
                     <div class=" ">
                         <h3 class="py-3 px-4 mb-0">Profile</h3>
                     </div>
-                    <form class="row" action="{{route('profile.update') }}" method="POST" autocomplete="off">
+                    <form class="row" action="{{ route('profile.update') }}" method="POST" autocomplete="off">
                         @csrf
                         @if ($errors->any())
                             <div class="alert alert-danger">
@@ -110,47 +114,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Security -->
-                            <div id="profile-security-tab" class="tab-pane fade mb-4 p-3 p-md-4">
-                                <div class="">
-                                    <!-- Old Password -->
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="ProfileOldPassword" name="profileOldPassword"
-                                            type="password">
-                                        <label class="small mb-1" for="profileOldPassword">Old Password</label>
-                                        @error('old_password')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <!-- New Password -->
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="ProfilePassword" name="profilePassword"
-                                            type="password">
-                                        <label class="small mb-1" for="profilePassword">New Password</label>
-                                        @error('password')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                        @enderror
-                                    </div>
 
-                                    <!-- Confirm New Password -->
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="ProfilePassword_confirmation"
-                                            name="profilePassword_confirmation" type="password">
-                                        <label class="small mb-1" for="ProfilePassword_confirmation">Confirm New
-                                            Password</label>
-                                        @error('password_confirmation')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-
-                                    <div class="my-4">
-                                        <button class="btn bg-green btn-lg" type="submit">{{ __('Save') }}</button>
-                                    </div>
-                                    <!-- Save changes button-->
-
-                                </div>
-                            </div>
                             {{-- Others --}}
                             @isset($profile->other_details)
                                 <div id="profile-org-tab" class="tab-pane fade mb-4 p-3 p-md-4">
@@ -172,8 +136,29 @@
                                     </div>
                                 </div>
                             @endisset
-                        </div>
                     </form>
+                    <!-- Security -->
+                    <div id="profile-security-tab" class="tab-pane fade mb-4 p-3 p-md-4">
+                        <div class="">
+                            <form method="POST" action="{{ route('password.email') }}">
+                                @csrf
+                                <div class="form-floating mb-3">
+                                    <input id="email" type="email" class="form-control" name="email"
+                                        value="{{ Auth::user()->email }}" required autocomplete="email" hidden>
+
+                                    <div class="my-4 text-center">
+                                        <button class="btn bg-green btn-lg w-50"
+                                            type="submit">{{ __('Send Password Reset Link') }}</button>
+                                    </div>
+                                    <!-- Save changes button-->
+
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+
                 </div>
             </div>
         </div>

@@ -273,9 +273,9 @@ class DonationCrudController extends CrudController
             'name' => 'donation_date',
             'label' => 'Appointment Date',
             'type' => 'date',
-            'attributes' => [
-                'min' => Carbon::now()->format('Y-m-d'),
-            ]
+            // 'attributes' => [
+            //     'min' => Carbon::now()->format('Y-m-d'),
+            // ]
         ]);
 
         $this->crud->addField([
@@ -355,6 +355,7 @@ class DonationCrudController extends CrudController
             'name' => 'proof_document',
             'label' => 'Proof Document',
             'type' => 'upload',
+            'disk'   => 'uploads',
             'wrapper' => [
                 'class' => 'form-group d-none', // Start hidden
             ],

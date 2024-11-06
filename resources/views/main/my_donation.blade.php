@@ -55,16 +55,20 @@
             <div class="row border-top m-0">
                 <div class=" mx-0 px-0 ">
                     <div class="nav nav-pills" id="pills-tab" role="tablist">
-                        <a class="nav-link active text-nowrap" href="{{ route('my.donation') }}" role="tab" aria-selected="true">Dashboard</a>
-                        <a class="nav-link text-nowrap" href="{{ route('my.donation.notification') }}" role="tab" aria-selected="false">Notifications
+                        <a class="nav-link active text-nowrap" href="{{ route('my.donation') }}" role="tab"
+                            aria-selected="true">Dashboard</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.notification') }}" role="tab"
+                            aria-selected="false">Notifications
                             @if (Auth::user()->unreadNotifications->count() > 0)
                                 <span class="text-bg-danger badge text-center">
                                     {{ Auth::user()->unreadNotifications->count() }}
                                 </span>
                             @endif
                         </a>
-                        <a class="nav-link text-nowrap" href="{{ route('my.donation.history') }}" role="tab" aria-selected="false">Donation History</a>
-                        <a class="nav-link text-nowrap" href="{{ route('my.donation.transparency') }}" role="tab" aria-selected="false">Transparency Board</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.history') }}" role="tab"
+                            aria-selected="false">Donation History</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.transparency') }}" role="tab"
+                            aria-selected="false">Transparency Board</a>
                     </div>
 
 
@@ -390,7 +394,7 @@
                 autoWidth: false,
             });
 
-            $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+            $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function(e) {
                 var targetTab = $(e.target).attr("href"); // Get the target tab
                 var table = $(targetTab).find('table').DataTable(); // Get the DataTable instance
                 if ($.fn.DataTable.isDataTable(table.table().node())) {
@@ -544,6 +548,10 @@
                 <p><strong>Donation ID:</strong> ${data.id}</p>
                 <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
                 <p><strong>Donation Status:</strong> ${data.status}</p>
+                <p><strong>Donation Proof:</strong>
+                    ${ data.proof ? `<a href="${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
+                </p>
+                <p><strong>Donation Remarks:</strong> ${data.remarks ?? ' -'}</p>
                 <p><strong>Donation Items:</strong></p>
                 ${itemsHtml}
                 <!-- Add other fields as needed -->

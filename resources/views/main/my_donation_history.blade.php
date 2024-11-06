@@ -323,6 +323,7 @@
                 <p><strong>Donation ID:</strong> ${data.id}</p>
                 <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
                 <p><strong>Donation Status:</strong> ${data.status}</p>
+                <p><strong>Donation Remarks:</strong> ${data.remarks ?? ' -'}</p>
                 <p><strong>Donation Items:</strong></p>
                 ${itemsHtml}
                 <!-- Add other fields as needed -->

@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         //Role Table
-        $roles = ['Content Manager', 'Barangay Representative', 'Normal User'];
+        $roles = ['Municipal Admin', 'Content Manager', 'Barangay Representative', 'Normal User'];
 
         foreach ($roles as $role) {
             Role::create([
@@ -96,6 +96,10 @@ class RoleSeeder extends Seeder
         $cms = User::where('email', 'cms@email.com')->first();
         $cmsRole = Role::where('name', 'Content Manager')->first();
         $cms->assignRole($cmsRole);
+
+        $admin = User::where('email', 'admin@email.com')->first();
+        $adminRole = Role::where('name', 'Municipal Admin')->first();
+        $admin->assignRole($adminRole);
 
         // $admin = User::where('email', 'admin@email.com')->first();
         // $adminRole = Role::where('name', 'System Admin')->first();

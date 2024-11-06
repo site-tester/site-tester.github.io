@@ -100,7 +100,7 @@
                                 <li>
                                 @endhasrole
                                 {{--  --}}
-                                @hasanyrole('Barangay Representative|Content Manager')
+                                @hasanyrole('Barangay Representative|Content Manager|Muncipal Admin')
                                 <li class="dropdown-item text-center">
                                     <a class=" btn btn-success text-nowrap fw-bolder mx-2" href="/admin">Admin Dashboard</a>
                                 <li>

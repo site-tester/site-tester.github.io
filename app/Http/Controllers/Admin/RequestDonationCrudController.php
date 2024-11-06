@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Barangay;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Http\Requests\RequestDonationRequest;
@@ -30,6 +31,7 @@ class RequestDonationCrudController extends CrudController
         CRUD::setModel(\App\Models\RequestDonation::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/request-donation');
         CRUD::setEntityNameStrings('Request Donation', 'Request Donations');
+
     }
 
     /**
@@ -40,12 +42,18 @@ class RequestDonationCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        if (auth()->user()->hasRole('Barangay Representative')) {
+            // $this->crud->removeAllButtons();
+            $this->crud->removeButton('update');
+        }
         CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+
 
 
     }
@@ -84,7 +92,7 @@ class RequestDonationCrudController extends CrudController
             'type' => 'select_from_array', // Use select2 for better UX
             'options' => [
                 'Food' => 'Food',
-                'NonFood' => 'NonFood',
+                'NonFood' => 'Non Food',
                 'Medical' => 'Medical',
             ],
             'allows_multiple' => false, // Set to true if you want to allow multiple selections
@@ -94,21 +102,31 @@ class RequestDonationCrudController extends CrudController
             'name' => 'date_requested',
             'label' => 'Date Requested',
             'type' => 'date',
-
         ]);
+
+        // Add hidden field for the barangay that the user represents
+        $userBarangay = Barangay::where('barangay_rep_id', auth()->id())->first();
+        if ($userBarangay) {
+            CRUD::addField([
+                'name' => 'barangay',
+                'type' => 'hidden',
+                'value' => $userBarangay->id,
+            ]);
+        }
 
         // Field for Status
-        CRUD::addField([
-            'name' => 'status',
-            'label' => 'Status',
-            'type' => 'select_from_array',
-            'options' => [
-                'Draft' => 'Draft',
-                'Publish' => 'Publish',
-                'Closed' => 'Closed',
-            ],
-            'allows_multiple' => false, // Set to true if you want to allow multiple selections
-        ]);
+        if (auth()->user()->hasRole('Municipal Admin')) {
+            CRUD::addField([
+                'name' => 'status',
+                'label' => 'Status',
+                'type' => 'select_from_array',
+                'options' => [
+                    'Pending Approval' => 'Pending Approval',
+                    'Approved' => 'Approved',
+                ],
+                'allows_multiple' => false,
+            ]);
+        }
     }
 
     /**

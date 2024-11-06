@@ -162,13 +162,13 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]);
 
-            // User::create([
-            //     'name'           => 'System Admin',
-            //     'email'          => 'admin@email.com',
-            //     'password'       => bcrypt('password'),
-            //     'remember_token' => Str::random(60),
-            //     'email_verified_at' => now(),
-            // ]);
+            User::create([
+                'name'           => 'Municipal Admin',
+                'email'          => 'admin@email.com',
+                'password'       => bcrypt('password'),
+                'remember_token' => Str::random(60),
+                'email_verified_at' => now(),
+            ]);
         }
     }
 }

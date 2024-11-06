@@ -164,7 +164,7 @@
                                     <div class="col-12 col-md-4 mb-3">
                                         <input type="radio" class="btn-check" name="donation_type" id="btncheck1"
                                             autocomplete="off" value="Food"
-                                            {{ $donation_type === 'Food' ? 'checked' : '' }} />
+                                            {{ $donation_type === 'Food' || $donation_type === null ? 'checked' : '' }} />
                                         <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
                                             for="btncheck1">Food</label>
                                     </div>
@@ -345,6 +345,8 @@
                                     <small id="additionalNote" class="fw-bold text-end " style="display: block;">
                                         * If the expiration date of an item is different from others, please add it as a new
                                         item.
+                                        <br>
+                                        *Ensure the expiration date is clearly visible in your photo. If not, you may need to resubmit the form with a clearer image.
                                     </small>
                                 </div>
                             </div>
@@ -367,22 +369,22 @@
                                             <!-- Time slot radio buttons -->
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time9"
-                                                    value="09:00 AM - 10:00 AM" autocomplete="off">
+                                                <input type="radio" class="btn-check " name="time_slot" id="time9"
+                                                    value="09:00 AM - 10:00 AM" autocomplete="off" disabled>
                                                 <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
                                                     for="time9">9:00 AM - 10:00 AM</label>
                                             </div>
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time10"
-                                                    value="10:00 AM - 11:00 AM" autocomplete="off">
+                                                <input type="radio" class="btn-check " name="time_slot" id="time10"
+                                                    value="10:00 AM - 11:00 AM" autocomplete="off" disabled>
                                                 <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
                                                     for="time10">10:00 AM - 11:00 AM</label>
                                             </div>
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time11"
-                                                    value="11:00 AM - 12:00 PM" autocomplete="off">
+                                                <input type="radio" class="btn-check " name="time_slot" id="time11"
+                                                    value="11:00 AM - 12:00 PM" autocomplete="off" disabled>
                                                 <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
                                                     for="time11">11:00 AM - 12:00 PM</label>
                                             </div>
@@ -392,22 +394,22 @@
                                         <div class="row mb-1">
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time13"
-                                                    value="01:00 PM - 02:00 PM" autocomplete="off">
+                                                <input type="radio" class="btn-check " name="time_slot" id="time13"
+                                                    value="01:00 PM - 02:00 PM" autocomplete="off" disabled>
                                                 <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
                                                     for="time13">1:00 PM - 2:00 PM</label>
                                             </div>
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time14"
-                                                    value="02:00 PM - 03:00 PM" autocomplete="off">
+                                                <input type="radio" class="btn-check " name="time_slot" id="time14"
+                                                    value="02:00 PM - 03:00 PM" autocomplete="off" disabled>
                                                 <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
                                                     for="time14">2:00 PM - 3:00 PM</label>
                                             </div>
 
                                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                                                <input type="radio" class="btn-check" name="time_slot" id="time15"
-                                                    value="03:00 PM - 04:00 PM" autocomplete="off">
+                                                <input type="radio" class="btn-check " name="time_slot" id="time15"
+                                                    value="03:00 PM - 04:00 PM" autocomplete="off" disabled>
                                                 <label class="btn btn-donate-now border border-dark fs-6 text-nowrap w-100"
                                                     for="time15">3:00 PM - 4:00 PM</label>
                                             </div>
@@ -481,19 +483,48 @@
                 }
             ];
 
-            // Function to disable time slots if they're past the current time
-            function disablePastTimeSlots() {
-                $.each(timeSlots, function(index, slot) {
-                    const [slotEndHours, slotEndMinutes] = slot.end.split(':').map(Number);
+            $('#schedDate').change(function() {
+                const selectedDate = $(this).val(); // Get the selected date from the date picker
+                disablePastTimeSlots(selectedDate);
+            });
 
-                    // Check if the slot time has already passed
-                    if (currentHours > slotEndHours ||
-                        (currentHours === slotEndHours && currentMinutes > slotEndMinutes)) {
-                        // Disable the radio button and style the label
-                        $('#' + slot.id).prop('disabled', true);
-                        $('label[for="' + slot.id + '"]').addClass('disabled'); // Optional styling
-                    }
-                });
+            // Function to disable past time slots if the selected date is today
+            function disablePastTimeSlots(selectedDate) {
+                const currentDate = new Date();
+                const selectedDateObj = new Date(selectedDate); // Convert selectedDate string to a Date object
+
+                // Check if the selected date is today
+                const isToday = selectedDateObj.toDateString() === currentDate.toDateString();
+
+                if (isToday) {
+                    // Get the current time
+                    const currentHours = currentDate.getHours();
+                    const currentMinutes = currentDate.getMinutes();
+
+                    // Loop through the time slots and disable the past ones
+                    $.each(timeSlots, function(index, slot) {
+                        const [slotEndHours, slotEndMinutes] = slot.end.split(':').map(Number);
+
+                        // Disable slots that have already passed
+                        if (currentHours > slotEndHours || (currentHours === slotEndHours &&
+                                currentMinutes > slotEndMinutes)) {
+                            $('#' + slot.id).prop('disabled', true);
+                            $('#' + slot.id).prop('checked', false);
+                            $('label[for="' + slot.id + '"]').addClass('disabled'); // Optional styling
+                        } else {
+                            // Enable future slots
+                            $('#' + slot.id).prop('disabled', false);
+                            $('label[for="' + slot.id + '"]').removeClass(
+                            'disabled'); // Remove styling for enabled slots
+                        }
+                    });
+                } else {
+                    // If it's not today, ensure all slots are enabled
+                    $.each(timeSlots, function(index, slot) {
+                        $('#' + slot.id).prop('disabled', false);
+                        $('label[for="' + slot.id + '"]').removeClass('disabled');
+                    });
+                }
             }
 
             // Call the function to disable past time slots
@@ -533,6 +564,7 @@
             var donationFoodFormData = new FormData();
             var donationNonFoodFormData = new FormData();
             var donationMedicalFormData = new FormData();
+            var removedItemIds = [];
 
             $('.add-to-donation-food-basket').click(function() {
                 var donationItemName = $('.donation_food_item_name').val();
@@ -546,10 +578,14 @@
 
                     var formattedQuantity = donationItemQuantity + ' ' + donationItemQtyCon;
 
-                    donationFoodFormData.append('food_name[]', donationItemName); // Use array notation
-                    donationFoodFormData.append('food_quantity[]', formattedQuantity); // Use array notation
-                    donationFoodFormData.append('food_expiration[]', donationItemExp); // Use array notation
-                    donationFoodFormData.append('food_image[]', donationItemImage); // Use array notation
+                    donationFoodFormData.append(`food_name_${uniqueId}`,
+                        donationItemName); // Use array notation
+                    donationFoodFormData.append(`food_quantity_${uniqueId}`,
+                        formattedQuantity); // Use array notation
+                    donationFoodFormData.append(`food_expiration_${uniqueId}`,
+                        donationItemExp); // Use array notation
+                    donationFoodFormData.append(`food_image_${uniqueId}`,
+                        donationItemImage); // Use array notation
 
                     // Add item to the basket array
                     var donationItem = {
@@ -587,6 +623,9 @@
                     newItem.find('.remove-item').click(function() {
                         var itemId = $(this).closest('.donation-food-basket-item').data('id');
 
+                        // Track the ID of the removed item
+                        removedItemIds.push(itemId);
+
                         // Remove item from array
                         donationBasketArray = donationBasketArray.filter(function(item) {
                             return item.id !== itemId;
@@ -618,10 +657,10 @@
                     var formattedQuantity = donationItemQuantity + ' ' + donationItemQtyCon;
 
                     // Create FormData to handle the file upload (for server-side upload)
-                    donationNonFoodFormData.append('nonfood_name[]', donationItemName);
-                    donationNonFoodFormData.append('nonfood_quantity[]', formattedQuantity);
-                    donationNonFoodFormData.append('nonfood_condition[]', donationItemCondition);
-                    donationNonFoodFormData.append('nonfood_image[]',
+                    donationNonFoodFormData.append(`nonfood_name_${uniqueId}`, donationItemName);
+                    donationNonFoodFormData.append(`nonfood_quantity_${uniqueId}`, formattedQuantity);
+                    donationNonFoodFormData.append(`nonfood_condition_${uniqueId}`, donationItemCondition);
+                    donationNonFoodFormData.append(`nonfood_image_${uniqueId}`,
                         donationItemImage); // Append the image file
 
                     // Add item to the basket array
@@ -661,6 +700,8 @@
                     newItem.find('.remove-item').click(function() {
                         var itemId = $(this).closest('.donation-nonfood-basket-item').data('id');
 
+                        removedItemIds.push(itemId);
+
                         // Remove item from array
                         nonfoodBasketArray = nonfoodBasketArray.filter(function(item) {
                             return item.id !== itemId;
@@ -692,10 +733,10 @@
                     var formattedQuantity = donationItemQuantity + ' ' + donationItemQtyCon;
 
                     // Create FormData to handle the file upload (for server-side upload)
-                    donationMedicalFormData.append('medical_name[]', donationItemName);
-                    donationMedicalFormData.append('medical_quantity[]', formattedQuantity);
-                    donationMedicalFormData.append('medical_condition[]', donationItemCondition);
-                    donationMedicalFormData.append('medical_image[]',
+                    donationMedicalFormData.append(`medical_name_${uniqueId}`, donationItemName);
+                    donationMedicalFormData.append(`medical_quantity_${uniqueId}`, formattedQuantity);
+                    donationMedicalFormData.append(`medical_condition_${uniqueId}`, donationItemCondition);
+                    donationMedicalFormData.append(`medical_image_${uniqueId}`,
                         donationItemImage); // Append the image file
 
                     // Add item to the basket array
@@ -735,6 +776,8 @@
                     newItem.find('.remove-item').click(function() {
                         var itemId = $(this).closest('.donation-medical-basket-item').data('id');
 
+                        removedItemIds.push(itemId);
+
                         // Remove item from array
                         medicalBasketArray = medicalBasketArray.filter(function(item) {
                             return item.id !== itemId;
@@ -751,6 +794,21 @@
                     alert('Please fill in all fields and upload an image.');
                 }
             });
+
+            function filterFormData(originalFormData) {
+                let newFormData = new FormData();
+                originalFormData.forEach((value, key) => {
+                    let itemId = key.split('_').pop(); // Get unique item ID from the key
+                    if (!removedItemIds.includes(Number(itemId))) {
+                        // Remove the uniqueId suffix from the key
+                        let baseKey = key.replace(/_\d+$/, '') + '[]';
+
+                        // Append to the new FormData without the uniqueId
+                        newFormData.append(baseKey, value);
+                    }
+                });
+                return newFormData;
+            }
 
             $('#submit-donation').on('click', function(event) {
                 event.preventDefault();
@@ -772,19 +830,26 @@
                 combinedFormData.append('time_slot', $('input[name="time_slot"]:checked').val());
 
                 // Append food donation data to combinedFormData
-                for (var pair of donationFoodFormData.entries()) {
+                let filteredFoodData = filterFormData(donationFoodFormData);
+                for (var pair of filteredFoodData.entries()) {
                     combinedFormData.append(pair[0], pair[1]);
                 }
 
                 // Append non-food donation data to combinedFormData
-                for (var pair of donationNonFoodFormData.entries()) {
+                let filteredNonFoodData = filterFormData(donationNonFoodFormData);
+                for (var pair of filteredNonFoodData.entries()) {
                     combinedFormData.append(pair[0], pair[1]);
                 }
 
                 // Append medical donation data to combinedFormData
-                for (var pair of donationMedicalFormData.entries()) {
+                let filteredMedicalData = filterFormData(donationMedicalFormData);
+                for (var pair of filteredMedicalData.entries()) {
                     combinedFormData.append(pair[0], pair[1]);
                 }
+
+                // combinedFormData.forEach((value, key) => {
+                //     console.log(key, value);
+                // });
 
                 // Perform AJAX request with combinedFormData
                 $.ajax({

@@ -64,7 +64,7 @@
                         <div class="row text-greener">
                             <div class="col-12 text-center">
                                 <div class="counter-number">{{ $donationGiven }}
-                                    <span class="h2 fs-normal">Total Goods Delivered{{$donationGiven > 1 ?'s': '' }}
+                                    <span class="h2 fs-normal">Total Goods Delivered
                                 </span>
                                 </div>
                             </div>

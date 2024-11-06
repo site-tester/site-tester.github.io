@@ -23,7 +23,7 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        if ($user->hasRole('Content Manager') || $user->hasRole('Barangay')) {
+        if ($user->hasRole('Content Manager') || $user->hasRole('Barangay') || $user->hasRole('Municipal Admin')) {
             return redirect()->route('backpack.dashboard'); // Redirect to admin dashboard
         // } elseif ($user->hasRole('Barangay')) {
         //     return redirect()->route('barangay.dashboard'); // Redirect to trainer dashboard

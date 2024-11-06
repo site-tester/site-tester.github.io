@@ -271,9 +271,9 @@ class PermissionSeeder extends Seeder
         // Assign all existing permissions to Content Manager Role
         $cmsRole->givePermissionTo($cmsPermissions);
 
-        // // Get the System Admin role
-        // $cmsRole = Role::findByName('System Admin');
-        // // Assign all existing permissions to System Admin Role
-        // $cmsRole->givePermissionTo(Permission::all());
+        // Get the Municipal Admin role
+        $adminRole = Role::findByName('Municipal Admin');
+        // Assign all existing permissions to Municipal Admin Role
+        $adminRole->givePermissionTo($cmsPermissions);
     }
 }

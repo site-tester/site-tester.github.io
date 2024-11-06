@@ -102,8 +102,6 @@ class DonationController extends Controller
             }
 
             return response()->json(['success' => true, 'redirect_url' => route('donation.confirmation.page')]);
-            // $toSee = $request->food_name;
-            // return response()->json($toSee);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -276,6 +274,8 @@ class DonationController extends Controller
             'id' => $donation->id,
             'created_at' => $donation->created_at,
             'status' => $donation->status,
+            'remarks' => $donation->remarks,
+            'proof' => $donation->proof_document,
             'items' => $donation->donationItems, // Assuming donationItems is the relationship name
         ];
 
