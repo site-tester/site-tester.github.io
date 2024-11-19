@@ -94,7 +94,7 @@
     --tblr-danger-text: var(--tblr-danger);
     --tblr-navbar-border-color: transparent;
 }
-/*
+
 [data-bs-theme=dark], [data-menu-theme=dark] {
     --tblr-body-color: var(--tblr-gray-400);
     --tblr-body-color-rgb: 160, 155, 190;
@@ -156,4 +156,4 @@
     --tblr-navbar-color: rgba(255, 255, 255, 0.7);
     --tblr-bg-surface-tertiary: #ffffff02;
     --tblr-navbar-border-color: transparent;
-} */
+}

@@ -23,7 +23,9 @@ class RequestDonation extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-    // protected $fillable = [];
+    protected $fillable = [
+        'barangay_id'
+    ];
     // protected $hidden = [];
 
     /*
@@ -37,7 +39,10 @@ class RequestDonation extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'barangay_id');
+    }
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -61,14 +66,14 @@ class RequestDonation extends Model
     {
         static::updating(function ($donation) {
             // Check if the status is being changed to 'Approved'
-            if ($donation->isDirty('status') && $donation->status === 'Approved') {
-                $donors = User::role('Normal User')->get();
-                $barangay = Barangay::where('id', $donation->barangay)->first();
+            // if ($donation->isDirty('status') && $donation->status === 'Approved') {
+            //     $donors = User::role('Normal User')->get();
+            //     $barangay = Barangay::where('id', $donation->barangay)->first();
 
-                foreach ($donors as $donor) {
-                    $donor->notify(new DonationRequestNotification($donation, $barangay));
-                }
-            }
+            //     foreach ($donors as $donor) {
+            //         $donor->notify(new DonationRequestNotification($donation, $barangay));
+            //     }
+            // }
         });
     }
 }

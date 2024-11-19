@@ -52,7 +52,7 @@ class BarangayCrudController extends CrudController
         CRUD::addColumn([
             'name' => 'name',
             'label' => 'Barangay Name'
-        ]); // Assuming you have a 'name' column for the barangay
+        ]); 
         CRUD::addColumn([
             'name' => 'barangay_rep_id',
             'label' => 'Barangay Representative',
@@ -62,9 +62,21 @@ class BarangayCrudController extends CrudController
             'pivot' => false,
 
         ]);
+
+
         CRUD::addColumn([
             'name' => 'location',
             'label' => 'Location'
+        ]);
+
+        CRUD::addColumn([
+            'name' => 'email',
+            'label' => 'Email',
+            'entity' => 'barangayRep', // Name of the relationship method in Barangay model
+            'model' => 'App\Models\User', // Your User model
+            'attribute' => 'email', // Displayed attribute from the user
+            'pivot' => false,
+
         ]);
 
     }

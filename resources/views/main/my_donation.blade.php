@@ -536,7 +536,7 @@
                         <td>${item.item_name}</td>
                         <td>${item.quantity}</td>
                         <td>${item.expiration_date ?? item.condition ?? 'N/A'}</td>
-                        <td><img src="/storage/${item.image_path}" alt="Donation Image" height="100"></td>
+                        <td><img src="/storage/app/public/${item.image_path}" alt="Donation Image" height="100"></td>
                     </tr>
                 `;
                     });
@@ -549,7 +549,7 @@
                 <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
                 <p><strong>Donation Status:</strong> ${data.status}</p>
                 <p><strong>Donation Proof:</strong>
-                    ${ data.proof ? `<a href="${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
+                    ${ data.proof ? `<a href="/storage/app/public/uploads/proofs/${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
                 </p>
                 <p><strong>Donation Remarks:</strong> ${data.remarks ?? ' -'}</p>
                 <p><strong>Donation Items:</strong></p>

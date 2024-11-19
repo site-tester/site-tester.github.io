@@ -74,7 +74,7 @@
             </div>
         </section>
 
-        <section id="carousel" class="container card bg-greener">
+        <section id="carousel" class="container card bg-greener mb-4">
             <div class="owl-carousel ">
                 <div class="row align-items-center">
                     <div class="col-12 col-md-5">
@@ -357,7 +357,32 @@
                 </div>
             </div>
         </section>
-
+        @if(false)
+        {{-- @if(!$latestNews->isEmpty()) --}}
+        <div class="container mb-5">
+            <h2>Latest News</h2>
+            <div class="row">
+                @foreach ($latestNews as $news)
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            @if($news->image)
+                                <img src="{{ asset('storage/' . $news->image) }}" class="card-img-top" alt="{{ $news->title }}">
+                            @endif
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $news->title }}</h5>
+                                <p class="card-text">{!! Str::limit($news->content, 100) !!}</p>
+                                <a href="#" class="btn bg-green float-end">Read More</a>
+                                {{-- {{ route('news.show', $news->id) }} --}}
+                            </div>
+                            <div class="card-footer text-muted">
+                                Published on {{ \Carbon\Carbon::parse($news->date)->format('M d, Y') }}
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
         <section id="contact" class="container-fluid py-5" style="background: rgba(18,79,31,0.2)">
             <div class="container px-5 m-auto row text-center justify-content-center">
                 <h1 class="col-12 fw-bolder mb-4">Contact Us</h1>

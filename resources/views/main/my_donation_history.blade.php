@@ -311,7 +311,7 @@
                         <td>${item.item_name}</td>
                         <td>${item.quantity}</td>
                         <td>${item.expiration_date ?? item.condition ?? 'N/A'}</td>
-                        <td><img src="/storage/${item.image_path}" alt="Donation Image" height="100"></td>
+                        <td><img src="/storage/app/public/${item.image_path}" alt="Donation Image" height="100"></td>
                     </tr>
                 `;
                     });

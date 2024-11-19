@@ -28,32 +28,39 @@ class UserCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/users');
         CRUD::setEntityNameStrings('user', 'users');
     }
 
-    /**
-     * Define what happens when the List operation is loaded.
-     *
-     * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
-     * @return void
-     */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
-
+        $this->crud->query->whereHas('roles', function ($query) {
+            $query->where('name', 'Normal User'); // Adjust 'Normal User' to your exact role name
+        });
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+        CRUD::addColumn([
+            'name' => 'name',
+            'label' => 'Name'
+        ]);
+        CRUD::addColumn([
+            'name' => 'email',
+            'label' => 'Email'
+        ]);
+
+        CRUD::addColumn([ // n-n relationship (with pivot table)
+            'label'     => trans('backpack::permissionmanager.roles'), // Table column heading
+            'type'      => 'select_multiple',
+            'name'      => 'roles', // the method that defines the relationship in your Model
+            'entity'    => 'roles', // the method that defines the relationship in your Model
+            'attribute' => 'name', // foreign key attribute that is shown to user
+            'model'     => config('permission.models.role'), // foreign key model
+        ]);
+
     }
 
-    /**
-     * Define what happens when the Create operation is loaded.
-     *
-     * @see https://backpackforlaravel.com/docs/crud-operation-create
-     * @return void
-     */
     protected function setupCreateOperation()
     {
         // CRUD::setValidation(UserRequest::class);
@@ -68,12 +75,7 @@ class UserCrudController extends CrudController
         CRUD::field('password')->validationRules('required');
     }
 
-    /**
-     * Define what happens when the Update operation is loaded.
-     *
-     * @see https://backpackforlaravel.com/docs/crud-operation-update
-     * @return void
-     */
+
     protected function setupUpdateOperation()
     {
         // $this->setupCreateOperation();

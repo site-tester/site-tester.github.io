@@ -52,52 +52,10 @@ class PermissionSeeder extends Seeder
             'add_cms',
             'delete_cms',
 
-            // Landing
-            'browse_landing',
-            'read_landing',
-            'edit_landing',
-            'add_landing',
-            'delete_landing',
-
-            // Terms
-            'browse_terms',
-            'read_terms',
-            'edit_terms',
-            'add_terms',
-            'delete_terms',
-
-            // Events
-            'browse_events',
-            'read_events',
-            'edit_events',
-            'add_events',
-            'delete_events',
-
-            // News
-            'browse_news',
-            'read_news',
-            'edit_news',
-            'add_news',
-            'delete_news',
-
-            // Announcements
-            'browse_announcements',
-            'read_announcements',
-            'edit_announcements',
-            'add_announcements',
-            'delete_announcements',
-
             // End CMS Permissions
 
 
             // Barangay Permissions
-
-            // Notification
-            'browse_notification',
-            'read_notification',
-            'edit_notification',
-            'add_notification',
-            'delete_notification',
 
             // Donate
             'browse_donate',
@@ -106,30 +64,11 @@ class PermissionSeeder extends Seeder
             'add_donate',
             'delete_donate',
 
-            // Donations Management
-            // 'browse_donations',
-            // 'read_donations',
-            // 'edit_donations',
-            // 'add_donations',
-            // 'delete_donations',
-
-            'browse_donations_status',
-            'read_donations_status',
-            'edit_donations_status',
-            'add_donations_status',
-            'delete_donations_status',
-
             'browse_barangay',
             'read_barangay',
             'edit_barangay',
             'add_barangay',
             'delete_barangay',
-
-            'browse_donation_transparency_board',
-            'read_donation_transparency_board',
-            'edit_donation_transparency_board',
-            'add_donation_transparency_board',
-            'delete_donation_transparency_board',
 
             // Inventory Management
             'browse_inventory',
@@ -138,16 +77,12 @@ class PermissionSeeder extends Seeder
             'add_inventory',
             'delete_inventory',
 
-            'browse_generate_inventory_report',
-
-            // Donor Coordination
-            'read_donation_history',
-
-            // Logging and Documentation
-            'generate_donation_report',
-            'update_donation_log',
-
             // End Barangay Permissions
+
+            // New Permissions
+            'browse_disaster_report',
+            'browse_disaster_report_verification',
+            'browse_dashboard_municipal',
         ];
 
 
@@ -158,39 +93,30 @@ class PermissionSeeder extends Seeder
         // Assign Permission to specific Role
         // Define the Barangay-specific permissions
         $barangayPermissions = [
-            'browse_notification',
-            'read_notification',
-            'edit_notification',
-            'add_notification',
-            'delete_notification',
             'browse_donate',
             'read_donate',
             'edit_donate',
             'add_donate',
             'delete_donate',
-            'browse_donations_status',
-            'read_donations_status',
-            'edit_donations_status',
-            'add_donations_status',
-            'delete_donations_status',
-            'browse_donation_transparency_board',
-            'read_donation_transparency_board',
-            'edit_donation_transparency_board',
-            'add_donation_transparency_board',
-            'delete_donation_transparency_board',
             'browse_inventory',
             'read_inventory',
             'edit_inventory',
             'add_inventory',
             'delete_inventory',
-            'browse_generate_inventory_report',
-            'read_donation_history',
-            'generate_donation_report',
-            'update_donation_log',
             'browse_dashboard',
+            'browse_disaster_report',
         ];
 
         $cmsPermissions = [
+            'browse_cms',
+            'read_cms',
+            'edit_cms',
+            'add_cms',
+            'delete_cms',
+        ];
+
+        $adminPermissions = [
+            'browse_dashboard_municipal',
             'browse_auth',
             'read_auth',
             'edit_auth',
@@ -211,56 +137,13 @@ class PermissionSeeder extends Seeder
             'edit_permissions',
             'add_permissions',
             'delete_permissions',
-            'browse_cms',
-            'read_cms',
-            'edit_cms',
-            'add_cms',
-            'delete_cms',
-            'browse_landing',
-            'read_landing',
-            'edit_landing',
-            'add_landing',
-            'delete_landing',
-            'browse_terms',
-            'read_terms',
-            'edit_terms',
-            'add_terms',
-            'delete_terms',
-            'browse_events',
-            'read_events',
-            'edit_events',
-            'add_events',
-            'delete_events',
-            'browse_news',
-            'read_news',
-            'edit_news',
-            'add_news',
-            'delete_news',
-            'browse_announcements',
-            'read_announcements',
-            'edit_announcements',
-            'add_announcements',
-            'delete_announcements',
             'browse_barangay',
             'read_barangay',
             'edit_barangay',
             'add_barangay',
             'delete_barangay',
-            // 'browse_notification',
-            // 'read_notification',
-            // 'edit_notification',
-            // 'add_notification',
-            // 'delete_notification',
-
+            'browse_disaster_report_verification',
         ];
-
-        // $cmsPermissions = [
-        //     'browse_auth',
-        //     'read_auth',
-        //     'edit_auth',
-        //     'add_auth',
-        // ];
-
 
         // Get the Barangay Representative role
         $brgyRole = Role::findByName('Barangay Representative');
@@ -274,6 +157,6 @@ class PermissionSeeder extends Seeder
         // Get the Municipal Admin role
         $adminRole = Role::findByName('Municipal Admin');
         // Assign all existing permissions to Municipal Admin Role
-        $adminRole->givePermissionTo($cmsPermissions);
+        $adminRole->givePermissionTo($adminPermissions);
     }
 }

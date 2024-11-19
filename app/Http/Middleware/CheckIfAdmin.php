@@ -62,6 +62,8 @@ class CheckIfAdmin
 
         if (Auth::check() && (auth()->user()->hasRole('Content Manager') || auth()->user()->hasRole('Barangay Representative') || auth()->user()->hasRole('Municipal Admin') )) {
             return $next($request);
+        }elseif (Auth::check() && auth()->user()->hasRole('Municipal Admin') ) {
+            return $next($request);
         }
 
         abort(403, 'Unauthorized access.');

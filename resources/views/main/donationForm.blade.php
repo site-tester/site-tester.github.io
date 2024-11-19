@@ -202,10 +202,10 @@
                                             <table class="table table-bordered text-center">
                                                 <thead>
                                                     <tr class="donation-food-basket-item">
-                                                        <th class="fw-bold">Item</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 20%;"
+                                                        <th class="fw-bold" style="width: 25%;">Item</th>
+                                                        <th class="fw-bold text-nowrap"
                                                             colspan="2">Qty</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Exp. Date</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Exp. Date</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -248,10 +248,10 @@
                                             <table class="table table-bordered text-center">
                                                 <thead>
                                                     <tr class="donation-nonfood-basket-item">
-                                                        <th class="fw-bold">Item</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 20%;"
+                                                        <th class="fw-bold" style="width: 25%;">Item</th>
+                                                        <th class="fw-bold text-nowrap"
                                                             colspan="2">Qty</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Condition</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Condition</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -303,10 +303,10 @@
                                             <table class="table table-bordered text-center">
                                                 <thead>
                                                     <tr class="donation-medical-basket-item">
-                                                        <th class="fw-bold" style="width:100px;">Item</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 20%;"
+                                                        <th class="fw-bold" style="width: 25%;">Item</th>
+                                                        <th class="fw-bold text-nowrap"
                                                             colspan="2">Qty</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 10%;">Exp. Date</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Exp. Date</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>

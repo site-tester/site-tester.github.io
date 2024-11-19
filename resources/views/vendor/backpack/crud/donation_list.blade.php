@@ -148,14 +148,14 @@
                     </div>
                 @endif
             </div>
-            <div class="col-3 m-1 overview">
+            {{-- <div class="col-3 m-1 overview">
                 <div class="card py-3 px-4 h-100">
                     <div class="h3">Overview</div>
                     <a href="{{ url()->current() }}?status=pending" class="border-bottom px-1 py-2">Total Pending Request <span class="float-end">{{ $overviewData['pendingDonation'] }}</span></a>
                     <a href="{{ url()->current() }}?date=today" class="border-bottom px-1 py-2">This Day <span class="float-end">{{ $overviewData['thisDayDonation'] }}</span></a>
                     <a href="{{ url()->current() }}?status=approved" class="border-bottom px-1 py-2">Accepted This Day <span class="float-end">{{ $overviewData['approvedDonation'] }}</span></a>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
 

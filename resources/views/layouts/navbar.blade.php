@@ -10,15 +10,23 @@
 
         <div class="collapse navbar-collapse row px-1 px-md-auto justify-content-between" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
-            <ul class="col navbar-nav ms-auto">
+            <ul class="col navbar-nav ms-auto border-start border-white ps-3">
                 @guest
-                    <li class="nav-item"><a class="btn" href="/">Home</a></li>
-                    <li class="nav-item"><a class="btn" href="{{ url('/about-us') }}">About</a></li>
-                    <li class="nav-item"><a class="btn" href="{{ url('/contact-us') }}">Contact</a></li>
+                    <li class="nav-item"><a
+                            class="btn mx-1 {{ Route::currentRouteName() === 'landing' ? 'active fw-bolder' : '' }}"
+                            href="/">Home</a></li>
+                    <li class="nav-item"><a class="btn mx-1 {{ Request::is('about-us') ? 'active fw-bolder' : '' }}"
+                            href="{{ url('/about-us') }}">About</a></li>
+                    <li class="nav-item"><a class="btn mx-1 {{ Request::is('contact-us') ? 'active fw-bolder' : '' }}"
+                            href="{{ url('/contact-us') }}">Contact</a></li>
                 @else
-                    <li class="nav-item"><a class="btn" href="/">Home</a></li>
-                    <li class="nav-item"><a class="btn" href="{{ url('/about-us') }}">About</a></li>
-                    <li class="nav-item"><a class="btn" href="{{ url('/contact-us') }}">Contact</a></li>
+                    <li class="nav-item"><a
+                            class="btn mx-1 {{ Route::currentRouteName() === 'landing' ? 'active fw-bolder' : '' }}"
+                            href="/">Home</a></li>
+                    <li class="nav-item"><a class="btn mx-1 {{ Request::is('about-us') ? 'active fw-bolder' : '' }}"
+                            href="{{ url('/about-us') }}">About</a></li>
+                    <li class="nav-item"><a class="btn mx-1 {{ Request::is('contact-us') ? 'active fw-bolder' : '' }}"
+                            href="{{ url('/contact-us') }}">Contact</a></li>
 
                 @endauth
 
@@ -76,8 +84,9 @@
                                     </a>
                                 </li> --}}
                                 <li>
-                                    <a href="{{route('my.donation')}}" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg"
-                                            width="14.41" height="14.41" viewBox="0 0 14 14">
+                                    <a href="{{ route('my.donation') }}" class="dropdown-item"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="14.41" height="14.41"
+                                            viewBox="0 0 14 14">
                                             <path fill="currentColor" fill-rule="evenodd"
                                                 d="M9.03.22a.75.75 0 1 0-1.06 1.06l.72.72H6.5a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h2.875V3.5a.625.625 0 1 1 1.25 0V8H13.5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-2.19l.72-.72A.75.75 0 0 0 10.97.22l-.97.97zM1.843 7H0v4l1.828 1.828A4 4 0 0 0 4.657 14H10.5a1.5 1.5 0 0 0 0-3H7.723a2.11 2.11 0 0 1-3.515.892l-1.45-1.45a.625.625 0 1 1 .884-.884l1.45 1.45a.86.86 0 0 0 1.306-1.11L4.672 8.172A4 4 0 0 0 1.843 7"
                                                 clip-rule="evenodd" />
@@ -90,17 +99,32 @@
                                         @endif
                                     </a>
                                 </li>
+
                                 <li>
-                                    <hr class="dropdown-divider">
+                                    <a href="{{ route('my.donation') }}" class="dropdown-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-chat-right-heart-fill" viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353zM8 3.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132" />
+                                        </svg>&nbsp;
+                                        Donation Request
+                                        @if (Auth::user()->unreadNotifications->count() > 0)
+                                            <span class="text-bg-danger badge text-center">
+                                                {{ Auth::user()->unreadNotifications->count() }}
+                                            </span>
+                                        @endif
+                                    </a>
                                 </li>
 
-
+                                {{-- <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li class="dropdown-item text-center">
                                     <a class=" btn btn-success text-nowrap fw-bolder mx-2" href="/donate-now">Donate Now</a>
-                                <li>
-                                @endhasrole
-                                {{--  --}}
-                                @hasanyrole('Barangay Representative|Content Manager|Muncipal Admin')
+                                <li> --}}
+                            @endhasrole
+                            {{--  --}}
+                            @hasanyrole('Barangay Representative|Content Manager|Muncipal Admin')
                                 <li class="dropdown-item text-center">
                                     <a class=" btn btn-success text-nowrap fw-bolder mx-2" href="/admin">Admin Dashboard</a>
                                 <li>
