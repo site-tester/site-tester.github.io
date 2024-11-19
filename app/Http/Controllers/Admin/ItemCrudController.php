@@ -33,7 +33,9 @@ class ItemCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/item');
         CRUD::setEntityNameStrings('inventory', 'inventories');
         $this->crud->addButtonFromView('bottom', 'print_button', 'print_button');
-        CRUD::addClause('orderBy', 'expiration_date', 'desc');
+        // CRUD::addClause('orderBy', 'expiration_date', 'asc');
+        CRUD::addClause('orderByRaw', 'expiration_date IS NULL, expiration_date ASC');
+
     }
 
     /**
@@ -92,6 +94,13 @@ class ItemCrudController extends CrudController
         CRUD::addColumn([
             'name' => 'quantity',
             'label' => 'Quantity',
+        ]);
+        
+        CRUD::addColumn([
+            'name' => 'expiration_date',
+            'label' => 'Expiration Date',
+            'type' => 'date', // This specifies the date format
+            'format' => 'YYYY-MM-DD' // Optional: Customize the date format if needed
         ]);
         // CRUD::addColumn([
         //     'name' => 'donation_id',

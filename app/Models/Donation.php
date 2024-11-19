@@ -119,6 +119,10 @@ class Donation extends Model
             if ($donation->status === 'Received') {
                 $donation->addItemsToInventory($donation->id);
             }
+            
+            if ($donation->status === 'Distributed') {
+                $donation->removeItemsFromInventory($donation->id);
+            }
         });
     }
 
@@ -140,6 +144,11 @@ class Donation extends Model
             ]);
         }
 
+    }
+    
+    public function removeItemsFromInventory($id)
+    {
+        \DB::table('inventory')->where('donation_id', $id)->delete();
     }
 
     public function changeDonationStatusLog($donation)

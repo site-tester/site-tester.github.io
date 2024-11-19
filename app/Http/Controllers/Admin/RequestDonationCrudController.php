@@ -32,6 +32,10 @@ class RequestDonationCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/request-donation');
         CRUD::setEntityNameStrings('Request Donation', 'Request Donations');
 
+        if (auth()->user()->hasRole('Municipal Admin')) {
+            $this->crud->denyAccess(['create']);
+        }
+
     }
 
     /**
@@ -46,16 +50,21 @@ class RequestDonationCrudController extends CrudController
             // $this->crud->removeAllButtons();
             $this->crud->removeButton('update');
         }
+
+         CRUD::addColumn([
+            'name' => 'barangay', // The actual field in your database (foreign key)
+            'label' => 'Barangay', // The label you want to display in the column
+             'type' => 'text', // Define it as a select field
+            'entity' => 'barangay', // Define the relationship
+            'attribute' => 'name', // The field from the related model (Barangay) to display
+            'model' => 'App\Models\Barangay', // The model that defines the relation
+        ]);
         CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-
-
-
     }
 
     /**
@@ -138,5 +147,9 @@ class RequestDonationCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function addDisasterReport(){
+        return view('vendor.backpack.ui.addDisasterReport');
     }
 }

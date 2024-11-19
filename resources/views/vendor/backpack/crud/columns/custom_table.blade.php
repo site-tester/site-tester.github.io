@@ -17,9 +17,9 @@
                     @if ($item->image_path)
                         {{-- <img src="/storage/{{$item->image_path}}" alt="Item Image" height="100"> --}}
                         {{-- <img src="/storage/app/public/{{$item->image_path}}" alt="Item Image" height="100"> --}}
-                        <a href="/storage/{{ $item->image_path }}" data-fancybox="gallery"
+                        <a href="/storage/app/public/{{$item->image_path}}" data-fancybox="gallery"
                             data-caption="{{ $item->item_name }}">
-                            <img src="/storage/{{ $item->image_path }}" height="100" />
+                            <img src="/storage/app/public/{{$item->image_path}}" height="100" />
                         </a>
                     @else
                         No Image Available

@@ -48,30 +48,54 @@ class DonationCrudController extends CrudController
     {
         // CRUD::setFromDb(); // set columns from db columns.
         CRUD::setListView('vendor.backpack.crud.donation_list');
+        $show = request()->get('show');
 
-        $this->data['overviewData'] = [
-            'pendingDonation' => Donation::where('status', 'Pending Approval')->count(),
-            'thisDayDonation' => Donation::whereDate('created_at', now()->toDateString())->count(),
-            'approvedDonation' => Donation::whereDate('updated_at', now()->toDateString())->where('status', 'Approved')->count(),
-        ];
-
-        // Apply custom filters based on query parameters
-        if (request()->has('status')) {
-            $status = request('status');
-            if ($status === 'pending') {
-                CRUD::addClause('where', 'status', 'Pending Approval');
-            } elseif ($status === 'approved') {
-                CRUD::addClause('where', 'status', 'Approved');
-                CRUD::addClause('whereDate', 'updated_at', now()->toDateString());
-            }
+        if ($show == 'Active') {
+            // Apply a filter to the query based on the status
+            CRUD::setEntityNameStrings('Active Donation', 'Active Donations');
+            CRUD::addClause('where', 'status', '!=', 'Pending Approval');
+            $this->data['breadcrumbs'] = [
+                trans('backpack::base.dashboard') => backpack_url('dashboard'),
+                'Donations' => false,
+                'Active Donations' => false,
+            ];
         }
 
-        if (request()->has('date')) {
-            $date = request('date');
-            if ($date === 'today') {
-                CRUD::addClause('whereDate', 'created_at', now()->toDateString());
-            }
+        if ($show == 'Pending') {
+            // Apply a filter to the query based on the status
+            CRUD::setEntityNameStrings('Donation Aprroval', 'Donation Aprrovals');
+            CRUD::addClause('where', 'status', '!=', 'Pending Approval');
+            $this->data['breadcrumbs'] = [
+                trans('backpack::base.dashboard') => backpack_url('dashboard'),
+                'Donations' => false,
+                'Active Donations' => false,
+            ];
         }
+
+
+        // $this->data['overviewData'] = [
+        //     'pendingDonation' => Donation::where('status', 'Pending Approval')->count(),
+        //     'thisDayDonation' => Donation::whereDate('created_at', now()->toDateString())->count(),
+        //     'approvedDonation' => Donation::whereDate('updated_at', now()->toDateString())->where('status', 'Approved')->count(),
+        // ];
+
+        // // Apply custom filters based on query parameters
+        // if (request()->has('status')) {
+        //     $status = request('status');
+        //     if ($status === 'pending') {
+        //         CRUD::addClause('where', 'status', 'Pending Approval');
+        //     } elseif ($status === 'approved') {
+        //         CRUD::addClause('where', 'status', 'Approved');
+        //         CRUD::addClause('whereDate', 'updated_at', now()->toDateString());
+        //     }
+        // }
+
+        // if (request()->has('date')) {
+        //     $date = request('date');
+        //     if ($date === 'today') {
+        //         CRUD::addClause('whereDate', 'created_at', now()->toDateString());
+        //     }
+        // }
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -84,6 +108,7 @@ class DonationCrudController extends CrudController
             // dd($barangayId);
             // Add a filter clause to only show donations related to the user's barangay
             CRUD::addClause('where', 'barangay_id', $barangayId->id);
+
         }
 
         CRUD::addColumn([
@@ -355,10 +380,12 @@ class DonationCrudController extends CrudController
             'name' => 'proof_document',
             'label' => 'Proof Document',
             'type' => 'upload',
-            'disk'   => 'uploads',
+            'disk' => 'uploads',
             'wrapper' => [
                 'class' => 'form-group d-none', // Start hidden
             ],
+            'upload' => true, // Use this for handling file uploads
+            'withFiles' => true, // This is set to ensure file support
         ]);
 
         CRUD::addField([

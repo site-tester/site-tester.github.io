@@ -16,8 +16,9 @@ Route::group([
     ),
     'namespace' => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
-    Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index']);
-    Route::crud('user', 'UserCrudController');
+    Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('municipality-dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'adminDashboard']);
+    Route::crud('users', 'UserCrudController');
     Route::crud('barangay', 'BarangayCrudController');
     Route::crud('donation', 'DonationCrudController');
     Route::crud('item', 'ItemCrudController');
@@ -44,6 +45,13 @@ Route::group([
     Route::crud('category', 'CategoryCrudController');
     Route::crud('tag', 'TagCrudController');
     Route::crud('request-donation', 'RequestDonationCrudController');
+    Route::crud('disaster-request', 'DisasterReportCrudController');
+    Route::crud('disaster-report-verification', 'RequestDonationVerificationCrudController');
+    Route::post('update-verification-status/{id}', [
+        'uses' => 'RequestDonationVerificationCrudController@updateStatus',
+        'as' => 'update.verification.status',
+    ]);
+
 }); // this should be the absolute last line of this file
 
 /**

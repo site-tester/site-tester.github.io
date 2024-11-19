@@ -25,8 +25,8 @@ class LoginController extends Controller
     {
         if ($user->hasRole('Content Manager') || $user->hasRole('Barangay') || $user->hasRole('Municipal Admin')) {
             return redirect()->route('backpack.dashboard'); // Redirect to admin dashboard
-        // } elseif ($user->hasRole('Barangay')) {
-        //     return redirect()->route('barangay.dashboard'); // Redirect to trainer dashboard
+        } elseif ($user->hasRole('Municipal Admin')) {
+            return redirect()->url('admin/municipality-dashboard'); // Redirect to trainer dashboard
         } elseif ($user->hasRole('Normal User')) {
             if ($user->isApprove) {
                 return redirect()->route('donor.dashboard');

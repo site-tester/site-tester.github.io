@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('request_donations', function (Blueprint $table) {
             $table->id();
-            $table->string('barangay');
+            $table->string('barangay_id');
             $table->string('preffered_donation_type');
             $table->string('disaster_type');
+            $table->string('immediate_needs');
             $table->date('date_requested');
             $table->string('status')->default('Pending Approval');
             $table->timestamps();

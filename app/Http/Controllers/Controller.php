@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use App\Models\Article;
 use App\Models\Terms;
 use App\Models\User;
 use Backpack\PageManager\app\Models\Page;
@@ -52,7 +53,13 @@ class Controller extends BaseController
 
         // $about = Page::where('template','about_us')->firstOrFail();
         $contact = Page::where('template','contact_us')->firstOrFail();
-        return view('home', compact('contact', 'registeredDonors', 'donationReceived', 'donationGiven'));
+        
+        $latestNews = Article::where('status', 'PUBLISHED')
+        ->orderBy('date', 'desc')
+        ->take(3)
+        ->get();
+        
+        return view('home', compact('contact', 'registeredDonors', 'donationReceived', 'donationGiven', 'latestNews'));
     }
 
     public function terms()

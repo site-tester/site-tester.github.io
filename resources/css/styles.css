@@ -92,7 +92,16 @@ main{
 }
 
 .nav-text-bg .nav-item a:hover {
-  color: darkgray !important;
+  font-weight: bolder;
+}
+
+.nav-text-bg .nav-item a.active {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.nav-text-bg .nav-item a.active:hover {
+  font-weight:lighter;
 }
 
 .nav-text-bg .nav-item .dropdown-item:hover {

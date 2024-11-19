@@ -48,18 +48,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    // public function roles()
-    // {
-    //     return $this->belongsToMany(Role::class, 'model_has_roles');
-    // }
-
     public static function getBarangayRepresentatives($query)
     {
         return $query->whereHas('roles', function ($q) {
             $q->where('name', 'Barangay Representative');
         });
     }
-    public function profile(){
-        return $this->belongsTo(UserProfile::class,'id','user_id');
+    public function profile()
+    {
+        return $this->belongsTo(UserProfile::class, 'id', 'user_id');
     }
 }

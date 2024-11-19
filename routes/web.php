@@ -4,6 +4,7 @@
 use App\Http\Controllers\FloodPredictController;
 use App\Http\Controllers\TransparencyBoardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DonationController;
@@ -46,6 +47,8 @@ Route::middleware(['verified'])->group(function () {
     Route::post('/submit-donation', [DonationController::class, 'submitDonation'])->name('submit.donation');
     Route::get('/transparency-board', [TransparencyBoardController::class, 'getTransparencyData']);
 });
+
+Route::get('/generate-report', [ReportController::class, 'generateReport']);
 
 Route::get('/train-predict-flood', [FloodPredictController::class, 'trainAndPredict']);
 Route::get('/train-model-flood', [FloodPredictController::class, 'trainModel']);
