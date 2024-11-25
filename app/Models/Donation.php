@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\DonationApprovalNotification;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,6 +38,7 @@ class Donation extends Model
     protected $casts = [
         'images' => 'array', // Automatically casts JSON to array
         'donation_date' => 'date', // Casts to a Carbon date instance
+        'type' => 'array', // Automatically casts JSON to array
     ];
 
     /*
@@ -111,6 +113,10 @@ class Donation extends Model
     protected static function booted()
     {
         static::saved(function ($donation) {
+            // if ($donation->status == 'Approved') {
+            //     $donation = Donation::find($$donation->id);
+            //     $donation->donor->notify(new DonationApprovalNotification($donation->id));
+            // }
             if ($donation->status !== 'Pending Approval') {
                 // Need Code Here to save about status update proof in Donation Status Log (Model: DonationStatusLog)
                 $donation->changeDonationStatusLog($donation);
@@ -119,10 +125,10 @@ class Donation extends Model
             if ($donation->status === 'Received') {
                 $donation->addItemsToInventory($donation->id);
             }
-            
-            if ($donation->status === 'Distributed') {
-                $donation->removeItemsFromInventory($donation->id);
-            }
+
+            // if ($donation->status === 'Distributed') {
+            //     $donation->removeItemsFromInventory($donation->id);
+            // }
         });
     }
 
@@ -145,7 +151,7 @@ class Donation extends Model
         }
 
     }
-    
+
     public function removeItemsFromInventory($id)
     {
         \DB::table('inventory')->where('donation_id', $id)->delete();

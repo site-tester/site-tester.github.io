@@ -38,11 +38,11 @@ class TransparencyBoardController extends Controller
         // Get donations and include donation items
         $donations = $query->get()->map(function ($donation) {
             return [
-                'coordinator' => $donation->coordinator ?? '-',
+                'approved_by' => $donation->approved_by ?? 'Pending',
                 'anonymous' => $donation->anonymous,
                 'donor_name' => $donation->donor->name,
                 'donation_date' => $donation->donation_date,
-                'donation_type' => $donation->type,
+                'donation_type' => json_decode($donation->type) , // is_array($donation->type) ? implode(', ', $donation->type) : implode(', ', json_decode($donation->type, true))
                 'barangay_name' => $donation->barangay->name,
                 'items' => $donation->donationItems->pluck('item_name')->toArray(),
                 'quantities' => $donation->donationItems->pluck('quantity')->toArray(),
@@ -51,7 +51,12 @@ class TransparencyBoardController extends Controller
             ];
         });
 
-        return response()->json(['donations' => $donations]);
+        return response()->json(
+            ['donations' => $donations]
+        );
+        // ['donations' => $donations]
+        // return response()->json($request->all());
+
     }
 
 

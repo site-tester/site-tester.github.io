@@ -157,9 +157,31 @@
                 </div>
             </div> --}}
         </div>
-
-
-
+    </div>
+    <!-- Modal -->
+    <div class="modal" id="approveModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Approve Donation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="approveForm">
+                        <div class="mb-3">
+                            <label for="approverName" class="form-label">Approver's Name</label>
+                            <input type="text" class="form-control" id="approverName" name="approver_name"
+                                placeholder="Enter approver's name" required>
+                        </div>
+                        <input type="hidden" id="donationId" name="donation_id">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitApproval">Approve</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -173,9 +195,156 @@
     @stack('crud_list_styles')
 @endsection
 
+@push('after_styles')
+    <style>
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        .modal {
+            z-index: 1050 !important;
+        }
+    </style>
+@endpush
+
 @section('after_scripts')
     @include('crud::inc.datatables_logic')
 
     {{-- CRUD LIST CONTENT - crud_list_scripts stack --}}
     @stack('crud_list_scripts')
+
+    <script>
+        document.getElementById('approveModal').addEventListener('show.bs.modal', function() {
+            this.style.display = 'block';
+            document.body.appendChild(this);
+        });
+
+        function updateDonationStatus(id, status) {
+            // Send an AJAX request to the server
+            $.ajax({
+                url: '{{ route('update.donation.verification.status', ':id') }}'.replace(':id',
+                    id), // Update URL with the actual entry ID
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}', // CSRF token for security
+                    status: status // The new status to be updated ('Approved' or 'Rejected')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Reload the page to see the updated status (or you can selectively update the button states in the UI)
+                        new Noty({
+                            type: 'success',
+                            text: 'Donation ' + status + '. Reloading in 3 seconds.',
+                            timeout: 3000, // Automatically close after 3 seconds
+                            progressBar: true,
+                        }).show();
+
+                        setTimeout(function() {
+                            location.reload();
+                        }, 3000);
+
+                    } else {
+                        // If there's an error updating the status, show an alert
+                        alert('Failed to update status: ' + data.error);
+                        new Noty({
+                            type: 'error',
+                            text: 'Failed to update status.',
+                            timeout: 3000,
+                            progressBar: true,
+                        }).show();
+                    }
+                },
+                error: function() {
+                    // If the AJAX request fails, show an error message
+                    console.log('AJAX Error:', error);
+                    new Noty({
+                        type: 'error',
+                        text: 'An error occurred while updating the status.',
+                        timeout: 3000,
+                        progressBar: true,
+                    }).show();
+                }
+            });
+        }
+
+        function submitApproval(donationId) {
+            // Get the input value
+            const approvedByInput = document.querySelector(`#approved_by-${donationId}`);
+            const approvedBy = approvedByInput.value;
+
+            if (!approvedBy) {
+                alert('Please fill in the "Approved By" field.');
+                return;
+            }
+
+            // Perform AJAX request
+            fetch(`{{ url('/admin/donation/') }}/${donationId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        approved_by: approvedBy
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        // Optionally reload the page or refresh the table
+                        location.reload();
+                    } else {
+                        alert(data.message || 'An unknown error occurred.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while approving the donation.');
+                });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener to handle modal opening
+            $('#approveModal').on('show.bs.modal', function(event) {
+                // Get the button that triggered the modal
+                const button = $(event.relatedTarget); // Button that triggered the modal
+                const donationId = button.data('id'); // Extract the donation ID from data-id attribute
+
+                // Set the donation ID in the hidden input field
+                $('#donationId').val(donationId);
+            });
+        });
+        $('#submitApproval').click(function() {
+            const approverName = $('#approverName').val();
+            const donationId = $('#donationId').val();
+
+            // Make sure the approver's name is not empty
+            if (!approverName) {
+                alert('Please enter the approver\'s name');
+                return;
+            }
+
+            // Send the data via AJAX
+            $.ajax({
+                url: '/admin/approve-donation/' + donationId, // URL to handle the request
+                method: 'POST',
+                data: {
+                    approver_name: approverName,
+                    _token: $('meta[name="csrf-token"]').attr('content') // CSRF Token for Laravel
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Donation approved successfully');
+                        $('#approveModal').modal('hide'); // Close the modal
+                        location.reload(); // Reload the page to reflect the changes
+                    } else {
+                        alert('An error occurred. Please try again.');
+                    }
+                },
+                error: function() {
+                    alert('Something went wrong!');
+                }
+            });
+        });
+    </script>
 @endsection

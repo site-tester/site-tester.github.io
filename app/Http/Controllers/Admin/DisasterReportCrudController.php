@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\DisasterReportRequest;
 use App\Models\Barangay;
+use App\Models\DisasterRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Class DisasterReportCrudController
@@ -16,7 +18,8 @@ use Carbon\Carbon;
 class DisasterReportCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -45,23 +48,50 @@ class DisasterReportCrudController extends CrudController
         CRUD::addClause('where', 'status', 'Approved');
         CRUD::setOperationSetting('showEntryCount', false);
         CRUD::setEntityNameStrings('Active Disaster Request', 'Active Disaster Requests');
-        $this->crud->removeButton('create');
+        $this->crud->removeButtons(['create','update']);
 
-         CRUD::addColumn([
-            'name' => 'barangay_id', // The actual field in your database (foreign key)
-            'label' => 'Barangay', // The label you want to display in the column
-            // 'type' => 'text', // Define it as a select field
-            'entity' => 'barangay', // Define the relationship
-            'attribute' => 'name', // The field from the related model (Barangay) to display
-
+        CRUD::addColumn([
+            'name' => 'created_at',
+            'label' => 'Date Requested',
+            'type' => 'date',
+            'format' => 'MMM-DD-YYYY',
+        ]);
+        CRUD::addColumn([
+            'name' => 'barangay_id', // The actual column is named barangay
+            'label' => 'Barangay',
+            // 'type' => 'relationship',
+            'entity' => 'barangay', // relationship is named barangay
+            'attribute' => 'name',
+            'model' => 'App\Models\Barangay',
         ]);
         CRUD::addColumn([
             'name' => 'preffered_donation_type',
             'label' => 'Donation Type',
+            'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->preffered_donation_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
         ]);
         CRUD::addColumn([
             'name' => 'disaster_type',
             'label' => 'Disaster Type',
+            'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->disaster_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    // Apply ucfirst to each item
+                    $formatted = array_map('ucfirst', $decoded);
+                    // If not JSON, return as is (with formatting)
+                    return implode(', ', $formatted);
+                },
         ]);
         CRUD::addColumn([
             'name' => 'date_requested',
@@ -100,7 +130,6 @@ class DisasterReportCrudController extends CrudController
     protected function setupCreateOperation()
     {
         $this->data['breadcrumbs'] = [
-            // trans('backpack::crud.admin') => backpack_url('dashboard'),
             trans('backpack::base.dashboard') => backpack_url('dashboard'),
             'Disaster Report' => false,
             'Create Form' => false,
@@ -117,7 +146,7 @@ class DisasterReportCrudController extends CrudController
                 return url('/admin/dashboard');
             },
         ]);
-        CRUD::removeSaveActions(['save_and_new', 'save_and_preview']);
+        CRUD::removeSaveActions(['save_and_new', 'save_and_edit', 'save_and_preview']);
         $this->crud->setOperationSetting('showCancelButton', false);
 
         $this->crud->setCreateView('vendor.backpack.ui.addDisasterReport');
@@ -133,12 +162,42 @@ class DisasterReportCrudController extends CrudController
         CRUD::addField([
             'name' => 'header',
             'type' => 'custom_html',
-            'value' => '<h3 class="mb-0 pb-0">Barangay Details</h3>',
+            'value' => '<h3 class="mb-0 pb-0">Disaster Request - Create Form</h3>',
+            'wrapper' => [
+                'class' => 'mb-0',
+            ],
+        ]);
+
+        CRUD::addField([
+            'name' => 'table_start',
+            'type' => 'custom_html',
+            'value' => '<table class="table table-responsive table-bordered">',
+            'escaped' => false,
+            'wrapper' => false,
+        ]);
+
+        CRUD::addField([
+            'name' => 'reported_by',
+            'label' => 'Reported By',
+            'type' => 'add_disaster_report_text',
+        ]);
+
+        CRUD::addField([
+            'name' => 'incident_date',
+            'label' => 'Date of Incident',
+            'type' => 'add_disaster_report_date',
+        ]);
+
+        CRUD::addField([
+            'name' => 'incident_time',
+            'label' => 'Time of Incident',
+            'type' => 'add_disaster_report_time',
         ]);
 
         CRUD::addField([
             'name' => 'barangay_id',
-            'label' => 'Barangay Name',
+            'label' => 'Barangay',
+            'type' => 'add_disaster_report_select',
             'entity' => 'barangay',
             'model' => 'App\Models\Barangay',
             'attribute' => 'name',
@@ -146,62 +205,63 @@ class DisasterReportCrudController extends CrudController
         ]);
 
         CRUD::addField([
+            'name' => 'exact_location',
+            'label' => 'Exact Location',
+            'type' => 'add_disaster_report_text',
+        ]);
+
+        CRUD::addField([
             'name' => 'disaster_type',
             'label' => 'Disaster Type',
-            'type' => 'select_from_array',
+            'type' => 'add_disaster_report_checklist',
+            // 'model' => 'App\Models\DisasterType',
+            // 'attribute' => 'name',
             'options' => [
-                'Flood' => 'Flood',
-                'Fire' => 'Fire',
-                'Earthquake' => 'Earthquake',
+                'flood' => 'Flood',
+                'fire' => 'Fire',
+                // 'option3' => 'Option 3',
             ],
-            'attributes' => [
-                'placeholder' => 'Select Disaster Type',
-            ],
-            'allows_multiple' => false, // Set to true if you want to allow multiple selections
         ]);
 
         CRUD::addField([
-            'name' => 'separator',
+            'name' => 'caused_by',
+            'label' => 'Caused By',
+            'type' => 'add_disaster_report_text',
+        ]);
+
+        CRUD::addField([
+            'name' => 'affected',
+            'label' => 'Affected',
+            'type' => 'add_disaster_report_affected',
+        ]);
+
+        CRUD::addField([
+            'name' => 'immediate_needs',
+            'label' => 'Immediate Needs',
+            'type' => 'add_disaster_report_needs',
+        ]);
+
+        CRUD::addField([
+            'name' => 'attachments',
+            'label' => 'Attachments',
+            'type' => 'add_disaster_report_upload_multiple',
+            'disk' => 'uploads',
+            'upload' => true, // Use this for handling file uploads
+            'withFiles' => [
+                'uploader' => \Backpack\CRUD\app\Library\Uploaders\MultipleFiles::class, // Need this for custom uploads
+            ],
+            'hint' => '<ul> <li>Can upload multiple attachments</li> </ul>'
+        ]);
+
+        CRUD::addField([
+            'name' => 'table_end',
             'type' => 'custom_html',
-            'value' => '<hr>',
+            'value' => '</table>',
+            'escaped' => false,
+            'wrapper' => false,
         ]);
 
-        CRUD::addField([
-            'name' => 'header2',
-            'type' => 'custom_html',
-            'value' => '<h3 class="mb-0 pb-0">Disaster Details</h3>',
-        ]);
-        CRUD::addField([
-            'name' => 'preffered_donation_type',
-            'label' => 'Preffered Donation Type',
-            'type' => 'select_from_array', // Use select2 for better UX
-            'options' => [
-                'Food' => 'Food',
-                'NonFood' => 'Non Food',
-                'Medical' => 'Medical',
-            ],
-            'allows_multiple' => false, // Set to true if you want to allow multiple selections
-        ]);
-
-        CRUD::addField([
-            'name' => 'date_requested',
-            'label' => 'Date Requested',
-            'type' => 'date',
-        ]);
-
-        // Add hidden field for the barangay that the user represents
-        // $userBarangay = Barangay::where('barangay_rep_id', auth()->id())->first();
-        // if ($userBarangay) {
-        //     CRUD::addField([
-        //         'name' => 'barangay',
-        //         'type' => 'hidden',
-        //         'value' => $userBarangay->id,
-        //     ]);
-        // }
-
-        // return view(CRUD::getListView(), $this->data);
-
-
+        CRUD::setValidation(DisasterReportRequest::class);
     }
 
     /**
@@ -213,5 +273,262 @@ class DisasterReportCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function store()
+    {
+        // dd($this->crud->getRequest()->all());
+
+        $this->crud->hasAccessOrFail('create');
+
+        // Custom logic: Add a generated disaster code
+        $data = $this->crud->validateRequest();
+
+        $data['disaster_type'] = json_encode($data['disaster_type']);
+
+        $donationType = [];
+        if ($data['immediate_needs_food']) {
+            $donationType[] = 'Food';
+        }
+        if ($data['immediate_needs_nonfood']) {
+            $donationType[] = 'NonFood';
+        }
+        if ($data['immediate_needs_medicine']) {
+            $donationType[] = 'Medicine';
+        }
+
+        $data->preffered_donation_type = json_encode($donationType);
+
+        // Handle file uploads
+        if ($this->crud->getRequest()->hasFile('attachments')) {
+            $files = $this->crud->getRequest()->file('attachments');
+            $filePaths = [];
+
+            foreach ($files as $file) {
+                $filePaths[] = $file->store('attachments', 'public');
+            }
+            // dd(json_encode($filePaths));
+            $data->attachments = json_encode($filePaths);
+        }
+
+        // $this->crud->registerFieldEvents();
+
+        // insert item in the db
+        // $item = $this->crud->create($this->crud->getStrippedSaveRequest($data));
+        // $this->data['entry'] = $this->crud->entry = $item;
+        DisasterRequest::create([
+            "reported_by" => $data->reported_by ?? null,
+            "incident_date" => $data->incident_date,
+            "incident_time" => $data->incident_time,
+            "barangay_id" => $data->barangay_id,
+            "preffered_donation_type" => $data->preffered_donation_type,
+            "exact_location" => $data->exact_location,
+            "disaster_type" => $data->disaster_type,
+            "caused_by" => $data->caused_by ?? null,
+            "overview" => 'Disaster caused by '.  $data->caused_by . ' @ '. $data->incident_date.' '. $data->incident_time .'.',
+            "affected_family" => $data->affected_family ?? null,
+            "affected_person" => $data->affected_person ?? null,
+            "immediate_needs_food" => $data->immediate_needs_food ?? null,
+            "immediate_needs_medicine" => $data->immediate_needs_medicine  ?? null,
+            "immediate_needs_nonfood" => $data->immediate_needs_nonfood  ?? null,
+            "date_requested" => now('UTC'),
+            "attachments" => $data->attachments ?? null,
+        ]);
+
+        // // Merge the custom data back into the request
+        // $this->crud->getRequest()->merge($data);
+
+        // Call Backpack's default store logic
+        // return $this->traitStore();
+
+
+        \Alert::success('Disaster Request Sent to Admin for Approval')->flash();
+
+        // $this->crud->setSaveAction();
+
+        return redirect()->route('admin.dashboard');
+    }
+
+    public function setupShowOperation()
+    {
+        $this->crud->removeAllButtons();
+        $this->crud->setColumns([
+            [
+                'name' => 'status',
+                'label' => 'Status',
+                'type' => 'text',
+                'wrapper' => [
+                    'element' => 'span',
+                    'class' => function ($crud, $column, $entry, $related_key) {
+                        // Determine the badge class based on the status value
+                        if ($column['text'] == 'Pending Approval') {
+                            return 'badge text-bg-warning'; // Yellow indicates awaiting action
+                        }
+                        if ($column['text'] == 'Approved') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Rejected') {
+                            return 'badge text-bg-secondary'; // Yellow indicates a warning
+                        }
+                        return 'badge badge-default';
+                    },
+                ],
+            ],
+            [
+                'name' => 'reported_by',
+                'label' => 'Reported By',
+            ],
+            [
+                'name' => 'date_requested',
+                'label' => 'Date Requested',
+                'type' => 'date',
+            ],
+            [
+                'name' => 'incident_date',
+                'label' => 'Incident Date',
+                'type' => 'date',
+            ],
+            [
+                'name' => 'incident_time',
+                'label' => 'Incident Time',
+                'type' => 'time',
+                'format' => 'H:mm A'
+            ],
+            [
+                'name' => 'barangay_id',
+                'label' => 'Barangay',
+                'entity' => 'barangay',
+                'model' => 'App\Models\Barangay',
+                'attribute' => 'name',
+            ],
+            [
+                'name' => 'exact_location',
+                'label' => 'Exact Location',
+            ],
+            [
+                'name' => 'preffered_donation_type',
+                'label' => 'Donation Type',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->preffered_donation_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
+            ],
+            [
+                'name' => 'disaster_type',
+                'label' => 'Disaster Type',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->disaster_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    // Apply ucfirst to each item
+                    $formatted = array_map('ucfirst', $decoded);
+                    // If not JSON, return as is (with formatting)
+                    return implode(', ', $formatted);
+                },
+            ],
+            [
+                'name' => 'caused_by',
+                'label' => 'Caused By',
+            ],
+            [
+                'name' => 'affected',
+                'label' => 'Affected',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+
+                    $value = "<table class='table table-bordered' >";
+                    if ($entry->affected_family) {
+                        $value .= "
+                            <tr>
+                                <td class='col-3 fw-bold'>Family:</td>
+                                <td>" . $entry->affected_family . "</td>
+                            </tr>
+                            ";
+                    }
+
+                    if ($entry->affected_person) {
+                        $value .= "
+                            <tr>
+                                <td class='fw-bold'>Person:</td>
+                                <td>" . $entry->affected_person . "</td>
+                            </tr>
+                            ";
+                    }
+
+                    $value .= "</table>";
+
+
+                    return $value;
+                },
+            ],
+            [
+                'name' => 'immediate_needs',
+                'label' => 'Immediate Needs',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $value = "<table class='table table-bordered' >";
+                    if ($entry->immediate_needs_food) {
+                        $value .= "
+                            <tr>
+                                <td class='col-3 fw-bold'>Food:</td>
+                                <td>" . $entry->immediate_needs_food . "</td>
+                            </tr>
+                            ";
+                    }
+                    if ($entry->immediate_needs_nonfood) {
+                        $value .= "
+                            <tr>
+                                <td class='fw-bold'>Non-Food:</td>
+                                <td>" . $entry->immediate_needs_nonfood . "</td>
+                            </tr>
+                            ";
+                    }
+                    if ($entry->immediate_needs_medicine) {
+                        $value .= "
+                            <tr>
+                                <td class='fw-bold'> Medical Supplies: </td>
+                                <td>" . $entry->immediate_needs_medicine . "</td>
+                            </tr>
+                            ";
+                    }
+                    $value .= "</table>";
+                    return $value;
+                },
+            ],
+            [
+                'name' => 'attachments',
+                'label' => 'Attachments',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->attachments;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+
+                    $value = "<div class='row'>";
+                    foreach ($decoded as $img_path) {
+                        $value .= " <div class='col-auto'>
+                        <a href='/storage/{$img_path}' data-fancybox='gallery'
+                            data-caption='{ $img_path }'>
+                            <img src='/storage/{$img_path}' height='100' />
+                        </a>
+                        </div>";
+                    }
+
+                    $value .= "</div>";
+                    return $value;
+                },
+            ],
+
+        ]);
+
     }
 }

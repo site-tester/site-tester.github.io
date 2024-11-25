@@ -55,16 +55,20 @@
             <div class="row border-top m-0">
                 <div class=" mx-0 px-0 ">
                     <div class="nav nav-pills" id="pills-tab" role="tablist">
-                        <a class="nav-link text-nowrap" href="{{ route('my.donation') }}" role="tab" aria-selected="true">Dashboard</a>
-                        <a class="nav-link text-nowrap" href="{{ route('my.donation.notification') }}" role="tab" aria-selected="false">Notifications
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation') }}" role="tab"
+                            aria-selected="true">Dashboard</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.notification') }}" role="tab"
+                            aria-selected="false">Notifications
                             @if (Auth::user()->unreadNotifications->count() > 0)
                                 <span class="text-bg-danger badge text-center">
                                     {{ Auth::user()->unreadNotifications->count() }}
                                 </span>
                             @endif
                         </a>
-                        <a class="nav-link text-nowrap" href="{{ route('my.donation.history') }}" role="tab" aria-selected="false">Donation History</a>
-                        <a class="nav-link active text-nowrap" href="{{ route('my.donation.transparency') }}" role="tab" aria-selected="false">Transparency Board</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.history') }}" role="tab"
+                            aria-selected="false">Donation History</a>
+                        <a class="nav-link active text-nowrap" href="{{ route('my.donation.transparency') }}" role="tab"
+                            aria-selected="false">Transparency Board</a>
                     </div>
                     <div class="w-100 h100">
                         <div class="p-3">
@@ -116,7 +120,7 @@
                                     <thead>
                                         <tr>
                                             <th class="fs-6">Barangay</th>
-                                            <th class="fs-6">Coordinator</th>
+                                            <th class="fs-6">Approved By</th>
                                             <th class="fs-6">Donor Name</th>
                                             <th class="fs-6">Date of Donation</th>
                                             <th class="fs-6">Donation Type</th>
@@ -193,6 +197,8 @@
                     },
                     dataType: 'json',
                     success: function(response) {
+                        console.log('AJAX Success:',
+                            response);
                         const $tbody = $('#donationResults tbody');
                         $tbody.empty(); // Clear previous results
 
@@ -207,14 +213,18 @@
                             $.each(response.donations, function(index, donation) {
                                 const itemList = donation.items.join('<br>');
                                 const quantityList = donation.quantities.join('<br>');
+                                const donationType = Array.isArray(donation
+                                        .donation_type) ?
+                                    donation.donation_type.join(', ') :
+                                    donation.donation_type;
 
                                 const donationEntry = `
                         <tr>
                             <td class="h6">${donation.barangay_name}</td>
-                            <td class="h6">${donation.coordinator}</td>
+                            <td class="h6">${donation.approved_by}</td>
                             <td class="h6">${donation.anonymous == 'true' ? 'Anonymous Donor' : donation.donor_name}</td>
                             <td class="h6">${new Date(donation.donation_date).toLocaleDateString()}</td>
-                            <td class="h6">${donation.donation_type}</td>
+                            <td class="h6">${donationType}</td>
                             <td class="h6">${itemList}</td>
                             <td class="h6">${quantityList}</td>
                             <td class="h6">${donation.status}</td>

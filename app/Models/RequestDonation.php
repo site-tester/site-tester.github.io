@@ -24,7 +24,19 @@ class RequestDonation extends Model
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'barangay_id'
+        'reported_by',
+        'incident_date',
+        'incident_time',
+        'barangay_id',
+        'exact_location',
+        'disaster_type',
+        'caused_by',
+        'affected_family',
+        'affected_person',
+        'immediate_needs_food',
+        'immediate_needs_medicine',
+        'immediate_needs_nonfood',
+        'attachments',
     ];
     // protected $hidden = [];
 

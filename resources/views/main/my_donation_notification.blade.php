@@ -74,6 +74,11 @@
                     <div class="w-100 h-100">
                         <div class="p-3">
                             <h5 class="m-0"><i class="bi bi-bell"></i> Notifications</h5>
+                            <!-- Button trigger modal -->
+                            {{-- <button type="button" class="btn btn-link" data-bs-toggle="modal"
+                                data-bs-target="#receiptDetailsModal">
+                                Launch demo modal
+                            </button> --}}
                             <table id="notificationTable" class="table table-striped border rounded-table mt-0"
                                 style="width:100%">
                                 <thead>
@@ -124,22 +129,23 @@
         </div>
     </div>
 
-    <div class="modal fade" id="donationDetailsModal" tabindex="-1" aria-labelledby="donationDetailsModalLabel"
+    <div class="modal fade" id="receiptDetailsModal" tabindex="-1" aria-labelledby="receiptDetailsModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="donationDetailsModalLabel">Donation Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Donation details will be dynamically loaded here -->
-                    <div id="donationDetailsContent">
+                    <div id="receiptDetailsContent">
                         Loading...
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="text-center py-3 border-top">
+                    <button type="button" id="printReceiptButton" class="btn btn-dark">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
                 </div>
             </div>
         </div>
@@ -161,23 +167,7 @@
                 responsive: true,
                 autoWidth: false,
             });
-            // $('#historyTable').DataTable({
-            //     ordering: false,
-            //     responsive: true,
-            //     autoWidth: false,
-            // });
-            // $('#notificationTable').DataTable({
-            //     ordering: false,
-            //     responsive: true,
-            //     autoWidth: false,
-            // });
-            // $('#transparencyTable').DataTable({
-            //     responsive: true,
-            //     autoWidth: false,
-            //     searching: false,
-            //     ordering: false,
-            //     lengthChange: false,
-            // });
+
 
             $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function(e) {
                 var targetTab = $(e.target).attr("href"); // Get the target tab
@@ -190,158 +180,201 @@
                     autoWidth: false,
                 });
             });
-
-            $('#filterButton').on('click', function() {
-                const barangayId = $('#barangayFilter').val();
-                const timePeriod = $('#timeFilter').val();
-                const year = $('#yearFilter').val();
-
-                $.ajax({
-                    url: '/transparency-board',
-                    method: 'GET',
-                    data: {
-                        barangay_id: barangayId,
-                        time_period: timePeriod,
-                        year: year
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        const $tbody = $('#donationResults tbody');
-                        $tbody.empty(); // Clear previous results
-
-                        if (response.donations.length === 0) {
-                            // Show 'No Data Available' message if there's no data
-                            const noDataMessage = `
-                        <tr>
-                            <td colspan="9" class="text-center">No data available in table</td>
-                        </tr>`;
-                            $tbody.append(noDataMessage);
-                        } else {
-                            $.each(response.donations, function(index, donation) {
-                                const itemList = donation.items.join('<br>');
-                                const quantityList = donation.quantities.join('<br>');
-
-                                const donationEntry = `
-                        <tr>
-                            <td class="h6">${donation.barangay_name}</td>
-                            <td class="h6">${donation.barangay_rep}</td>
-                            <td class="h6">${donation.anonymous == 'true' ? 'Anonymous Donor' : donation.donor_name}</td>
-                            <td class="h6">${new Date(donation.donation_date).toLocaleDateString()}</td>
-                            <td class="h6">${donation.donation_type}</td>
-                            <td class="h6">${itemList}</td>
-                            <td class="h6">${quantityList}</td>
-                            <td class="h6">${donation.status}</td>
-                            <td class="h6">${new Date(donation.updated_at).toLocaleDateString()}</td>
-                        </tr>`;
-                                $tbody.append(donationEntry);
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching data:', error);
-                    }
-                });
-            });
-
-            function fetchDonations() {
-                const barangayId = $('#barangayFilter').val();
-                const timePeriod = $('#timeFilter').val();
-                const year = $('#yearFilter').val();
-
-                $.ajax({
-                    url: '/transparency-board',
-                    method: 'GET',
-                    data: {
-                        barangay_id: barangayId,
-                        time_period: timePeriod,
-                        year: year
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        const $tbody = $('#donationResults tbody');
-                        $tbody.empty(); // Clear previous results
-
-                        $.each(response.donations, function(index, donation) {
-                            const itemList = donation.items.join(', ');
-                            const quantityList = donation.quantities.join(', ');
-
-                            const donationEntry = `
-                        <tr>
-                            <td>D-${donation.id}</td>
-                            <td>${donation.donor_name}</td>
-                            <td>${new Date(donation.donation_date).toLocaleDateString()}</td>
-                            <td>${donation.donation_type}</td>
-                            <td>${donation.barangay_name}</td>
-                            <td>${itemList}</td>
-                            <td>${quantityList}</td>
-                            <td>${donation.status}</td>
-                            <td>${new Date(donation.updated_at).toLocaleDateString()}</td>
-                        </tr>`;
-                            $tbody.append(donationEntry);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching data:', error);
-                    }
-                });
-            }
         });
 
-        function loadDonationDetails(donationId) {
+        function loadRecieptDetails(donationId) {
             // Clear previous details
-            document.getElementById('donationDetailsContent').innerHTML = 'Loading...';
+            document.getElementById('receiptDetailsContent').innerHTML = 'Loading...';
 
             // Make an AJAX request to get the donation details
-            fetch('/donation/view/' + donationId)
+            fetch('/donation/receipt-view/' + donationId)
                 .then(response => {
                     if (!response.ok) {
+                        console.error('HTTP error:', response.status); // Log HTTP status
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    let donationItems = data.items; // Items are already an array of objects
+                    // Extract data from the response
+                    console.log('Donation Details:', data);
+                    let donationFoodItems = data.foodItems || [];
+                    let donationNonFoodItems = data.nonFoodItems || [];
+                    let donationMedicineItems = data.medicalItems || [];
 
-                    // Build a table for donation items
-                    let itemsHtml = `
-                <table class="table table-striped px-5">
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Quantity</th>
-                            <th>Expiration or Condition</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+                    // Start building items HTML
+                    let itemsHtml = `<div><h5>ITEMS</h5>`;
 
-                    donationItems.forEach(item => {
+                    // Add Food Items if available
+                    if (donationFoodItems.length > 0) {
                         itemsHtml += `
+                <div class="p-2 border border-dark rounded my-2">
+                    <h5 class="text-center">Food</h5>
+                    <table class="table table-striped px-5">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Expiration Date/Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        donationFoodItems.forEach(item => {
+                            itemsHtml += `
                     <tr>
                         <td>${item.item_name}</td>
                         <td>${item.quantity}</td>
                         <td>${item.expiration_date ?? item.condition ?? 'N/A'}</td>
-                    </tr>
-                `;
-                    });
+                    </tr>`;
+                        });
+                        itemsHtml += `
+                        </tbody>
+                    </table>
+                </div>`;
+                    }
 
-                    itemsHtml += `</tbody></table>`;
+                    // Add Non-Food Items if available
+                    if (donationNonFoodItems.length > 0) {
+                        itemsHtml += `
+                <div class="p-2 border border-dark rounded my-2">
+                    <h5 class="text-center">Non-Food</h5>
+                    <table class="table table-striped px-5">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        donationNonFoodItems.forEach(item => {
+                            itemsHtml += `
+                    <tr>
+                        <td>${item.item_name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.condition ?? 'N/A'}</td>
+                    </tr>`;
+                        });
+                        itemsHtml += `
+                        </tbody>
+                    </table>
+                </div>`;
+                    }
 
-                    // Populate the modal with the donation details
+                    // Add Medical Items if available
+                    if (donationMedicineItems.length > 0) {
+                        itemsHtml += `
+                <div class="p-2 border border-dark rounded my-2">
+                    <h5 class="text-center">Medical Supplies</h5>
+                    <table class="table table-striped px-5">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Expiration Date/Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                        donationMedicineItems.forEach(item => {
+                            itemsHtml += `
+                    <tr>
+                        <td>${item.item_name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.expiration_date ?? item.condition ?? 'N/A'}</td>
+                    </tr>`;
+                        });
+                        itemsHtml += `
+                        </tbody>
+                    </table>
+                </div>`;
+                    }
+
+                    itemsHtml += `</div>`; // Close items container
+
+                    // Populate the modal with donation details
                     let detailsHtml = `
-                <p><strong>Donation ID:</strong> ${data.id}</p>
-                <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
-                <p><strong>Donation Status:</strong> ${data.status}</p>
-                <p><strong>Donation Items:</strong></p>
-                ${itemsHtml}
-                <!-- Add other fields as needed -->
-            `;
+                        <div class="bg-secondary-subtle text-secondary-emphasis py-3 px-4 rounded">
+                            <h1 class="text-center">Donation Receipt</h1>
+                            <div class="d-flex justify-content-between px-1">
+                                <h6>Donation ID: ${data.id}</h6>
+                                <h6>${new Date(data.created_at).toLocaleDateString()}</h6>
+                            </div>`;
+                    if (data.anonymous == false) {
+                        detailsHtml += `<div>
+                                                <h5>DONATED BY:</h5>
+                                                <p class="mb-0 pb-0">${data.name}</p>
+                                                <p class="mb-0 pb-0">Contact Number: ${data.contactNumber}</p>
+                                                <p>Address: ${data.address}</p>
+                                            </div>`;
+                    }
+                    detailsHtml += `
+                            <div>
+                                <h5>DONATED TO:</h5>
+                                <p>${data.barangay}</p>
+                            </div>
+                            <div>
+                                <h5>DROP OFF SCHEDULE:</h5>
+                                <p class="mb-0 pb-0">${new Date(data.dropOffDate).toLocaleDateString()}</p>
+                                <p>${data.dropOffTime}</p>
+                            </div>
+                            ${itemsHtml}
+                            <hr>
+                            <div>
+                                <h5 class="text-end">APPROVED BY:</h5>
+                                <h6 class="text-end">${data.approvedBy}</h6>
+                            </div>
+                        </div>`;
 
-                    document.getElementById('donationDetailsContent').innerHTML = detailsHtml;
+                    // Update modal content
+                    document.getElementById('receiptDetailsContent').innerHTML = detailsHtml;
                 })
                 .catch(error => {
                     console.error('Error fetching donation details:', error);
-                    document.getElementById('donationDetailsContent').innerHTML = 'Error loading details.';
-                })
+                    document.getElementById('receiptDetailsContent').innerHTML = 'Error loading details.';
+                });
         }
+
+        document.getElementById('printReceiptButton').addEventListener('click', function() {
+            // Get the content to print
+            const printContent = document.getElementById('receiptDetailsContent').innerHTML;
+
+            // Get all the stylesheets in the main document
+            const stylesheets = Array.from(document.styleSheets)
+                .map(sheet => {
+                    try {
+                        return sheet.href ? `<link rel="stylesheet" href="${sheet.href}">` : '';
+                    } catch (e) {
+                        console.warn("Could not access stylesheet:", sheet);
+                        return '';
+                    }
+                })
+                .join('\n');
+
+            // Create a new window
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+
+            // Add the content and styles to the new window
+            printWindow.document.open();
+            printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Print Receipt</title>
+            ${stylesheets}
+        </head>
+        <body>
+            ${printContent}
+        </body>
+        </html>
+    `);
+            printWindow.document.close();
+
+            // Wait for the new window to load styles before triggering print
+            printWindow.onload = () => {
+                printWindow.focus(); // Focus the print window
+                printWindow.print(); // Trigger the print dialog
+                printWindow.close(); // Close the window after printing
+            };
+        });
     </script>
 @endsection

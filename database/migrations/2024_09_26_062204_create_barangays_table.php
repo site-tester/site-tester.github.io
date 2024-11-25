@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->text('location');
             $table->integer('flood_frequency')->default(0);
             $table->decimal('flood_risk_score', 3, 1)->nullable();
+            $table->string('fire_risk_level')->nullable();
             $table->timestamps();
         });
     }

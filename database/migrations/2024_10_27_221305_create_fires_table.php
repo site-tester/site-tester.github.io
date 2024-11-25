@@ -14,7 +14,13 @@ return new class extends Migration
         Schema::create('fires', function (Blueprint $table) {
             $table->id();
             $table->foreignId('barangay_id')->constrained('barangays');
-            $table->integer('severity_score');
+            $table->integer('total_incidents');
+            $table->integer('high_severity_incidents');
+            $table->integer('casualties');
+            $table->integer('injuries');
+            $table->integer('families_affected');
+            $table->unsignedBigInteger('damages_php');
+            $table->enum('risk_level', ['Low', 'Medium', 'High']);
             $table->timestamps();
         });
     }

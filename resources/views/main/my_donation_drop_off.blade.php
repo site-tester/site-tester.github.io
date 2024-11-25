@@ -69,6 +69,8 @@
                             aria-selected="false">Donation History</a>
                         <a class="nav-link text-nowrap" href="{{ route('my.donation.transparency') }}" role="tab"
                             aria-selected="false">Transparency Board</a>
+                        <a class="nav-link text-nowrap" href="{{ route('my.donation.drop.off') }}" role="tab"
+                            aria-selected="false">Drop-Off</a>
                     </div>
 
 
@@ -77,29 +79,27 @@
                         <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel"
                             aria-labelledby="v-pills-dashboard-tab" tabindex="0">
                             <div class="p-3 w-100 border">
-                                <h5><i class="bi bi-graph-up-arrow"></i> Your Donor Status</h5>
+                                <h5><i class="bi bi-graph-up-arrow"></i> Your Donor Stats</h5>
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-12 col-md-4 mb-3">
                                                 <div class="text-center my-3 mx-5">
+                                                    <h1>{{ $historyDonations->count() }}</h1>
+                                                    <p class="text-uppercase">Total Number of Donations</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-4 mb-3">
+                                                <div class="text-center my-3 mx-5">
                                                     <h1>{{ $historyDonations->where('status', 'Pending Approval')->count() }}
                                                     </h1>
-                                                    <p class="text-uppercase bg-greener d-flex align-items-center justify-content-center px-3" style="min-height: 50px">Total Number of Pending Donations
-                                                    </p>
+                                                    <p class="text-uppercase">Total Number of Pending Donations</p>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-4 mb-3">
                                                 <div class="text-center my-3 mx-5">
-                                                    <h1>{{ $historyDonations->where('status', 'Approved')->count() }}</h1>
-                                                    <p class="text-uppercase bg-greener d-flex align-items-center justify-content-center px-3" style="min-height: 50px">Total Approved Donations</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12 col-md-4 mb-3">
-                                                <div class="text-center my-3 mx-5">
-                                                    <h1>{{ $historyDonations->where('status', 'Recieved')->count() }}</h1>
-                                                    <p class="text-uppercase bg-greener d-flex align-items-center justify-content-center px-3" style="min-height: 50px">Total Recieved Donations</p>
+                                                    <h1>{{ $recentDonations->where('status', 'Completed')->count() }}</h1>
+                                                    <p class="text-uppercase">Total Number of Completed Donations</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -127,10 +127,18 @@
                                                 @php
                                                     $badgeClass = 'text-bg-success'; // Green indicates approval
                                                 @endphp
+                                            @elseif ($donation->status === 'Rejected')
+                                                @php
+                                                    $badgeClass = 'text-bg-warning'; // Blue indicates a process in motion
+                                                @endphp
                                             @elseif ($donation->status === 'Received')
                                                 @php
-                                                    $badgeClass = 'text-bg-primary'; // Grey indicates a neutral state (received but not processed yet)
+                                                    $badgeClass = 'text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
                                                 @endphp
+                                            @elseif ($donation->status === 'Distributed')
+                                                @php
+                                                    $badgeClass = 'text-bg-success'; // Green indicates the process is complete
+                                                @endphp ?>
                                             @else
                                                 @php
                                                     $badgeClass = ''; // Default class if none match
@@ -143,7 +151,10 @@
                                                     {{ implode(', ', json_decode($donation->type, true)) }}</td>
                                                 <td class="text-center">{{ $donation->created_at->format('M/d/Y') }}</td>
                                                 <td class="text-center align-items-center">
-                                                    <span class="{{ $badgeClass }} badge p-2 mx-1 text-nowrap">{{ $donation->status }}</span>
+                                                    <span
+                                                        class="{{ $badgeClass }} badge rounded-pill p-2 mx-1 text-nowarp">
+                                                    </span>
+                                                    {{ $donation->status }}
                                                 </td>
                                                 <td class="text-center">
                                                     <button class="btn border bg-green" data-bs-toggle="modal"
@@ -154,6 +165,191 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade w-100 border" id="v-pills-history" role="tabpanel"
+                            aria-labelledby="v-pills-history-tab" tabindex="0">
+                            <div class="p-3">
+                                <h5 class="m-0"><i class="bi bi-box2-heart"></i> {{ $historyDonations->count() }}
+                                    Total Donations</h5>
+                                <table id="historyTable" class="border rounded-table mt-0" style="width:100%">
+                                    <thead>
+                                        <tr class="">
+                                            <th class="text-center">ID</th>
+                                            <th class="text-center">Barangay</th>
+                                            <th class="text-center">Type</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($historyDonations as $donation)
+                                            @if ($donation->status == 'Pending Approval')
+                                                @php
+                                                    $badgeClass = 'text-bg-warning'; // Yellow indicates awaiting action
+                                                @endphp
+                                            @elseif ($donation->status === 'Approved')
+                                                @php
+                                                    $badgeClass = 'text-bg-success'; // Green indicates approval
+                                                @endphp
+                                            @elseif ($donation->status === 'Rejected')
+                                                @php
+                                                    $badgeClass = 'text-bg-warning'; // Blue indicates a process in motion
+                                                @endphp
+                                            @elseif ($donation->status === 'Received')
+                                                @php
+                                                    $badgeClass = 'text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
+                                                @endphp
+                                            @elseif ($donation->status === 'Distributed')
+                                                @php
+                                                    $badgeClass = 'text-bg-success'; // Green indicates the process is complete
+                                                @endphp
+                                            @else
+                                                @php
+                                                    $badgeClass = ''; // Default class if none match
+                                                @endphp
+                                            @endif
+                                            <tr>
+                                                <td class="text-center">{{ $donation->id }}</td>
+                                                <td class="text-center">{{ $donation->barangay->name }}</td>
+                                                <td class="text-capitalize text-center ">{{ $donation->type }}</td>
+                                                <td class="text-center">{{ $donation->created_at->format('M/d/Y') }}</td>
+                                                <td class="text-center align-items-center">
+                                                    <span class="{{ $badgeClass }} badge rounded-pill p-2 mx-1"> </span>
+                                                    {{ $donation->status }}
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn border bg-green" data-bs-toggle="modal"
+                                                        data-bs-target="#donationDetailsModal"
+                                                        onclick="loadDonationDetails({{ $donation->id }})">View</button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade w-100 border" id="v-pills-notification" role="tabpanel"
+                            aria-labelledby="v-pills-notification-tab" tabindex="0">
+                            <div class="p-3">
+                                <h5 class="m-0"><i class="bi bi-bell"></i> Notifications</h5>
+                                <table id="notificationTable" class="table table-striped border rounded-table mt-0"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr class="">
+                                            {{-- <th class="text-center">Notification ID</th> --}}
+                                            <th class="text-center">Message</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($donationNotification as $notification)
+                                            {{-- @php
+                                                // $data = json_decode($notification->data, true);
+                                                dd($notification->id);
+                                            @endphp --}}
+                                            <tr>
+                                                {{-- <td class="text-center">{{ $notification->id }}</td> --}}
+                                                <td class="text-center">
+                                                    {!! $notification->data['message'] !!}
+                                                </td>
+                                                <td class="text-center">{{ $notification->created_at->format('M/d/Y') }}
+                                                </td>
+                                                <td class="text-center">
+                                                    @if (is_null($notification->read_at))
+                                                        <!-- Check if the notification is unread -->
+                                                        <form action="{{ route('notif.markAsRead', $notification->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('POST')
+                                                            <button type="submit" class="btn btn-info">Mark as
+                                                                Read</button>
+                                                        </form>
+                                                    @else
+                                                        <span class="btn btn-success disabled">Read</span>
+                                                        <!-- Show "Read" badge if already read -->
+                                                    @endif
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade w-100 border" id="v-pills-transparency" role="tabpanel"
+                            aria-labelledby="v-pills-transparency-tab" tabindex="0">
+                            <div class="p-3">
+                                <h5 class="m-0 mb-3"><i class="bi bi-clipboard-heart"></i> Transparency Board</h5>
+                                <div class="row mt-2 mx-2 align-items-center">
+                                    <div class="col-12 col-md-4 mx-1">
+                                        <div class=" row mb-2">
+                                            <h6>Filter by Barangay:</h6> {{-- All barangay, Barangay 1,2,3.... --}}
+                                            <select id="barangayFilter" class="form-select ">
+                                                <option value="" selected>All Barangays</option>
+                                                <!-- Dynamically generate options for barangays -->
+                                                @foreach ($barangays as $barangay)
+                                                    <option value="{{ $barangay->id }}">{{ $barangay->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2 mx-1">
+                                        <div class="row mb-2">
+                                            <h6>Activity by Time:</h6> {{-- Quarterly 1,2,3,4 or anually --}}
+                                            <select id="timeFilter" class="form-select">
+                                                <option value="">Select Time Period</option>
+                                                <option value="Q1">Q1 (Jan-Mar)</option>
+                                                <option value="Q2">Q2 (Apr-Jun)</option>
+                                                <option value="Q3">Q3 (Jul-Sep)</option>
+                                                <option value="Q4">Q4 (Oct-Dec)</option>
+                                                <option value="Annual" selected>Annual</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3 mx-1">
+                                        <div class="row mb-2">
+                                            <h6>Filter by Year:</h6>
+                                            <select id="yearFilter" class="form-select">
+                                                <option value="">Select Year</option>
+                                                @for ($year = now()->year; $year >= $firstDonationYear; $year--)
+                                                    <option value="{{ $year }}">{{ $year }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md">
+                                        <button id="filterButton" class="btn bg-greener">Apply Filters</button>
+                                    </div>
+                                </div>
+                                <small class="text-secondary fs-6 float-end">*Apply Filter First</small>
+                                <div id="donationResults">
+                                    <table id="transparencyTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th class="fs-6">Barangay</th>
+                                                <th class="fs-6">Brgy. Rep.</th>
+                                                <th class="fs-6">Donor Name</th>
+                                                <th class="fs-6">Date of Donation</th>
+                                                <th class="fs-6">Donation Type</th>
+                                                <th class="fs-6">Itemized List</th>
+                                                <th class="fs-6">Quantity/Volume</th>
+                                                <th class="fs-6">Status</th>
+                                                <th class="fs-6">Last Updated</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamic rows will be appended here -->
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
 
@@ -350,19 +546,11 @@
 
                     itemsHtml += `</tbody></table>`;
 
-                    let statusClass =
-                        data.status === 'Approved' ? 'bg-success' :
-                        data.status === 'Pending Approval' ? 'bg-warning text-dark' :
-                        data.status === 'Recieved' ? 'bg-primary' :
-                        '';
-
                     // Populate the modal with the donation details
                     let detailsHtml = `
                 <p><strong>Donation ID:</strong> ${data.id}</p>
                 <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
-                <p><strong>Donation Status:</strong> <span class ="badge ${ statusClass } px-2">${data.status}</span></p>
-                <p><strong>Donation Approved By:</strong> ${data.approvedBy ?? ' -'}</p>
-                <p><strong>Donation Recieved By:</strong> ${data.receivedBy ?? ' -'}</p>
+                <p><strong>Donation Status:</strong> ${data.status}</p>
                 <p><strong>Donation Proof:</strong>
                     ${ data.proof ? `<a href="/storage/app/public/uploads/proofs/${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
                 </p>

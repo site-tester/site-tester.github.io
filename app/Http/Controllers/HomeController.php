@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barangay;
+use App\Models\DisasterRequest;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class HomeController extends Controller
     public function updateProfile(Request $request)
     {
         // Fetch the user profile
-        $userProfile = UserProfile::where('user_id',Auth::id())->firstOrFail();
+        $userProfile = UserProfile::where('user_id', Auth::id())->firstOrFail();
         $user = User::where('id', Auth::id())->firstOrFail();
         // dd($user , $userProfile);
         // Validate input fields
@@ -86,5 +87,15 @@ class HomeController extends Controller
         $barangayLists = Barangay::orderBy('name')->get();
         return view('main.donationForm', compact('barangayLists', 'donation_type', 'barangayID'));
     }
+
+    public function viewDonateUrgent($id)
+    {
+        $donationRequest = DisasterRequest::where('id', $id)->first();
+        $barangayID = $donationRequest->barangay->id;
+        $barangayLists = Barangay::orderBy('name')->get();
+        return view('main.donationFormUrgent', compact('donationRequest', 'barangayLists', 'barangayID'));
+    }
+
+    
 
 }

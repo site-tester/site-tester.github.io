@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('donation_items', function (Blueprint $table) {
             $table->id();
             $table->string('donation_id');
+            $table->json('donation_type');
             $table->string('item_name');
             $table->string('quantity');
             $table->date('expiration_date')->nullable();

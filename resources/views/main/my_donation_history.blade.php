@@ -84,25 +84,13 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($historyDonations as $donation)
-                                        @if ($donation->status == 'Pending Approval')
+                                        @if ($donation->status === 'Rejected')
                                             @php
-                                                $badgeClass = 'text-bg-warning'; // Yellow indicates awaiting action
-                                            @endphp
-                                        @elseif ($donation->status === 'Approved')
-                                            @php
-                                                $badgeClass = 'text-bg-success'; // Green indicates approval
-                                            @endphp
-                                        @elseif ($donation->status === 'Rejected')
-                                            @php
-                                                $badgeClass = 'text-bg-warning'; // Blue indicates a process in motion
-                                            @endphp
-                                        @elseif ($donation->status === 'Received')
-                                            @php
-                                                $badgeClass = 'text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
+                                                $badgeClass = 'text-bg-danger'; // Blue indicates a process in motion
                                             @endphp
                                         @elseif ($donation->status === 'Distributed')
                                             @php
-                                                $badgeClass = 'text-bg-success'; // Green indicates the process is complete
+                                                $badgeClass = 'text-bg-primary'; // Green indicates the process is complete
                                             @endphp
                                         @else
                                             @php
@@ -112,11 +100,11 @@
                                         <tr>
                                             <td class="text-center">{{ $donation->id }}</td>
                                             <td class="text-center">{{ $donation->barangay->name }}</td>
-                                            <td class="text-capitalize text-center ">{{ $donation->type }}</td>
+                                            <td class="text-capitalize text-center ">{{ implode(', ', json_decode($donation->type,true)) }}</td>
                                             <td class="text-center">{{ $donation->created_at->format('M/d/Y') }}</td>
                                             <td class="text-center align-items-center">
-                                                <span class="{{ $badgeClass }} badge rounded-pill p-2 mx-1"> </span>
-                                                {{ $donation->status }}
+                                                <span class="{{ $badgeClass }} badge p-2 mx-1">{{ $donation->status }}</span>
+
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn border bg-green" data-bs-toggle="modal"
@@ -318,12 +306,21 @@
 
                     itemsHtml += `</tbody></table>`;
 
+                    let statusClass =
+                        data.status === 'Rejected' ? 'text-bg-danger' :
+                        data.status === 'Distributed' ? 'text-bg-primary' :
+                        '';
+
                     // Populate the modal with the donation details
                     let detailsHtml = `
                 <p><strong>Donation ID:</strong> ${data.id}</p>
-                <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
-                <p><strong>Donation Status:</strong> ${data.status}</p>
-                <p><strong>Donation Remarks:</strong> ${data.remarks ?? ' -'}</p>
+                <p><strong>Donation Date & Time:</strong> ${new Date(data.created_at).toLocaleString()}</p>
+                <p><strong>Donation Status:</strong> <span class ="badge ${ statusClass } px-2">${data.status}</span></p>
+                <p><strong>Donation Recieved By:</strong> ${data.receivedBy ?? ' -'}</p>
+                <p><strong>Donation Distributed By:</strong> ${data.distributedBy ?? ' -'}</p>
+                <p><strong>Donation Proof:</strong>
+                    ${ data.proof ? `<a href="/storage/app/public/uploads/proofs/${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
+                </p>
                 <p><strong>Donation Items:</strong></p>
                 ${itemsHtml}
                 <!-- Add other fields as needed -->

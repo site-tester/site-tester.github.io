@@ -89,7 +89,7 @@
         </a>
 
         <div class="dropdown-menu {{ request()->is('admin/donation*') ? 'active show' : '' }}" data-bs-popper="static">
-            <x-backpack::menu-dropdown-header title="* Ongoing Donation Approval *" />
+            {{-- <x-backpack::menu-dropdown-header title="* Ongoing Donation Approval *" /> --}}
             {{-- Dropdown Items --}}
             <a class="dropdown-item {{ request()->fullUrlIs(backpack_url('donation?show=Pending')) ? 'active' : '' }}" href="{{ backpack_url('donation?show=Pending') }}">
                 <i class="nav-icon d-block d-lg-none d-xl-block la la-stamp"></i>
@@ -98,7 +98,7 @@
                     <span class="visually-hidden">New alerts</span>
                 </span>
             </a>
-            <x-backpack::menu-dropdown-header title="* Ongoing Active Donation *" />
+            {{-- <x-backpack::menu-dropdown-header title="* Ongoing Active Donation *" /> --}}
             <a class="dropdown-item {{ request()->fullUrlIs(backpack_url('donation?show=Active')) ? 'active' : '' }}" href="{{ backpack_url('donation?show=Active') }}">
                 <i class="nav-icon d-block d-lg-none d-xl-block la la-toggle-on"></i>
                 <span>Active Donations</span>
@@ -119,7 +119,6 @@
             <span>Disaster Request</span>
         </a>
         <div class="dropdown-menu " data-bs-popper="static">
-            <x-backpack::menu-dropdown-header title="* Ongoing Create Form *" />
             <a class="dropdown-item" href="{{ backpack_url('disaster-request/create') }}">
                 {{-- <i class="nav-icon d-block d-lg-none d-xl-block la la-plus-square"></i> --}}
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-file-plus">
@@ -132,7 +131,7 @@
                 <span>Create Form</span>
             </a>
 
-            <x-backpack::menu-dropdown-header title="* Ongoing Active Disaster Report *" />
+            {{-- <x-backpack::menu-dropdown-header title="* Ongoing Active Disaster Report *" /> --}}
             <a class="dropdown-item" href="{{ backpack_url('disaster-request') }}">
                 <i class="nav-icon d-block d-lg-none d-xl-block la la-toggle-on"></i>
                 <span>Active Disaster Request</span>
@@ -147,8 +146,14 @@
     </li>
 @endcan
 
+@can('browse_inventory')
+    {{-- <x-backpack::menu-dropdown title="Manage Inventory" icon="la la-cubes"> --}}
+    <x-backpack::menu-item title="Transfer" icon="la la-cubes" :link="backpack_url('donation-transfer')" />
+    {{-- </x-backpack::menu-dropdown> --}}
+@endcan
+
 @can('browse_disaster_report_verification')
-    <x-backpack::menu-dropdown-header title="* Ongoing Disaster Report Verification *" />
+    {{-- <x-backpack::menu-dropdown-header title="* Ongoing Disaster Report Verification *" /> --}}
     <li class="nav-item">
         <a class="nav-link" href="{{ backpack_url('disaster-report-verification') }}">
             <i class="la la-house-damage nav-icon"></i>

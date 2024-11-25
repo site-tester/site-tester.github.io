@@ -47,10 +47,22 @@ Route::group([
     Route::crud('request-donation', 'RequestDonationCrudController');
     Route::crud('disaster-request', 'DisasterReportCrudController');
     Route::crud('disaster-report-verification', 'RequestDonationVerificationCrudController');
+    Route::crud('donation-transfer',  'TransferDonationController');
     Route::post('update-verification-status/{id}', [
         'uses' => 'RequestDonationVerificationCrudController@updateStatus',
         'as' => 'update.verification.status',
     ]);
+    Route::post('update-donation-verification-status/{id}', [
+        'uses' => 'DonationCrudController@updateStatus',
+        'as' => 'update.donation.verification.status',
+    ]);
+    Route::post('approve-donation/{id}', [
+        'uses' => 'DonationCrudController@approveDonation',
+        'as' => 'donation.approve',
+    ]);
+    Route::crud('donation-transfer',  'TransferDonationController');
+
+
 
 }); // this should be the absolute last line of this file
 

@@ -147,7 +147,6 @@
                                     @endforeach
                                 </select>
 
-
                                 <div class="ms-3 mt-2 small text-secondary">
                                     <strong>Legend:</strong>
                                     <table class="table table-bordered rounded">
@@ -196,12 +195,38 @@
 
                             <div class="mb-3 donationForm">
                                 <label for="" class="m-0 form-label row h4 mb-2">Donation Type</label>
+                                {{-- <div class="btn-group btn-group-lg mb-3 w-100" role="group"
+                                    aria-label="Basic checkbox toggle button group">
+                                    <input type="radio" class="btn-check" name="donation_type" id="btncheck1"
+                                        autocomplete="off" value="Food"
+                                        {{ $donation_type === 'Food' ? 'checked' : '' }} />
+                                    <label class="btn btn-donate-now border border-dark text-nowrap"
+                                        for="btncheck1">Food</label>
 
+                                    <input type="radio" class="btn-check" name="donation_type" id="btncheck2"
+                                        autocomplete="off" value="NonFood"
+                                        {{ $donation_type === 'Nonfood' ? 'checked' : '' }} />
+                                    <label class="btn btn-donate-now border border-dark text-nowrap"
+                                        for="btncheck2">Non-Food</label>
+
+                                    <input type="radio" class="btn-check" name="donation_type" id="btncheck3"
+                                        autocomplete="off" value="Medical"
+                                        {{ $donation_type === 'Medical' ? 'checked' : '' }} />
+                                    <label class="btn btn-donate-now border border-dark text-nowrap"
+                                        for="btncheck3">Medical</label>
+                                </div> --}}
+                                @php
+                                    $preffered_donation_type = json_decode($donationRequest->preffered_donation_type);
+                                    // dd($donationRequest->preffered_donation_type );
+                                    $incident_date = \Carbon\Carbon::parse($donationRequest->incident_date)->timezone(
+                                        'UTC',
+                                    );
+                                @endphp
                                 <div class="row">
                                     <div class="col-12 col-md-4 mb-3">
                                         <input type="checkbox" class="btn-check" name="donation_type[]" id="btncheck1"
                                             autocomplete="off" value="Food"
-                                            {{ in_array('Food', $donation_type ?? []) ? 'checked' : '' }} />
+                                            {{ in_array('Food', $preffered_donation_type ?? []) ? 'checked' : '' }} />
                                         <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
                                             for="btncheck1">Food</label>
                                     </div>
@@ -209,7 +234,7 @@
                                     <div class="col-12 col-md-4 mb-3">
                                         <input type="checkbox" class="btn-check" name="donation_type[]" id="btncheck2"
                                             autocomplete="off" value="NonFood"
-                                            {{ in_array('NonFood', $donation_type ?? []) ? 'checked' : '' }} />
+                                            {{ in_array('NonFood', $preffered_donation_type ?? []) ? 'checked' : '' }} />
                                         <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
                                             for="btncheck2">Non-Food</label>
                                     </div>
@@ -217,7 +242,7 @@
                                     <div class="col-12 col-md-4 mb-3">
                                         <input type="checkbox" class="btn-check" name="donation_type[]" id="btncheck3"
                                             autocomplete="off" value="Medical"
-                                            {{ in_array('Medical', $donation_type ?? []) ? 'checked' : '' }} />
+                                            {{ in_array('Medicine', $preffered_donation_type ?? []) ? 'checked' : '' }} />
                                         <label class="btn btn-donate-now w-100 border border-dark text-nowrap fs-3"
                                             for="btncheck3">Medical</label>
                                     </div>
@@ -227,7 +252,7 @@
                                     <input type="hidden" name="donation-food-basket-array">
                                     <input type="hidden" name="donation-nonfood-basket-array">
                                     <input type="hidden" name="donation-medical-basket-array">
-                                    <div id="expirationNote" class="alert alert-warning" style="display: none;">
+                                    <div id="expirationNote" class="alert alert-warning" style="display: block;">
                                         Please ensure that donated food items and medical supplies have an expiration date
                                         of at least 1 year from the donation date. Items expiring sooner will not be
                                         accepted.
@@ -241,8 +266,7 @@
                                                         <th class="fw-bold" style="width: 25%;">Item</th>
                                                         <th class="fw-bold text-nowrap">Quantity</th>
                                                         <th class="fw-bold text-nowrap">Unit</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Expiration
-                                                            Date</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Exp. Date</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -261,13 +285,13 @@
                                                             <select class="form-control donation_food_item_qty_con">
                                                                 <option value="" disabled selected hidden>
                                                                 </option>
-                                                                <option value="Piece/s">Pc/s</option>
+                                                                <option value="Piece/s">Piece/s</option>
                                                                 <option value="Pack/s">Pack/s</option>
                                                                 <option value="Box/es">Box/es</option>
                                                             </select>
                                                         </td>
                                                         <td><input class="form-control donation_food_item_exp"
-                                                                type="text" placeholder="Exp. Date"></td>
+                                                                type="text" placeholder="Expiration Date"></td>
                                                         <td><input class="form-control donation_food_item_image"
                                                                 type="file" accept="image/*"
                                                                 name="donation_food_item_image"></td>
@@ -347,8 +371,7 @@
                                                         <th class="fw-bold" style="width: 25%;">Item</th>
                                                         <th class="fw-bold text-nowrap">Quantity</th>
                                                         <th class="fw-bold text-nowrap">Unit</th>
-                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Expiration
-                                                            Date</th>
+                                                        <th class="fw-bold text-nowrap" style="width: 20%;">Exp. Date</th>
                                                         <th class="fw-bold text-nowrap" style="width: 15%;">Image</th>
                                                         <th style="width: 5%;"></th>
                                                     </tr>
@@ -386,7 +409,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <small id="additionalNote" class="fw-bold text-end " style="display: none;">
+                                    <small id="additionalNote" class="fw-bold text-end " style="display: block;">
                                         * If the expiration date of an item is different from others, please add it as a new
                                         item.
                                         <br>
@@ -403,14 +426,12 @@
                             <div class="col mb-3">
                                 <label for="schedDate" class="form-label h5">Select a Date:</label>
                                 <input type="text" class="form-control border border-dark" name="schedule_date"
-                                    id="schedDate" aria-describedby="helpId" placeholder="Select a Date" />
+                                    id="schedDate" aria-describedby="helpId" value="{{ $incident_date }}" />
                             </div>
                             <div class="col mb-3">
                                 <label for="donationTime" class="form-label h5">Select a Time:</label>
                                 <input id="donationTime" class="form-control border border-dark" type="text"
-                                    name="donation_time">
-
-
+                                    name="donation_time" value="{{ $donationRequest->incident_date }}">
                             </div>
 
                         </div>
@@ -436,6 +457,24 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         $(document).ready(function() {
+            // JSON passed from the controller (decode it in JavaScript)
+            const preferredDonationType = JSON.parse(@json($donationRequest->preffered_donation_type));
+            // Iterate through the array and toggle visibility
+            if (Array.isArray(preferredDonationType)) {
+                preferredDonationType.forEach(type => {
+                    if (type === "Food") {
+                        $('#foodInputs').removeClass('d-none').addClass('d-block');
+                    }
+                    if (type === "NonFood") {
+                        $('#nonFoodInputs').removeClass('d-none').addClass('d-block');
+                    }
+                    if (type === "Medicine") {
+                        $('#medicalInputs').removeClass('d-none').addClass('d-block');
+                    }
+                });
+            } else {
+                console.error("preferredDonationType is not an array:", preferredDonationType);
+            }
 
             $('#anonymousCheckbox').on('change', function() {
                 if ($(this).is(':checked')) {
@@ -457,17 +496,7 @@
 
             flatpickr("#schedDate", {
                 inline: true,
-                defaultDate: new Date(),
             });
-            // $("#donationTime").flatpickr([
-            //     enableTime: true,
-            //     noCalendar: true,
-            //     dateFormat: "H:i",
-            //     time_24hr: false,
-            // ]);
-
-            // Call the function to disable past time slots
-            // disablePastTimeSlots();
 
             const $foodInputs = $('#foodInputs');
             const $nonFoodInputs = $('#nonFoodInputs');
@@ -901,12 +930,12 @@
 
                     // Create a custom option with both icons
                     const $result = $(`
-            <div style="display: flex; align-items: center; height: 100%;">
-                <i class="${floodIconClass}" style="color: ${floodColor}; margin-right: 8px;"></i>
-                <i class="${fireIconClass}" style="color: ${fireColor}; margin-right: 8px;"></i>
-                ${data.text}
-            </div>
-        `);
+                        <div style="display: flex; align-items: center; height: 100%;">
+                            <i class="${floodIconClass}" style="color: ${floodColor}; margin-right: 8px;"></i>
+                            <i class="${fireIconClass}" style="color: ${fireColor}; margin-right: 8px;"></i>
+                            ${data.text}
+                        </div>
+                    `);
 
                     return $result;
                 },
@@ -952,7 +981,6 @@
                     return $selection;
                 }
             });
-
         });
     </script>
 @endsection

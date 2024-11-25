@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('anonymous')->nullable()->default(false);
             $table->foreignId('donor_id')->constrained('users');
             $table->foreignId('barangay_id');
-            $table->string('coordinator')->nullable();
-            $table->string('type');
-            // $table->json('items');
+            $table->string('transfered_by')->nullable();
+            $table->string('approved_by')->nullable();
+            $table->string('received_by')->nullable();
+            $table->string('distributed_by')->nullable();
+            $table->json('type');
             $table->date('donation_date');
             $table->string('donation_time');
             $table->string('proof_document')->nullable();
@@ -30,6 +32,7 @@ return new class extends Migration
                 'Received',
                 'Distributed',
             ])->default('Pending Approval');
+            $table->date('mark_as_done')->nullable();
             $table->timestamps();
         });
     }

@@ -6,10 +6,13 @@ use App\Http\Requests\DonationRequest;
 use App\Models\Barangay;
 use App\Models\Donation;
 use App\Models\User;
+use App\Notifications\DonationApprovalNotification;
 use App\Notifications\DonorDonationStatusNotification;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class DonationCrudController
@@ -49,6 +52,7 @@ class DonationCrudController extends CrudController
         // CRUD::setFromDb(); // set columns from db columns.
         CRUD::setListView('vendor.backpack.crud.donation_list');
         $show = request()->get('show');
+        CRUD::removeButton('reset');
 
         if ($show == 'Active') {
             // Apply a filter to the query based on the status
@@ -56,20 +60,22 @@ class DonationCrudController extends CrudController
             CRUD::addClause('where', 'status', '!=', 'Pending Approval');
             $this->data['breadcrumbs'] = [
                 trans('backpack::base.dashboard') => backpack_url('dashboard'),
-                'Donations' => false,
                 'Active Donations' => false,
+                'Lists' => false,
             ];
+            $this->crud->removeAllButtons();
         }
 
         if ($show == 'Pending') {
             // Apply a filter to the query based on the status
             CRUD::setEntityNameStrings('Donation Aprroval', 'Donation Aprrovals');
-            CRUD::addClause('where', 'status', '!=', 'Pending Approval');
+            CRUD::addClause('where', 'status', '=', 'Pending Approval');
             $this->data['breadcrumbs'] = [
                 trans('backpack::base.dashboard') => backpack_url('dashboard'),
-                'Donations' => false,
-                'Active Donations' => false,
+                'Donation Approval' => false,
+                'Lists' => false,
             ];
+            $this->crud->removeAllButtons();
         }
 
 
@@ -110,64 +116,230 @@ class DonationCrudController extends CrudController
             CRUD::addClause('where', 'barangay_id', $barangayId->id);
 
         }
+        if ($show == 'Pending') {
+            CRUD::addColumn([
+                'name' => 'id',
+                'label' => 'Donation ID',
+            ]);
 
-        CRUD::addColumn([
-            'name' => 'id',
-            'label' => 'Donation ID',
-        ]);
-        CRUD::addColumn([
-            'name' => 'coordinator',
-            'label' => 'Coordinator',
-        ]);
-
-        CRUD::addColumn([
-            'name' => 'donor_id',
-            'label' => 'Donor Name',
-            'entity' => 'donor',
-            'model' => 'App\Models\User',
-            'attribute' => 'name',
-            'pivot' => false,
-        ]);
-
-        CRUD::addColumn([
-            'name' => 'barangay_id',
-            'label' => 'Barangay Recipient',
-            'entity' => 'barangay',
-            'model' => 'App\Models\Barangay',
-            'attribute' => 'name',
-            'pivot' => false,
-        ]);
-
-        CRUD::addColumn([
-            'name' => 'status',
-            'label' => 'Status',
-            'type' => 'text',
-            'wrapper' => [
-                'element' => 'span',
-                'class' => function ($crud, $column, $entry, $related_key) {
-                    // Determine the badge class based on the status value
-                    if ($column['text'] == 'Pending Approval') {
-                        return 'badge text-bg-warning'; // Yellow indicates awaiting action
-                    }
-                    if ($column['text'] == 'Approved') {
-                        return 'badge text-bg-success'; // Green indicates approval
-                    }
-                    if ($column['text'] == 'Rejected') {
-                        return 'badge text-bg-warning'; // Yellow indicates a warning
-                    }
-                    if ($column['text'] == 'Received') {
-                        return 'badge text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
-                    }
-                    if ($column['text'] == 'Distributed') {
-                        return 'badge text-bg-success'; // Green indicates the process is complete
-                    }
-                    return 'badge badge-default';
+            CRUD::addColumn([
+                'name' => 'donor_id',
+                'label' => 'Donor Name',
+                'entity' => 'donor',
+                'model' => 'App\Models\User',
+                'attribute' => 'name',
+                'pivot' => false,
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    $donor = Donation::where('id', $entry->id)->firstOrFail();
+                    return $donor->anonymous == 0 ? $donor->donor->name : 'Anonymous';
                 },
-            ],
-        ]);
-        CRUD::removeButton('create');
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'barangay_id',
+                'label' => 'Barangay Recipient',
+                'entity' => 'barangay',
+                'model' => 'App\Models\Barangay',
+                'attribute' => 'name',
+                'pivot' => false,
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'status',
+                'label' => 'Status',
+                'type' => 'text',
+                'wrapper' => [
+                    'element' => 'span',
+                    'class' => function ($crud, $column, $entry, $related_key) {
+                        // Determine the badge class based on the status value
+                        if ($column['text'] == 'Pending Approval') {
+                            return 'badge text-bg-warning'; // Yellow indicates awaiting action
+                        }
+                        if ($column['text'] == 'Approved') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Rejected') {
+                            return 'badge text-bg-danger'; // Yellow indicates a warning
+                        }
+                        if ($column['text'] == 'Received') {
+                            return 'badge text-bg-primary'; // Grey indicates a neutral state (received but not processed yet)
+                        }
+                        if ($column['text'] == 'Distributed') {
+                            return 'badge text-bg-primary'; // Green indicates the process is complete
+                        }
+                        return 'badge badge-default';
+                    },
+                ],
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'status_approval',
+                'label' => 'Verification',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    // Ensure the $entry is not null and the status is set
+                    if (!$entry) {
+                        return ''; // Return an empty string or default HTML
+                    }
+
+                    // Define the button styles based on the current status
+                    $checkButton = '<button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#approveModal" data-id="' . $entry->id . '" ';
+                    $xButton = '<button class="btn btn-danger btn-lg" onclick="updateDonationStatus(' . $entry->id . ', \'Rejected\')" ';
+                    $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '">';
+
+
+                    // Check the current status of the entry and adjust the buttons accordingly
+                    if ($entry->status == 'Pending Approval') {
+                        // Both action buttons are clickable if the status is Pending Approval
+                        $checkButton .= '>';
+                        $xButton .= '>';
+                        // $viewButton .= '>';
+                    } elseif ($entry->status == 'Approved') {
+                        // If the status is Approved, disable the X button
+                        $checkButton .= 'style="pointer-events: none;">';
+                        $xButton .= 'disabled style="background-color: #ccc; border-color: #ccc;">'; // Grey out X button
+                        // $viewButton .= '>';
+                    } elseif ($entry->status == 'Rejected') {
+                        // If the status is Rejected, disable the check button
+                        $checkButton .= 'disabled style="background-color: #ccc; border-color: #ccc;">'; // Grey out check button
+                        $xButton .= 'style="pointer-events: none;">';
+                        // $viewButton .= '>';
+                    }
+
+                    // Add the icon HTML to all buttons
+                    $checkButton .= '<i class="la la-check-circle"></i></button>';
+                    $xButton .= '<i class="la la-times-circle"></i></button>';
+                    $viewButton .= '<i class="la la-eye"></i></a>';
+
+
+                    // Return all buttons
+                    return $viewButton . ' ' . $checkButton . ' ' . $xButton;
+                },
+                'escaped' => false,
+            ]);
+        }
+
+        if ($show == 'Active') {
+            CRUD::addColumn([
+                'name' => 'donation_date',
+                'label' => 'Donation Date'
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'donor_id',
+                'label' => 'Donor Name',
+                'entity' => 'donor',
+                'model' => 'App\Models\User',
+                'attribute' => 'name',
+                'pivot' => false,
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    $donor = Donation::where('id', $entry->id)->firstOrFail();
+                    return $donor->anonymous == 0 ? $donor->donor->name : 'Anonymous';
+                },
+
+            ]);
+            CRUD::addColumn([
+                'name' => 'type',
+                'label' => 'Category',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'approved_by',
+                'label' => 'Approved By',
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'received_by',
+                'label' => 'Received By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $$entry->received_by ?? 'Pending';
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'status',
+                'label' => 'Status',
+                'type' => 'text',
+                'wrapper' => [
+                    'element' => 'span',
+                    'class' => function ($crud, $column, $entry, $related_key) {
+                        // Determine the badge class based on the status value
+                        if ($column['text'] == 'Pending Approval') {
+                            return 'badge text-bg-warning'; // Yellow indicates awaiting action
+                        }
+                        if ($column['text'] == 'Approved') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Rejected') {
+                            return 'badge text-bg-danger'; // Yellow indicates a warning
+                        }
+                        if ($column['text'] == 'Received') {
+                            return 'badge text-bg-primary'; // Grey indicates a neutral state (received but not processed yet)
+                        }
+                        if ($column['text'] == 'Distributed') {
+                            return 'badge text-bg-primary'; // Green indicates the process is complete
+                        }
+                        return 'badge badge-default';
+                    },
+                ],
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'status_approval',
+                'label' => 'Details',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    // Ensure the $entry is not null and the status is set
+                    if (!$entry) {
+                        return ''; // Return an empty string or default HTML
+                    }
+
+                    // Define the button styles based on the current status
+                    $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '">';
+                    // Check the current status of the entry and adjust the buttons accordingly
+                    $viewButton .= '<i class="la la-eye"></i></a>';
+
+                    // Return all buttons
+                    return $viewButton;
+                },
+                'escaped' => false,
+            ]);
+        }
 
         return view(CRUD::getListView(), $this->data);
+    }
+
+    protected function approveDonation(Request $request, $id)
+    {
+        try {
+            $donation = Donation::findOrFail($id);
+            $donation->approved_by = $request->input('approver_name'); // Save the approver's name
+            $donation->status = 'Approved'; // Update status to approved
+
+            if ($donation->status === "Approved") {
+                // Send notification to the donor
+                $donation->donor->notify(new DonationApprovalNotification($donation));
+            };
+
+            $donation->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -411,16 +583,28 @@ class DonationCrudController extends CrudController
         if ($donationBeforeUpdate->status !== $donationAfterUpdate->status) {
             // Retrieve the donor if the relationship exists
             $donor = $donationAfterUpdate->donor;
-            // Send notification to the donor if they exist
-            if ($donor) {
-                $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate));
+
+            if ($donationAfterUpdate->status == 'Approve') {
+                if ($donor) {
+                    $donor->notify(new DonationApprovalNotification($donationAfterUpdate));
+                }
+            } else {
+                if ($donor) {
+                    $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate));
+                }
             }
+            // Send notification to the donor if they exist
+            // if ($donor) {
+            //     $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate));
+            // }
         }
         return $response;
     }
 
     public function setupShowOperation()
     {
+        CRUD::setEntityNameStrings('Donation Preview', 'Donation Preview');
+        $this->crud->removeAllButtons();
         $this->crud->setColumns([
             [
                 'name' => 'status',
@@ -451,17 +635,17 @@ class DonationCrudController extends CrudController
                 ],
             ],
             [
-                'name' => 'coordinator',
-                'label' => 'Coordinator',
-                'type' => 'text',
-            ],
-            [
                 'name' => 'donor_id',
                 'label' => 'Donor Name',
                 'entity' => 'donor',
                 'model' => 'App\Models\User',
                 'attribute' => 'name',
                 'pivot' => false,
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    $donor = Donation::where('id', $entry->id)->firstOrFail();
+                    return $donor->anonymous == 0 ? $donor->donor->name : 'Anonymous';
+                },
             ],
             [
                 'name' => 'barangay_id',
@@ -472,9 +656,42 @@ class DonationCrudController extends CrudController
                 'pivot' => false,
             ],
             [
+                'name' => 'approved_by',
+                'label' => 'Approved By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->approved_by ?? 'Pending';
+                },
+            ],
+            [
+                'name' => 'received_by',
+                'label' => 'Received By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->received_by ?? 'Pending';
+                },
+            ],
+            [
+                'name' => 'distributed_by',
+                'label' => 'Distributed By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->distributed_by ?? 'Pending';
+                },
+            ],
+            [
                 'name' => 'type',
                 'label' => 'Type',
-                'type' => 'text',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
             ],
             [
                 'name' => 'donationItems',
@@ -501,12 +718,12 @@ class DonationCrudController extends CrudController
             [
                 'name' => 'created_at',
                 'label' => 'Created At',
-                'type' => 'datetime',
+                'type' => 'date',
             ],
             [
                 'name' => 'updated_at',
                 'label' => 'Updated At',
-                'type' => 'datetime',
+                'type' => 'date',
             ],
             // Add other fields you want to display
         ]);
@@ -550,5 +767,51 @@ class DonationCrudController extends CrudController
         $output .= '</ul>'; // End the unordered list
         return $output; // Return the formatted HTML
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        // Find the donation entry
+        $entry = Donation::find($id);
+        // Log the entry's details
+        Log::info('Donation entry:', $entry->toArray());
+
+        if ($entry) {
+            // Get the donor associated with the donation
+            $user = User::find($entry->donor_id);
+
+            if (!$user) {
+                // Handle case where no donor is found
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Donor not found for this donation.'
+                ]);
+            };
+
+            // Update the donation status based on the request
+            $entry->status = $request->status;
+
+            // If the status is 'Approved', send the notification
+            if ($entry->status === "Approved") {
+                // Send notification to the donor
+                $user->notify(new DonationApprovalNotification($entry));
+            };
+
+            // Save the updated donation status
+            $entry->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Donation ID:' . $id . ' ' . $entry->status,
+                'status' => $entry->status
+            ]);
+        }
+
+        // Return an error response if the donation entry was not found
+        return response()->json([
+            'success' => false,
+            'message' => 'Donation request not found.'
+        ]);
+    }
+
 
 }

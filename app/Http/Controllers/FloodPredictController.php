@@ -72,14 +72,6 @@ class FloodPredictController extends Controller
         $labels = Barangay::all()->map(function ($barangay) {
             return $this->calculateRiskLevel($barangay->flood_frequency);
         })->toArray();
-        // $samples = [];
-        // $labels = [];
-
-        // $barangays = Barangay::all();
-        // foreach ($barangays as $barangay) {
-        //     $samples[] = [$barangay->flood_frequency]; // Use only flood frequency as feature
-        //     $labels[] = $this->getRiskScore($barangay); // Define how to get risk score
-        // }
 
         // Train the model
         $model = new KNearestNeighbors();

@@ -51,10 +51,10 @@ class RequestDonationCrudController extends CrudController
             $this->crud->removeButton('update');
         }
 
-         CRUD::addColumn([
+        CRUD::addColumn([
             'name' => 'barangay', // The actual field in your database (foreign key)
             'label' => 'Barangay', // The label you want to display in the column
-             'type' => 'text', // Define it as a select field
+            'type' => 'text', // Define it as a select field
             'entity' => 'barangay', // Define the relationship
             'attribute' => 'name', // The field from the related model (Barangay) to display
             'model' => 'App\Models\Barangay', // The model that defines the relation
@@ -149,7 +149,8 @@ class RequestDonationCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-    public function addDisasterReport(){
+    public function addDisasterReport()
+    {
         return view('vendor.backpack.ui.addDisasterReport');
     }
 }

@@ -24,9 +24,29 @@ class DisasterRequest extends Model
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'barangay_id'
+        'reported_by',
+        'incident_date',
+        'incident_time',
+        'barangay_id',
+        'exact_location',
+        'disaster_type',
+        'caused_by',
+        'preffered_donation_type',
+        'affected_family',
+        'affected_person',
+        'overview',
+        'immediate_needs_food',
+        'immediate_needs_medicine',
+        'immediate_needs_nonfood',
+        'attachments',
+        "date_requested",
     ];
     // protected $hidden = [];
+    protected $casts = [
+        'disaster_type' => 'array',
+        'attachments' => 'array',
+        'preffered_donation_type' => 'array',
+    ];
 
     /*
     |--------------------------------------------------------------------------

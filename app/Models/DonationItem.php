@@ -12,10 +12,15 @@ class DonationItem extends Model
     protected $fillable = [
         'donation_id',
         'item_name',
+        'donation_type',
         'quantity',
         'expiration_date',
         'condition',
         'image_path',
+    ];
+
+    protected $casts = [
+        'donation_type' => 'array',
     ];
 
     public function donation(){

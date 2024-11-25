@@ -43,9 +43,16 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/my-donation-history', [DonationController::class, 'myDonationHistory'])->name('my.donation.history');
     Route::get('/my-donation-transparency', [DonationController::class, 'myDonationTransparency'])->name('my.donation.transparency');
     Route::get('/donation/view/{id}', [DonationController::class, 'show'])->name('donation.modal');
+    Route::get('/donation/receipt-view/{id}', [DonationController::class, 'showReceipt'])->name('donation.reciept.modal');
     Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notif.markAsRead');
     Route::post('/submit-donation', [DonationController::class, 'submitDonation'])->name('submit.donation');
     Route::get('/transparency-board', [TransparencyBoardController::class, 'getTransparencyData']);
+    Route::get('/donation-request', [DonationController::class, 'viewDonationRequest'])->name('donation.request');
+    Route::get('/urgent-donate/{id}', [HomeController::class, 'viewDonateUrgent'])->name('donate-now-urgent');
+    Route::get('/donation-requests/filter', [DonationController::class, 'filter'])->name('donation-requests.filter');
+
+
+
 });
 
 Route::get('/generate-report', [ReportController::class, 'generateReport']);

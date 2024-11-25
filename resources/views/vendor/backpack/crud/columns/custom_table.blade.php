@@ -1,6 +1,7 @@
 <table class="table table-sm table-bordered">
     <thead>
         <tr>
+            <th>Donation Type</th>
             <th>Item Name</th>
             <th>Quantity</th>
             <th>Expiration Date or Condition</th>
@@ -10,6 +11,7 @@
     <tbody>
         @foreach ($entry->donationItems as $item)
             <tr>
+                <td>{{ $item->donation_type }}</td>
                 <td>{{ $item->item_name }}</td>
                 <td>{{ $item->quantity }}</td>
                 <td>{{ $item->expiration_date ?? ($item->condition ?? 'N/A') }}</td>
