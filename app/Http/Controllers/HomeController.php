@@ -96,6 +96,6 @@ class HomeController extends Controller
         return view('main.donationFormUrgent', compact('donationRequest', 'barangayLists', 'barangayID'));
     }
 
-    
+
 
 }

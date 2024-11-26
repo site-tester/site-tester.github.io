@@ -13,7 +13,7 @@ class DisasterTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $disasters = ['Flood', 'Fire'];
+        $disasters = ['Flood', 'Fire', 'Earthquake'];
 
         foreach ($disasters as $disaster) {
             DisasterType::create([

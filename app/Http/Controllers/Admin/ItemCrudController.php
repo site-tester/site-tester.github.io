@@ -47,24 +47,25 @@ class ItemCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setListView('vendor.backpack.crud.inventory_list');
+        CRUD::removeButtons(['update','delete']);
 
-        $this->data['overviewData'] = [
-            'totalItems' => Item::count(),
-            'totalFood' => Item::where('donation_type', 'Food')->count(),
-            'totalNonFood' => Item::where('donation_type', 'NonFood')->count(),
-            'totalMedical' => Item::where('donation_type', 'Medical')->count(),
-        ];
+        // $this->data['overviewData'] = [
+        //     'totalItems' => Item::count(),
+        //     'totalFood' => Item::where('donation_type', 'Food')->count(),
+        //     'totalNonFood' => Item::where('donation_type', 'NonFood')->count(),
+        //     'totalMedical' => Item::where('donation_type', 'Medical')->count(),
+        // ];
 
-        if (request()->has('type')) {
-            $type = request('type');
-            if ($type === 'food') {
-                CRUD::addClause('where', 'donation_type', 'Food');
-            }elseif ($type === 'nonfood') {
-                CRUD::addClause('where', 'donation_type', 'NonFood');
-            }elseif ($type === 'medical') {
-                CRUD::addClause('where', 'donation_type', 'Medical');
-            }
-        }
+        // if (request()->has('type')) {
+        //     $type = request('type');
+        //     if ($type === 'food') {
+        //         CRUD::addClause('whereIn', 'donation_type', 'Food');
+        //     }elseif ($type === 'nonfood') {
+        //         CRUD::addClause('whereIn', 'donation_type', 'NonFood');
+        //     }elseif ($type === 'medical') {
+        //         CRUD::addClause('whereIn', 'donation_type', 'Medical');
+        //     }
+        // }
 
         if (auth()->user()->hasRole('Barangay Representative')) {
             // Get the barangay_id of the authenticated user
@@ -102,15 +103,10 @@ class ItemCrudController extends CrudController
             'type' => 'date', // This specifies the date format
             'format' => 'YYYY-MM-DD' // Optional: Customize the date format if needed
         ]);
-        // CRUD::addColumn([
-        //     'name' => 'donation_id',
-        //     'label' => 'Donor Name',
-        //     'type' => 'relationship',
-        //     'entity' => 'donation',
-        //     'attribute' => 'donor.email',
-        //     'model' => 'App\Models\User',
-        //     'pivot' => false,
-        // ]);
+        CRUD::addColumn([
+            'name' => 'condition',
+            'label' => 'Condition',
+        ]);
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -206,5 +202,11 @@ class ItemCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+    
+    protected function setupShowOperation()
+    {
+        
+        CRUD::setFromDb();
     }
 }

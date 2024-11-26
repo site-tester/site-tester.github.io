@@ -21,24 +21,26 @@
     <div class="container my-5">
         <div class="card">
             <div class="row w-75 mx-auto  p-5">
-                <div class="col">
+                <div class="col mb-3">
                     {{-- Impact Level --}}
                     <select class="form-select form-select-lg" name="impactLevel" id="impactLevelSelect">
                         <option></option>
+                        <option value="all">All</option>
                         <option value="high">High</option>
                         <option value="moderate">Moderate</option>
                         <option value="low">Low</option>
                     </select>
                 </div>
-                <div class="col">
+                <div class="col mb-3">
                     <select class="form-select form-select-lg" name="disasterType" id="disasterTypeSelect">
                         <option></option>
+                        <option value="all">All</option>
                         <option value="fire">Fire</option>
                         <option value="flood">Flood</option>
-                        {{-- <option value=""></option> --}}
+                        <option value="earthquake">Earthquake</option>
                     </select>
                 </div>
-                <div class="col">
+                <div class="col mb-3">
                     <div class="d-grid gap-2">
                         <button type="button" id="applyFilterBtn" class="btn btn-success btn-sm">
                             Apply Filter
@@ -89,7 +91,7 @@
                                     <h6>Date Reported:</h6>
                                     <p>{{ $item->created_at->format('M-d-Y') }}</p>
                                 </div>
-                                <div>
+                                {{-- <div>
                                     <h6>Estimated Affected Population:</h6>
                                     <table class="table">
                                         <tr>
@@ -118,7 +120,7 @@
                                             <td>{{ $item->immediate_needs_medicine }}</td>
                                         </tr>
                                     </table>
-                                </div>
+                                </div> --}}
                                 <div class="text-center mb-3">
                                     <!-- Modal trigger button -->
                                     <button type="button" class="btn btn-link btn-lg" data-bs-toggle="modal"

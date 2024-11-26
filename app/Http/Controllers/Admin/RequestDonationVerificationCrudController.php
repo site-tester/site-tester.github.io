@@ -368,9 +368,9 @@ class RequestDonationVerificationCrudController extends CrudController
                     $value = "<div class='row'>";
                     foreach ($decoded as $img_path) {
                         $value .= " <div class='col-auto'>
-                        <a href='/storage/{$img_path}' data-fancybox='gallery'
+                        <a href='/storage/app/public/{$img_path}' data-fancybox='gallery'
                             data-caption='{ $img_path }'>
-                            <img src='/storage/{$img_path}' height='100' />
+                            <img src='/storage/app/public/{$img_path}' height='100' />
                         </a>
                         </div>";
                     }

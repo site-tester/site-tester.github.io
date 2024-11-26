@@ -208,7 +208,7 @@ class DonationCrudController extends CrudController
                     }
 
                     // Add the icon HTML to all buttons
-                    $checkButton .= '<i class="la la-check-circle"></i></button>';
+                    $checkButton .= '<i class="la la-check-circle"></i></button><input id="approveDonationId" type="hidden" value="' . $entry->id . '">';
                     $xButton .= '<i class="la la-times-circle"></i></button>';
                     $viewButton .= '<i class="la la-eye"></i></a>';
 
@@ -258,6 +258,10 @@ class DonationCrudController extends CrudController
             CRUD::addColumn([
                 'name' => 'approved_by',
                 'label' => 'Approved By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->approved_by ?? 'Pending';
+                },
             ]);
 
             CRUD::addColumn([
@@ -265,14 +269,22 @@ class DonationCrudController extends CrudController
                 'label' => 'Received By',
                 'type' => 'closure',
                 'function' => function ($entry) {
-                    return $$entry->received_by ?? 'Pending';
+                    return $entry->received_by ?? 'Pending';
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'distributed_by',
+                'label' => 'Distributed By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->distributed_by ?? 'Pending';
                 },
             ]);
 
             CRUD::addColumn([
                 'name' => 'status',
                 'label' => 'Status',
-                'type' => 'text',
                 'wrapper' => [
                     'element' => 'span',
                     'class' => function ($crud, $column, $entry, $related_key) {
@@ -295,6 +307,8 @@ class DonationCrudController extends CrudController
                         return 'badge badge-default';
                     },
                 ],
+                
+
             ]);
 
             CRUD::addColumn([
@@ -308,12 +322,35 @@ class DonationCrudController extends CrudController
                     }
 
                     // Define the button styles based on the current status
-                    $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '">';
+                    $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '" data-bs-toggle="tooltip" title="View Details">';
                     // Check the current status of the entry and adjust the buttons accordingly
+
+                    $receiveButton = '<button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#receiveModal" data-id="' . $entry->id . '" data-bs-toggle="tooltip" title="Recieve Donation"';
+                    $distributeButton = '<button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#distributeModal" data-id="' . $entry->id . '" data-bs-toggle="tooltip" title="Distribute Donation"';
+
+                    // Check the current status of the entry and adjust the buttons accordingly
+                    if ($entry->status == 'Approved') {
+                        // Both action buttons are clickable if the status is Pending Approval
+                        $receiveButton .= '>';
+                        $distributeButton .= '>';
+                    } elseif ($entry->status == 'Distributed') {
+                        $distributeButton .= 'style="pointer-events: none;" disabled>';
+                        $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;" diabled>';
+                        // $viewButton .= '>';
+                    } elseif ($entry->status == 'Received') {
+                        // If the status is Rejected, disable the check button
+                        $distributeButton .= '>'; // Grey out check button
+                        $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;pointer-events: none;">';
+                        // $viewButton .= '>';
+                    }
+
+                    // Add the icon HTML to all buttons
+                    $distributeButton .= '<i class="la la-send-o"></i></button>';
+                    $receiveButton .= '<i class="la la-handshake"></i></button>';
                     $viewButton .= '<i class="la la-eye"></i></a>';
 
                     // Return all buttons
-                    return $viewButton;
+                    return $viewButton . ' ' . $receiveButton .' '. $distributeButton ;
                 },
                 'escaped' => false,
             ]);
@@ -337,6 +374,38 @@ class DonationCrudController extends CrudController
             $donation->save();
 
             return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function receiveDonation(Request $request, $id)
+    {
+        try {
+            $donation = Donation::findOrFail($id);
+            $donation->received_by = $request->input('receiver_name'); // Save the receiver's name
+            $donation->status = 'Received'; // Update status to received
+
+            $donation->save();
+
+            return response()->json(['success' => true, 'message' => 'Donation received successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Distribute Donation
+    public function distributeDonation(Request $request, $id)
+    {
+        try {
+            $donation = Donation::findOrFail($id);
+            $donation->distributed_by = $request->input('distributor_name'); // Save the distributor's name
+            $donation->distribution_proof = $request->file('distributor_img')->store('distribution_proofs', 'public'); // Save proof image
+            $donation->status = 'Distributed'; // Update status to distributed
+
+            $donation->save();
+
+            return response()->json(['success' => true, 'message' => 'Donation distributed successfully']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }

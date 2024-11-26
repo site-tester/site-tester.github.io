@@ -133,18 +133,19 @@
                     @csrf
                     <div class="mb-3 p-md-5 bg-secondary-subtle">
                         <div class="px-3">
-                            <div class="mb-3">
+                            <div class="mb-3" hidden>
                                 <label for="" class="form-label h4">Barangay</label>
 
-                                <select id="barangaySelect" name="barangay_id" class="w-100">
+                                <select id="barangaySelect" class="w-100" disabled>
                                     @foreach ($barangayLists as $barangay)
                                         <option value="{{ $barangay['id'] }}"
                                             data-flood-risk="{{ $barangay->flood_risk_score }}"
-                                            data-fire-risk="{{ $barangay->fire_risk_level }}"
+                                            data-fire-risk="{{ $barangay->fire_risk_level }}" data-earthquake-risk="low"
                                             {{ $barangayID === $barangay['id'] ? 'selected' : '' }}>
                                             {{ $barangay['name'] }}
                                         </option>
                                     @endforeach
+                                    <input type="hidden" value="{{ $barangayID }}" name="barangay_id" disabled>
                                 </select>
 
                                 <div class="ms-3 mt-2 small text-secondary">
@@ -192,6 +193,89 @@
                                     </table>
                                 </div>
                             </div>
+                            {{-- <div class="mb3">
+                                <h4>Barangay:
+                                    <span class="fw-normal">
+                                        @foreach ($barangayLists as $barangay)
+                                            {{ $barangayID === $barangay['id'] ? $barangay['name'] : '' }}
+                                        @endforeach
+                                    </span>
+                                    <input type="hidden" value="{{ $barangayID }}" name="barangay_id">
+                                </h4>
+                            </div> --}}
+                            @php
+                                $rawValue = $donationRequest->disaster_type;
+                                $rawValue = stripslashes($rawValue);
+                                $cleanValue = trim($rawValue, '"');
+                                $decoded = json_decode($cleanValue, true);
+                                // Apply ucfirst to each item
+                                $formatted = array_map('ucfirst', $decoded);
+                                $disaster_type = implode(', ', $formatted);
+                            @endphp
+                            <div class="mb-3 ">
+
+                                <div class="px-3">
+                                    <h3>Barangay:
+                                        <span class="fw-normal">
+                                            @foreach ($barangayLists as $barangay)
+                                                {{ $barangayID === $barangay['id'] ? $barangay['name'] : '' }}
+                                            @endforeach
+                                        </span>
+                                        <input type="hidden" value="{{ $barangayID }}" name="barangay_id">
+                                    </h3>
+                                    <h3
+                                        class="@if ($donationRequest->vulnerability == 'High') text-danger
+                                    @elseif ($donationRequest->vulnerability == 'Moderate')
+                                        text-warning
+                                    @elseif ($donationRequest->vulnerability == 'High')
+                                        text-success @endif">
+                                        {{ $donationRequest->vulnerability }}</h3>
+                                    <h5>Type of Disaster: <span class="fw-normal">{{ $disaster_type }}</span></h5>
+                                    <h5>Date Reported: <span
+                                            class="fw-normal">{{ $donationRequest->created_at->format('M-d-Y') }}</span>
+                                    </h5>
+                                    {{-- <h5>Estimated Population Affecte:d</h5>
+                                    <div class="px-1 px-md-5 py-2">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <td class="fw-bold col-2 text-end">Families</td>
+                                                <td>{{ $donationRequest->affected_family }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold col-2 text-end">Persons</td>
+                                                <td>{{ $donationRequest->affected_person }}</td>
+                                            </tr>
+                                        </table>
+                                    </div> --}}
+
+                                    <h5>Immediate Needs:</h5>
+                                    <div class="px-1 px-md-5 py-2">
+                                        <table class="table table-bordered">
+                                            @if ($donationRequest->immediate_needs_food)
+                                                <tr>
+                                                    <td class="fw-bold col-2 text-end">Food</td>
+                                                    <td>{{ $donationRequest->immediate_needs_food }}</td>
+                                                </tr>
+                                            @endif
+
+                                            @if ($donationRequest->immediate_needs_nonfood)
+                                                <tr>
+                                                    <td class="fw-bold col-2 text-end">Non-Food</td>
+                                                    <td>{{ $donationRequest->immediate_needs_nonfood }}</td>
+                                                </tr>
+                                            @endif
+
+                                            @if ($donationRequest->immediate_needs_medicine)
+                                                <tr>
+                                                    <td class="fw-bold col-2 text-end">Medicine</td>
+                                                    <td>{{ $donationRequest->immediate_needs_medicine }}</td>
+                                                </tr>
+                                            @endif
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="mb-3 donationForm">
                                 <label for="" class="m-0 form-label row h4 mb-2">Donation Type</label>
@@ -221,6 +305,7 @@
                                     $incident_date = \Carbon\Carbon::parse($donationRequest->incident_date)->timezone(
                                         'UTC',
                                     );
+                                    // dd($donationRequest);
                                 @endphp
                                 <div class="row">
                                     <div class="col-12 col-md-4 mb-3">
@@ -496,6 +581,7 @@
 
             flatpickr("#schedDate", {
                 inline: true,
+                minDate: "today",
             });
 
             const $foodInputs = $('#foodInputs');
@@ -903,6 +989,7 @@
                     // Get the flood and fire risk scores from data attributes
                     const floodRiskScore = $(data.element).data('flood-risk');
                     const fireRiskLevel = $(data.element).data('fire-risk');
+                    const earthquakeRiskLevel = $(data.element).data('earthquake-risk');
 
                     // Determine flood icon and color
                     let floodIconClass = 'fas fa-water';
@@ -928,11 +1015,28 @@
                         fireColor = 'orange';
                     }
 
+                    // just placeholders
+                    let earthquakeIconClass = ' ';
+                    let earthquakeColor = ' ';
+                    let earthquakeSVG =
+                        '<svg fill="#198754" version="1.1" id="Layer_1" height="20" width="20" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 92 92"  enable-background="new 0 0 92 92" xml:space="preserve"> <g id="SVGRepo_bgCarrier" stroke-width="0"></g> <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g> <g id="SVGRepo_iconCarrier"> <path id="XMLID_1181_" d="M92,57c0,2.2-1.8,4-4,4H69.2c-1.7,0-3.2-0.9-3.8-2.6l-3-8.4l-9.8,33.1c-0.5,1.7-2.1,2.9-3.8,2.9 c0,0-0.1,0-0.1,0c-1.8-0.1-3.4-1.3-3.8-3.1L32,27l-7.8,31.1c-0.4,1.8-2,2.9-3.9,2.9H4c-2.2,0-4-1.8-4-4s1.8-4,4-4h13.2L28.3,8.9 C28.7,7.1,30.4,6,32.2,6c1.8,0,3.4,1.3,3.9,3.1l13.2,57.2l9-30.4c0.5-1.7,2-2.9,3.7-2.9c1.7-0.1,3.3,1,3.9,2.6L72,53h16 C90.2,53,92,54.8,92,57z"> </path> </g> </svg>';
+
+                    if (earthquakeRiskLevel == 'high') {
+                        earthquakeIconClass = ' ';
+                        earthquakeColor = ' ';
+                    } else if (earthquakeRiskLevel == ' ') {
+                        earthquakeIconClass = ' ';
+                        earthquakeColor = ' ';
+                    }
+
                     // Create a custom option with both icons
                     const $result = $(`
                         <div style="display: flex; align-items: center; height: 100%;">
                             <i class="${floodIconClass}" style="color: ${floodColor}; margin-right: 8px;"></i>
                             <i class="${fireIconClass}" style="color: ${fireColor}; margin-right: 8px;"></i>
+                            <div style="margin-right: 8px;"">
+                                ${earthquakeSVG}
+                            </div>
                             ${data.text}
                         </div>
                     `);
@@ -947,6 +1051,7 @@
                     // Get flood and fire risk scores for the selected item
                     const floodRiskScore = $(data.element).data('flood-risk');
                     const fireRiskLevel = $(data.element).data('fire-risk');
+                    const earthquakeRiskLevel = $(data.element).data('earthquake-risk');
 
                     let floodIconClass = 'fas fa-water';
                     let floodColor = 'green';
@@ -970,10 +1075,27 @@
                         fireColor = 'orange';
                     }
 
+                    // just placeholders
+                    let earthquakeIconClass = ' ';
+                    let earthquakeColor = ' ';
+                    let earthquakeSVG =
+                        '<svg fill="#198754" version="1.1" id="Layer_1" height="20" width="20" xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 92 92"  enable-background="new 0 0 92 92" xml:space="preserve"> <g id="SVGRepo_bgCarrier" stroke-width="0"></g> <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g> <g id="SVGRepo_iconCarrier"> <path id="XMLID_1181_" d="M92,57c0,2.2-1.8,4-4,4H69.2c-1.7,0-3.2-0.9-3.8-2.6l-3-8.4l-9.8,33.1c-0.5,1.7-2.1,2.9-3.8,2.9 c0,0-0.1,0-0.1,0c-1.8-0.1-3.4-1.3-3.8-3.1L32,27l-7.8,31.1c-0.4,1.8-2,2.9-3.9,2.9H4c-2.2,0-4-1.8-4-4s1.8-4,4-4h13.2L28.3,8.9 C28.7,7.1,30.4,6,32.2,6c1.8,0,3.4,1.3,3.9,3.1l13.2,57.2l9-30.4c0.5-1.7,2-2.9,3.7-2.9c1.7-0.1,3.3,1,3.9,2.6L72,53h16 C90.2,53,92,54.8,92,57z"> </path> </g> </svg>';
+
+                    if (earthquakeRiskLevel == 'high') {
+                        earthquakeIconClass = ' ';
+                        earthquakeColor = ' ';
+                    } else if (earthquakeRiskLevel == ' ') {
+                        earthquakeIconClass = ' ';
+                        earthquakeColor = ' ';
+                    }
+
                     const $selection = $(`
                             <div style="display: flex; align-items: center; height: 100%;">
                                 <i class="${floodIconClass}" style="color: ${floodColor}; margin-right: 8px;"></i>
                                 <i class="${fireIconClass}" style="color: ${fireColor}; margin-right: 8px;"></i>
+                                <div style="margin-right: 8px;"">
+                                    ${earthquakeSVG}
+                                </div>
                                 ${data.text}
                             </div>
                         `);

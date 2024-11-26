@@ -48,11 +48,14 @@ class TransferDonationController extends CrudController
 
     protected function setupListOperation()
     {
+
+        CRUD::addClause('where', 'barangay_id', '!=', Auth::id());
         $this->data['breadcrumbs'] = [
             trans('backpack::base.dashboard') => backpack_url('dashboard'),
             'Transfer Disaster Requests' => false,
             'List' => false,
         ];
+
 
         CRUD::addClause('where', 'status', 'Approved');
         CRUD::setOperationSetting('showEntryCount', false);
@@ -133,6 +136,7 @@ class TransferDonationController extends CrudController
     public function setupShowOperation()
     {
         $this->crud->removeAllButtons();
+
         $this->crud->setColumns([
             [
                 'name' => 'status',

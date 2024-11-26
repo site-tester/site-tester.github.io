@@ -23,7 +23,7 @@
                                 @guest
                                     {{ route('login') }}
                                 @else
-                                    {{ route('donate-now') }} @endguest
+                                    {{ route('donation.request') }} @endguest
                                 "
                                 class="btn btn-light text-success rounded fw-bolder">Donate Now</a>
                         </div>

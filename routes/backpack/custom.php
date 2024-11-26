@@ -60,6 +60,14 @@ Route::group([
         'uses' => 'DonationCrudController@approveDonation',
         'as' => 'donation.approve',
     ]);
+    Route::post('receive-donation/{id}', [
+        'uses' => 'DonationCrudController@receiveDonation',
+        'as' => 'donation.receive',
+    ]);
+    Route::post('distribute-donation/{id}', [
+        'uses' => 'DonationCrudController@distributeDonation',
+        'as' => 'donation.distribute',
+    ]);
     Route::crud('donation-transfer',  'TransferDonationController');
 
 

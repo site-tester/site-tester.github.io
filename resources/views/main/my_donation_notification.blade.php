@@ -299,7 +299,7 @@
                                 <h6>Donation ID: ${data.id}</h6>
                                 <h6>${new Date(data.created_at).toLocaleDateString()}</h6>
                             </div>`;
-                    if (data.anonymous == false) {
+                    if (data.anonymous == true) {
                         detailsHtml += `<div>
                                                 <h5>DONATED BY:</h5>
                                                 <p class="mb-0 pb-0">${data.name}</p>

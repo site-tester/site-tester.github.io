@@ -148,15 +148,7 @@
                     </div>
                 @endif
             </div>
-            <div class="col-3 m-1 overview">
-                <div class="card py-3 px-4 h-100">
-                    <div class="h3">Overview</div>
-                    <a href="{{ url()->current() }}?status=pending" class="border-bottom px-1 py-2">Total Pending Request <span class="float-end">{{ $overviewData['totalItems'] }}</span></a>
-                    <a href="{{ url()->current() }}?type=food" class="border-bottom px-1 py-2">Donation Type: FOOD <span class="float-end">{{ $overviewData['totalFood'] }}</span></a>
-                    <a href="{{ url()->current() }}?type=nonfood" class="border-bottom px-1 py-2">Donation Type: NON-FOOD <span class="float-end">{{ $overviewData['totalNonFood'] }}</span></a>
-                    <a href="{{ url()->current() }}?type=medical" class="border-bottom px-1 py-2">Donation Type: MEDICAL <span class="float-end">{{ $overviewData['totalMedical'] }}</span></a>
-                </div>
-            </div>
+            
         </div>
 
 

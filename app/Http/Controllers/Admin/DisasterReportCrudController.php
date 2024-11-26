@@ -46,6 +46,7 @@ class DisasterReportCrudController extends CrudController
     {
 
         CRUD::addClause('where', 'status', 'Approved');
+        CRUD::addClause('where', 'barangay_id', auth()->user()->id);
         CRUD::setOperationSetting('showEntryCount', false);
         CRUD::setEntityNameStrings('Active Disaster Request', 'Active Disaster Requests');
         $this->crud->removeButtons(['create','update']);
@@ -100,7 +101,6 @@ class DisasterReportCrudController extends CrudController
         CRUD::addColumn([
             'name' => 'status',
             'label' => 'Status',
-            'type' => 'text',
             'wrapper' => [
                 'element' => 'span',
                 'class' => function ($crud, $column, $entry, $related_key) {
@@ -108,10 +108,18 @@ class DisasterReportCrudController extends CrudController
                     if ($column['text'] == 'Approved') {
                         return 'badge text-bg-success'; // Green indicates approval
                     }
+                    if ($column['text'] == 'Verified') {
+                        return 'badge text-bg-success'; // Green indicates approval
+                    }
                     return 'badge badge-default';
                 },
             ],
+            'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->status == 'Approved' ? 'Verified' : '';
+                },
         ]);
+        CRUD::addButtonFromView('line', 'delete', 'custom_delete_button');
 
         // CRUD::setFromDb(); // set columns from db columns.
 
@@ -202,6 +210,12 @@ class DisasterReportCrudController extends CrudController
             'model' => 'App\Models\Barangay',
             'attribute' => 'name',
             'pivot' => false,
+            'options' => function ($query) {
+                return $query->where('barangay_rep_id', auth()->user()->id)->get();
+            }, // Automatically selects the logged-in barangay
+            'attributes' => [
+                'readonly' => 'readonly', // Makes the field non-editable
+            ],
         ]);
 
         CRUD::addField([
@@ -219,7 +233,7 @@ class DisasterReportCrudController extends CrudController
             'options' => [
                 'flood' => 'Flood',
                 'fire' => 'Fire',
-                // 'option3' => 'Option 3',
+                'earthquake' => 'Earthquake',
             ],
         ]);
 

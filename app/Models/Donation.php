@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Notifications\DonationApprovalNotification;
+use App\Notifications\DonorDonationStatusNotification;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -123,12 +124,22 @@ class Donation extends Model
             }
 
             if ($donation->status === 'Received') {
+
+                $donor = User::find($donation->donor_id);
+
+                $donor->notify(new DonorDonationStatusNotification($donation));
+
                 $donation->addItemsToInventory($donation->id);
             }
 
-            // if ($donation->status === 'Distributed') {
-            //     $donation->removeItemsFromInventory($donation->id);
-            // }
+            if ($donation->status === 'Distributed') {
+
+                $donor = User::find($donation->donor_id);
+
+                $donor->notify(new DonorDonationStatusNotification($donation));
+
+                $donation->removeItemsFromInventory($donation->id);
+            }
         });
     }
 

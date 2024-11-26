@@ -40,7 +40,7 @@
                     <h6>Date Reported:</h6>
                     <p>{{ $item->created_at->format('M-d-Y') }}</p>
                 </div>
-                <div>
+                {{-- <div>
                     <h6>Estimated Affected Population:</h6>
                     <table class="table">
                         <tr>
@@ -69,7 +69,7 @@
                             <td>{{ $item->immediate_needs_medicine }}</td>
                         </tr>
                     </table>
-                </div>
+                </div> --}}
                 <div class="text-center mb-3">
                     <!-- Modal trigger button -->
                     <button type="button" class="btn btn-link btn-lg" data-bs-toggle="modal"
