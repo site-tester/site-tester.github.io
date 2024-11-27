@@ -436,61 +436,72 @@ class DonationController extends Controller
     {
         $donationRequest = DisasterRequest::where('status', 'Approved')
             ->orderBy('vulnerability', 'desc') // Order by vulnerability
-            ->paginate(3);
+            ->paginate(3, ['*'], 'donationRequestPage');
 
-        return view('main.donation_request', compact('donationRequest'));
+        $donationActiveRequest = DisasterRequest::where('status', 'Approved')
+            ->orderBy('vulnerability', 'desc') // Order by vulnerability
+            ->orderBy('affected_family', 'desc') // Order by affected families
+            ->paginate(10, ['*'], 'donationActiveRequestPage');
+
+        $donationDoneRequest = DisasterRequest::onlyTrashed()->whereNotNull('deleted_at')
+            ->orderBy('vulnerability', 'desc')  // Order by vulnerability
+            ->orderBy('affected_family', 'desc') // Order by affected families
+            ->paginate(10, ['*'], 'donationDoneRequestPage');
+
+            // dd($donationActiveRequest);
+        return view('main.donation_request', compact('donationRequest', 'donationActiveRequest', 'donationDoneRequest'));
     }
 
     public function filter(Request $request)
-{
-    // Start with the basic query for approved requests
-    $query = DisasterRequest::where('status', 'Approved');
+    {
+        // Start with the basic query for approved requests
+        $query = DisasterRequest::where('status', 'Approved');
 
-    // Apply filters based on impact level
-    if ($request->impactLevel && $request->impactLevel !== 'all') {
-        $query->where('vulnerability', $request->impactLevel);
+        // Apply filters based on impact level
+        if ($request->impactLevel && $request->impactLevel !== 'all') {
+            $query->where('vulnerability', $request->impactLevel);
+        }
+
+        // Apply filters based on disaster type
+        if ($request->disasterType && $request->disasterType !== 'all') {
+            // Get the filtered data
+            $getQuery = $query->get();
+
+            // Apply the manipulation and filtering in the loop
+            $filteredRequests = $getQuery->filter(function ($item) use ($request) {
+                // Get the raw disaster_type value
+                $rawValue = stripslashes($item->disaster_type);
+
+                // Trim the extra quotes
+                $cleanValue = trim($rawValue, '"');
+
+                // Decode the JSON string into an array
+                $decoded = json_decode($cleanValue, true);
+
+                // Return true if the requested disaster type exists in the decoded value
+                return in_array($request->disasterType, $decoded);
+            });
+
+            // Log the filtered data for debugging
+            \Log::info('Filtered Data:', ['data' => $filteredRequests]);
+
+            $donationRequest = new \Illuminate\Pagination\LengthAwarePaginator(
+                $filteredRequests->forPage($request->page ?? 1, 3),
+                $filteredRequests->count(),
+                3
+            );
+
+        } else {
+            // If no specific disaster type is selected, apply the pagination normally
+            $donationRequest = $query->paginate(3);
+        }
+
+        // Return the filtered data and view
+        return response()->json([
+            'view' => view('main.donation_request_filter', compact('donationRequest'))->render(),
+            'pagination' => $donationRequest->links()->toHtml(),
+        ]);
     }
-
-    // Apply filters based on disaster type
-    if ($request->disasterType && $request->disasterType !== 'all') {
-        // Get the filtered data
-        $getQuery = $query->get();
-
-        // Apply the manipulation and filtering in the loop
-        $filteredRequests = $getQuery->filter(function ($item) use ($request) {
-            // Get the raw disaster_type value
-            $rawValue = stripslashes($item->disaster_type);
-
-            // Trim the extra quotes
-            $cleanValue = trim($rawValue, '"');
-
-            // Decode the JSON string into an array
-            $decoded = json_decode($cleanValue, true);
-
-            // Return true if the requested disaster type exists in the decoded value
-            return in_array($request->disasterType, $decoded);
-        });
-
-        // Log the filtered data for debugging
-        \Log::info('Filtered Data:', ['data' => $filteredRequests]);
-
-        $donationRequest = new \Illuminate\Pagination\LengthAwarePaginator(
-            $filteredRequests->forPage($request->page ?? 1, 3),
-            $filteredRequests->count(),
-            3
-        );
-
-    } else {
-        // If no specific disaster type is selected, apply the pagination normally
-        $donationRequest = $query->paginate(3);
-    }
-
-    // Return the filtered data and view
-    return response()->json([
-        'view' => view('main.donation_request_filter', compact('donationRequest'))->render(),
-        'pagination' => $donationRequest->links()->toHtml(),
-    ]);
-}
 
 
 }

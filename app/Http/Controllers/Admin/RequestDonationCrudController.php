@@ -35,7 +35,7 @@ class RequestDonationCrudController extends CrudController
         if (auth()->user()->hasRole('Municipal Admin')) {
             $this->crud->denyAccess(['create']);
         }
-
+        $this->crud->enableSoftDelete();
     }
 
     /**

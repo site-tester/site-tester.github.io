@@ -35,128 +35,128 @@ class UserSeeder extends Seeder
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep',
-                'email'          => 'barangay@email.com',
+                'name'           => 'Baclaran Representative',
+                'email'          => 'bbaclaran@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 2',
-                'email'          => 'barangay2@email.com',
+                'name'           => 'Don Galo Representative',
+                'email'          => 'bdongalo@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 3',
-                'email'          => 'barangay3@email.com',
+                'name'           => 'La huerta Representative',
+                'email'          => 'blahuerta@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 4',
-                'email'          => 'barangay4@email.com',
+                'name'           => 'San Dionisio Representative',
+                'email'          => 'bsandionisio@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 5',
-                'email'          => 'barangay5@email.com',
+                'name'           => 'San Isidro Representative',
+                'email'          => 'bsanisidro@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 6',
-                'email'          => 'barangay6@email.com',
+                'name'           => 'Santo Niño Representative',
+                'email'          => 'bstnino@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 7',
-                'email'          => 'barangay7@email.com',
+                'name'           => 'Tambo Representative',
+                'email'          => 'btambo@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 8',
-                'email'          => 'barangay8@email.com',
+                'name'           => 'Vitalez Representative',
+                'email'          => 'bvitalez@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 9',
-                'email'          => 'barangay9@email.com',
+                'name'           => 'BF Representative',
+                'email'          => 'bbf@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 10',
-                'email'          => 'barangay10@email.com',
+                'name'           => 'Don Bosco Representative',
+                'email'          => 'bdonbosco@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 11',
-                'email'          => 'barangay11@email.com',
+                'name'           => 'Marcelo Green Representative',
+                'email'          => 'bmarcelogreen@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 12',
-                'email'          => 'barangay12@email.com',
+                'name'           => 'Merville Representative',
+                'email'          => 'bmerville@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 13',
-                'email'          => 'barangay13@email.com',
+                'name'           => 'Moonwalk Representative',
+                'email'          => 'bmoonwalk@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 14',
-                'email'          => 'barangay14@email.com',
+                'name'           => 'San Antonio Representative',
+                'email'          => 'bsanantonio@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 15',
-                'email'          => 'barangay15@email.com',
+                'name'           => 'San Martin de Porres Representative',
+                'email'          => 'bsanmartin@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),
             ]);
 
             User::create([
-                'name'           => 'Barangay Rep 16',
-                'email'          => 'barangay16@email.com',
+                'name'           => 'Sun Valley Representative',
+                'email'          => 'bsunvalley@email.com',
                 'password'       => bcrypt('password'),
                 'remember_token' => Str::random(60),
                 'email_verified_at' => now(),

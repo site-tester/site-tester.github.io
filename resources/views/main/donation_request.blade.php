@@ -48,6 +48,116 @@
                     </div>
                 </div>
             </div>
+            <div class="row px-1 mb-3 mx-2">
+                <ul class="nav nav-fill nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="fill-tab-0" data-bs-toggle="tab" href="#fill-tabpanel-0"
+                            role="tab" aria-controls="fill-tabpanel-0" aria-selected="true">Acvite</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="fill-tab-1" data-bs-toggle="tab" href="#fill-tabpanel-1" role="tab"
+                            aria-controls="fill-tabpanel-1" aria-selected="false">Done</a>
+                    </li>
+                </ul>
+                <div class="tab-content pt-1" id="tab-content">
+                    <div class="tab-pane active px-3" id="fill-tabpanel-0" role="tabpanel" aria-labelledby="fill-tab-0">
+                        <table class="table">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Date</th>
+                                    <th>Disaster Type</th>
+                                    <th>Barangay</th>
+                                    <th>Status</th>
+                                    <th>Disaster Report</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @if ($donationActiveRequest->isEmpty())
+                                    <tr>
+                                        <td colspan="5" class="text-center">No records found.</td>
+                                    </tr>
+                                @else
+                                    @foreach ($donationActiveRequest as $item)
+                                        @php
+                                            $rawValue = $item->disaster_type;
+                                            $rawValue = stripslashes($rawValue);
+                                            $cleanValue = trim($rawValue, '"');
+                                            $decoded = json_decode($cleanValue, true);
+                                            // Apply ucfirst to each item
+                                            $formatted = array_map('ucfirst', $decoded);
+                                            $disaster_type = implode(', ', $formatted);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $item->date_requested }}</td>
+                                            <td>{{ $disaster_type }}</td>
+                                            <td>{{ $item->barangay->name }}</td>
+                                            <td>{{ $item->status }}</td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-link" data-bs-toggle="modal"
+                                                    data-bs-target="#modalId-{{ $item->id }}"> {{-- {{ $item->id }} --}}
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="fill-tabpanel-1" role="tabpanel" aria-labelledby="fill-tab-1">
+                        <table class="table">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Date</th>
+                                    <th>Disaster Type</th>
+                                    <th>Barangay</th>
+                                    <th>Status</th>
+                                    <th>Disaster Report</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @if ($donationDoneRequest->isEmpty())
+                                    <tr>
+                                        <td colspan="5" class="text-center">No records found.</td>
+                                    </tr>
+                                @else
+                                    @foreach ($donationDoneRequest as $item)
+                                        @php
+                                            $rawValue = $item->disaster_type;
+                                            $rawValue = stripslashes($rawValue);
+                                            $cleanValue = trim($rawValue, '"');
+                                            $decoded = json_decode($cleanValue, true);
+                                            // Apply ucfirst to each item
+                                            $formatted = array_map('ucfirst', $decoded);
+                                            $disaster_type = implode(', ', $formatted);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $item->date_requested }}</td>
+                                            <td>{{ $disaster_type }}</td>
+                                            <td>{{ $item->barangay->name }}</td>
+                                            <td>
+                                                @if ($item->deleted_at)
+                                                    Completed
+                                                @else
+                                                    {{ $item->status }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-link" data-bs-toggle="modal"
+                                                    data-bs-target="#modalId-{{ $item->id }}"> {{-- {{ $item->id }} --}}
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
             @if ($donationRequest->isNotEmpty())
                 <div id="donationRequestResults" class="row disaster_request px-5 my-5 mx-auto">
                     @foreach ($donationRequest as $item)
@@ -132,7 +242,8 @@
                                 <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
                                 <div class="modal fade" id="modalId-{{ $item->id }}" tabindex="-1" role="dialog"
                                     aria-labelledby="modalTitleId" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
+                                        role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"

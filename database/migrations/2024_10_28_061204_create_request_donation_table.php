@@ -32,6 +32,7 @@ return new class extends Migration
             $table->json('attachments');
             $table->string('status')->default('Pending Approval');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

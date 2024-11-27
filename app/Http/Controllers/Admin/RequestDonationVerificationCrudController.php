@@ -208,7 +208,6 @@ class RequestDonationVerificationCrudController extends CrudController
             [
                 'name' => 'status',
                 'label' => 'Status',
-                'type' => 'text',
                 'wrapper' => [
                     'element' => 'span',
                     'class' => function ($crud, $column, $entry, $related_key) {
@@ -219,12 +218,19 @@ class RequestDonationVerificationCrudController extends CrudController
                         if ($column['text'] == 'Approved') {
                             return 'badge text-bg-success'; // Green indicates approval
                         }
+                        if ($column['text'] == 'Verified') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
                         if ($column['text'] == 'Rejected') {
                             return 'badge text-bg-secondary'; // Yellow indicates a warning
                         }
                         return 'badge badge-default';
                     },
                 ],
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->status == 'Approved' ? 'Verified' : '';
+                },
             ],
             [
                 'name' => 'reported_by',

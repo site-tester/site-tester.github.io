@@ -307,7 +307,7 @@ class DonationCrudController extends CrudController
                         return 'badge badge-default';
                     },
                 ],
-                
+
 
             ]);
 
@@ -693,10 +693,10 @@ class DonationCrudController extends CrudController
                             return 'badge text-bg-danger'; // Yellow indicates a warning
                         }
                         if ($column['text'] == 'Received') {
-                            return 'badge text-bg-secondary'; // Grey indicates a neutral state (received but not processed yet)
+                            return 'badge text-bg-primary'; // Grey indicates a neutral state (received but not processed yet)
                         }
                         if ($column['text'] == 'Distributed') {
-                            return 'badge text-bg-success'; // Green indicates the process is complete
+                            return 'badge text-bg-primary'; // Green indicates the process is complete
                         }
 
                         return 'badge badge-default';
