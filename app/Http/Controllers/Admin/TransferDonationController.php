@@ -34,7 +34,7 @@ class TransferDonationController extends CrudController
     public function setup()
     {
         CRUD::setModel(RequestDonation::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/donation-transfer');
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/transfer-donation');
         CRUD::setEntityNameStrings('Transfer Disaster Request', 'Transfer Disaster Requests');
         $this->crud->denyAccess(['create']);
 

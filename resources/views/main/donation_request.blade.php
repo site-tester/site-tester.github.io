@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="row px-1 mb-3 mx-2">
-                <ul class="nav nav-fill nav-tabs" role="tablist">
+                <ul class="nav nav-fill nav-tabs pe-0" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="fill-tab-0" data-bs-toggle="tab" href="#fill-tabpanel-0"
                             role="tab" aria-controls="fill-tabpanel-0" aria-selected="true">Acvite</a>
@@ -59,7 +59,7 @@
                             aria-controls="fill-tabpanel-1" aria-selected="false">Done</a>
                     </li>
                 </ul>
-                <div class="tab-content pt-1" id="tab-content">
+                <div class="tab-content pt-1" id="tab-content" style="min-height: 100px !important;">
                     <div class="tab-pane active px-3" id="fill-tabpanel-0" role="tabpanel" aria-labelledby="fill-tab-0">
                         <table class="table">
                             <thead>

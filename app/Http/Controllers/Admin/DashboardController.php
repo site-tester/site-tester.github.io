@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Barangay;
 use App\Models\Donation;
+use App\Models\RequestDonation;
 use App\Models\User;
 use App\Models\UserProfile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateInterval;
 
 class DashboardController extends Controller
 {
@@ -25,7 +28,8 @@ class DashboardController extends Controller
             })->count();
             $barangay = Barangay::where('barangay_rep_id', Auth::user()->id)->firstOrFail();
             $pendingDonation = Donation::where('status', 'Pending Approval')->where('barangay_id', $barangay->id)->count();
-            $totalDonation = Donation::where('barangay_id', $barangay->id)->count();
+            $totalActiveDonation = Donation::where('status', '!=', 'Pending Approval')->where('status', '!=', 'Distributed')->where('barangay_id', $barangay->id)->count();
+            $totalDonation = RequestDonation::where('status', 'Approved')->count();
 
             $individualDonor = $this->individualDonor();
             $organizationDonor = $this->organizationDonor();
@@ -107,6 +111,7 @@ class DashboardController extends Controller
             return view('vendor.backpack.ui.dashboard', [
                 'totalDonors' => $totalUsers,
                 'pendingDonation' => $pendingDonation,
+                'totalActiveDonation' => $totalActiveDonation,
                 'totalDonation' => $totalDonation,
                 'individualDonor' => $individualDonor,
                 'organizationDonor' => $organizationDonor,
@@ -116,15 +121,49 @@ class DashboardController extends Controller
                 'barangaySummaries' => $barangaySummaries,
                 'donorSummaries' => $donorSummaries,
                 'donationTypeSummaries' => $donationTypeSummaries,
+
                 'years' => $years,
             ]);
 
         }
 
         if (Auth::user()->hasRole('Municipal Admin')) {
-            return view('vendor.backpack.ui.dashboard', [
+            $pendingDisasterReport = RequestDonation::where('status', 'Pending Approval')->count();
+            $verifiedDisasterReport = RequestDonation::where('status', 'Approved')->count();
 
-            ]);
+            $barangayRequests = DB::table('request_donations')
+                ->select('barangay_id', DB::raw('COUNT(*) as request_count'))
+                ->groupBy('barangay_id')
+                ->get();
+
+            $prioritization = DB::table('barangays')
+                ->select('fire_risk_level', 'flood_risk_score')
+                ->get();
+
+            $totalDonations = DB::table('donations')
+                ->select('barangay_id', DB::raw('SUM(donor_id) as total_donations'))
+                ->groupBy('barangay_id')
+                ->get();
+
+                $userEngagement = DB::table('model_has_roles')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->join('users', 'model_has_roles.model_id', '=', 'users.id')
+                ->select('roles.name as role', DB::raw('COUNT(users.id) as user_count'))
+                ->where('roles.name', '!=', 'Content Manager')
+                ->groupBy('roles.name')
+                ->get();
+
+            return view(
+                'vendor.backpack.ui.dashboard',
+                compact(
+                    'pendingDisasterReport',
+                    'verifiedDisasterReport',
+                    'barangayRequests',
+                    'prioritization',
+                    'totalDonations',
+                    'userEngagement'
+                )
+            );
         }
     }
 
@@ -207,10 +246,85 @@ class DashboardController extends Controller
     private function getDonationsByBarangay()
     {
         return Donation::join('barangays', 'donations.barangay_id', '=', 'barangays.id')
+            ->where('donations.status', 'Distributed') // Filter by status
             ->selectRaw('barangays.name as barangay_name, COUNT(*) as donation_count')
             ->groupBy('barangays.name')
             ->orderByDesc('donation_count')
             ->pluck('donation_count', 'barangay_name')
             ->toArray();
+
     }
+
+    public function donationsChartData(Request $request)
+    {
+        $period = $request->get('period', 'daily');
+
+        $query = DB::table('donations');
+
+        if ($period === 'daily') {
+            $query->selectRaw('DATE(donation_date) as period, COUNT(*) as total');
+            $query->groupBy('period');
+        } elseif ($period === 'weekly') {
+            $query->selectRaw("YEAR(donation_date) as year, WEEK(donation_date, 1) as week, CONCAT(YEAR(donation_date), '-W', WEEK(donation_date, 1)) as period, COUNT(*) as total");
+            $query->groupBy('year', 'week', 'period');
+        } elseif ($period === 'monthly') {
+            $query->selectRaw("DATE_FORMAT(donation_date, '%Y-%m') as period, COUNT(*) as total");
+            $query->groupBy('period');
+        }
+
+        $results = $query->orderBy('period', 'ASC')->get();
+
+        // Add week start and end dates for weekly period
+        if ($period === 'weekly') {
+            $results->transform(function ($row) {
+                // Calculate week start and end dates
+                [$year, $week] = explode('-W', $row->period);
+                $startDate = new DateTime();
+                $startDate->setISODate($year, $week); // Set to first day (Monday) of the week
+                $endDate = clone $startDate;
+                $endDate->add(new DateInterval('P6D')); // Add 6 days to get Sunday
+
+                // Add start and end dates to the row
+                $row->week_start = $startDate->format('Y-m-d');
+                $row->week_end = $endDate->format('Y-m-d');
+
+                return $row;
+            });
+        }
+
+        return response()->json($results);
+    }
+
+    public function donationBreakdownChartData(Request $request)
+    {
+        $period = $request->get('period', 'daily');
+        $query = DB::table('donation_items');
+
+        // Filter by donation period (daily, weekly, or monthly)
+        if ($period === 'daily') {
+            $query->selectRaw('DATE(created_at) as period, JSON_UNQUOTE(donation_type) as category, COUNT(*) as total');
+            $query->groupBy('period', 'category');
+        } elseif ($period === 'weekly') {
+            $query->selectRaw("YEAR(created_at) as year, WEEK(created_at) as week, CONCAT(YEAR(created_at), '-W', WEEK(created_at)) as period, JSON_UNQUOTE(donation_type) as category, COUNT(*) as total");
+            $query->groupBy('year', 'week', 'category', 'period');
+        } elseif ($period === 'monthly') {
+            $query->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as period, JSON_UNQUOTE(donation_type) as category, COUNT(*) as total");
+            $query->groupBy('period', 'category');
+        }
+
+        $results = $query->orderBy('period', 'ASC')->get();
+
+        return response()->json($results);
+    }
+
+    public function getInventoryData()
+    {
+        $inventoryData = DB::table('inventory')
+            ->select(DB::raw('donation_type, sum(quantity) as total'))
+            ->groupBy('donation_type')
+            ->get();
+
+        return response()->json($inventoryData);
+    }
+
 }

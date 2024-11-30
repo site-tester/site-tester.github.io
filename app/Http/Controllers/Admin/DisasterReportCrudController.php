@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\DisasterReportRequest;
 use App\Models\Barangay;
 use App\Models\DisasterRequest;
+use App\Models\User;
+use App\Notifications\AdminDisasterRequestReportNotification;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Carbon\Carbon;
@@ -44,13 +46,15 @@ class DisasterReportCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        $show = request()->get('show') ?? '';
 
-        CRUD::addClause('where', 'status', 'Approved');
-        CRUD::addClause('where', 'barangay_id', auth()->user()->id);
+        if ($show == 'Active') {
+            CRUD::addClause('where', 'status', 'Approved');
+        CRUD::addClause('where', 'barangay_id', auth()->user()->barangay->id);
         CRUD::setOperationSetting('showEntryCount', false);
-        
+
         CRUD::setEntityNameStrings('Active Disaster Request', 'Active Disaster Requests');
-        $this->crud->removeButtons(['create','update']);
+        $this->crud->removeButtons(['create', 'update']);
 
         CRUD::addColumn([
             'name' => 'created_at',
@@ -70,30 +74,30 @@ class DisasterReportCrudController extends CrudController
             'name' => 'preffered_donation_type',
             'label' => 'Donation Type',
             'type' => 'custom_html',
-                'value' => function ($entry) {
-                    $rawValue = $entry->preffered_donation_type;
-                    $rawValue = stripslashes($rawValue);
-                    $cleanValue = trim($rawValue, '"');
-                    $decoded = json_decode($cleanValue, true);
-                    $formatted = array_map('ucfirst', $decoded);
-                    return implode(', ', $formatted);
+            'value' => function ($entry) {
+                $rawValue = $entry->preffered_donation_type;
+                $rawValue = stripslashes($rawValue);
+                $cleanValue = trim($rawValue, '"');
+                $decoded = json_decode($cleanValue, true);
+                $formatted = array_map('ucfirst', $decoded);
+                return implode(', ', $formatted);
 
-                },
+            },
         ]);
         CRUD::addColumn([
             'name' => 'disaster_type',
             'label' => 'Disaster Type',
             'type' => 'custom_html',
-                'value' => function ($entry) {
-                    $rawValue = $entry->disaster_type;
-                    $rawValue = stripslashes($rawValue);
-                    $cleanValue = trim($rawValue, '"');
-                    $decoded = json_decode($cleanValue, true);
-                    // Apply ucfirst to each item
-                    $formatted = array_map('ucfirst', $decoded);
-                    // If not JSON, return as is (with formatting)
-                    return implode(', ', $formatted);
-                },
+            'value' => function ($entry) {
+                $rawValue = $entry->disaster_type;
+                $rawValue = stripslashes($rawValue);
+                $cleanValue = trim($rawValue, '"');
+                $decoded = json_decode($cleanValue, true);
+                // Apply ucfirst to each item
+                $formatted = array_map('ucfirst', $decoded);
+                // If not JSON, return as is (with formatting)
+                return implode(', ', $formatted);
+            },
         ]);
         CRUD::addColumn([
             'name' => 'date_requested',
@@ -116,18 +120,89 @@ class DisasterReportCrudController extends CrudController
                 },
             ],
             'type' => 'closure',
+            'function' => function ($entry) {
+                return $entry->status == 'Approved' ? 'Verified' : '';
+            },
+        ]);
+        CRUD::addButtonFromView('line', 'delete', 'custom_delete_button');
+        }
+
+
+        if ($show == 'History') {
+            CRUD::addClause('where', 'barangay_id', auth()->user()->barangay->id);
+            CRUD::setOperationSetting('showEntryCount', false);
+
+            CRUD::setEntityNameStrings('Request History', 'Requests History');
+            $this->crud->removeButtons(['create', 'update']);
+            CRUD::addColumn([
+                'name' => 'created_at',
+                'label' => 'Date Requested',
+                'type' => 'date',
+                'format' => 'MMM-DD-YYYY',
+            ]);
+            CRUD::addColumn([
+                'name' => 'barangay_id', // The actual column is named barangay
+                'label' => 'Barangay',
+                // 'type' => 'relationship',
+                'entity' => 'barangay', // relationship is named barangay
+                'attribute' => 'name',
+                'model' => 'App\Models\Barangay',
+            ]);
+            CRUD::addColumn([
+                'name' => 'preffered_donation_type',
+                'label' => 'Donation Type',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->preffered_donation_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
+            ]);
+            CRUD::addColumn([
+                'name' => 'disaster_type',
+                'label' => 'Disaster Type',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->disaster_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    // Apply ucfirst to each item
+                    $formatted = array_map('ucfirst', $decoded);
+                    // If not JSON, return as is (with formatting)
+                    return implode(', ', $formatted);
+                },
+            ]);
+            CRUD::addColumn([
+                'name' => 'date_requested',
+                'label' => 'Date Requested',
+            ]);
+            CRUD::addColumn([
+                'name' => 'status',
+                'label' => 'Status',
+                'wrapper' => [
+                    'element' => 'span',
+                    'class' => function ($crud, $column, $entry, $related_key) {
+                        // Determine the badge class based on the status value
+                        if ($column['text'] == 'Approved') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Verified') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        return 'badge badge-default';
+                    },
+                ],
+                'type' => 'closure',
                 'function' => function ($entry) {
                     return $entry->status == 'Approved' ? 'Verified' : '';
                 },
-        ]);
-        CRUD::addButtonFromView('line', 'delete', 'custom_delete_button');
-
-        // CRUD::setFromDb(); // set columns from db columns.
-
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+            ]);
+        }
     }
 
     /**
@@ -229,8 +304,6 @@ class DisasterReportCrudController extends CrudController
             'name' => 'disaster_type',
             'label' => 'Disaster Type',
             'type' => 'add_disaster_report_checklist',
-            // 'model' => 'App\Models\DisasterType',
-            // 'attribute' => 'name',
             'options' => [
                 'flood' => 'Flood',
                 'fire' => 'Fire',
@@ -292,7 +365,7 @@ class DisasterReportCrudController extends CrudController
 
     public function store()
     {
-        // dd($this->crud->getRequest()->all());
+        $entry = $this->crud->getCurrentEntry();
 
         $this->crud->hasAccessOrFail('create');
 
@@ -331,7 +404,7 @@ class DisasterReportCrudController extends CrudController
         // insert item in the db
         // $item = $this->crud->create($this->crud->getStrippedSaveRequest($data));
         // $this->data['entry'] = $this->crud->entry = $item;
-        DisasterRequest::create([
+        $disasterRequest = DisasterRequest::create([
             "reported_by" => $data->reported_by ?? null,
             "incident_date" => $data->incident_date,
             "incident_time" => $data->incident_time,
@@ -340,14 +413,15 @@ class DisasterReportCrudController extends CrudController
             "exact_location" => $data->exact_location,
             "disaster_type" => $data->disaster_type,
             "caused_by" => $data->caused_by ?? null,
-            "overview" => 'Disaster caused by '.  $data->caused_by . ' @ '. $data->incident_date.' '. $data->incident_time .'.',
+            "overview" => 'Disaster caused by ' . $data->caused_by . ' @ ' . $data->incident_date . ' ' . $data->incident_time . '.',
             "affected_family" => $data->affected_family ?? null,
             "affected_person" => $data->affected_person ?? null,
             "immediate_needs_food" => $data->immediate_needs_food ?? null,
-            "immediate_needs_medicine" => $data->immediate_needs_medicine  ?? null,
-            "immediate_needs_nonfood" => $data->immediate_needs_nonfood  ?? null,
+            "immediate_needs_medicine" => $data->immediate_needs_medicine ?? null,
+            "immediate_needs_nonfood" => $data->immediate_needs_nonfood ?? null,
             "date_requested" => now('UTC'),
             "attachments" => $data->attachments ?? null,
+            "status" => "Pending Approval"
         ]);
 
         // // Merge the custom data back into the request
@@ -356,6 +430,8 @@ class DisasterReportCrudController extends CrudController
         // Call Backpack's default store logic
         // return $this->traitStore();
 
+        $admin = User::role('Municipal Admin')->firstOrFail();
+        $admin->notify(new AdminDisasterRequestReportNotification($disasterRequest, 'Admin Request Approval Tab'));
 
         \Alert::success('Disaster Request Sent to Admin for Approval')->flash();
 
@@ -371,7 +447,6 @@ class DisasterReportCrudController extends CrudController
             [
                 'name' => 'status',
                 'label' => 'Status',
-                'type' => 'text',
                 'wrapper' => [
                     'element' => 'span',
                     'class' => function ($crud, $column, $entry, $related_key) {
@@ -388,6 +463,9 @@ class DisasterReportCrudController extends CrudController
                         return 'badge badge-default';
                     },
                 ],
+                'value' => function ($entry) {
+                    return $entry->status;
+                },
             ],
             [
                 'name' => 'reported_by',

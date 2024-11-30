@@ -9,6 +9,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Http\Requests\RequestDonationRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class RequestDonationCrudController
@@ -52,6 +53,28 @@ class RequestDonationVerificationCrudController extends CrudController
             $this->crud->removeAllButtons();
             // $this->crud->removeButton('update');
         }
+        CRUD::addColumn([
+            'name' => 'id',
+            'label' => 'ID',
+            'type' => 'custom_html',
+            'value' => function ($entry) {
+                // Check if there is an unread notification related to this donation
+                $unreadNotification = auth()->user()
+                    ->unreadNotifications()
+                    ->where('data->notification_to', 'Admin Request Approval Tab')
+                    ->where('data->barangay_id', $entry->id)
+                    ->where('data->request_status', 'Pending Approval')
+                    ->exists();
+
+                // Add the "new" badge if unread
+                if ($unreadNotification) {
+                    return $entry->id . ($unreadNotification ? ' <span class="badge bg-success">New</span>' : '');
+                }
+
+                return $entry->id;
+            }
+
+        ]);
         CRUD::addColumn([
             'name' => 'created_at',
             'label' => 'Date Reported',
@@ -203,6 +226,15 @@ class RequestDonationVerificationCrudController extends CrudController
 
     public function setupShowOperation()
     {
+        $entry = $this->crud->getCurrentEntry();
+        if ($entry) {
+            Auth::user()->unreadNotifications()
+                ->where('data->notification_to', 'Admin Request Approval Tab')
+                ->where('data->request_status', 'Pending Approval')
+                ->where('data->barangay_id', $entry->id)
+                // ->where('data->donation_request_id', $id)
+                ->update(['read_at' => now()]);
+        }
         $this->crud->removeAllButtons();
         $this->crud->setColumns([
             [
@@ -229,7 +261,16 @@ class RequestDonationVerificationCrudController extends CrudController
                 ],
                 'type' => 'closure',
                 'function' => function ($entry) {
-                    return $entry->status == 'Approved' ? 'Verified' : '';
+                    $value = '';
+                    if ($entry->status == 'Approved') {
+                        $value = 'Verified';
+                    }
+
+                    if ($entry->status == 'Pending Approval') {
+                        $value = 'Pending Approval';
+                    }
+
+                    return $value;
                 },
             ],
             [
@@ -393,6 +434,16 @@ class RequestDonationVerificationCrudController extends CrudController
     // Custom Function
     public function updateStatus(Request $request, $id)
     {
+        $requestId = $this->crud->getCurrentEntry();
+        if ($requestId) {
+            Auth::user()->unreadNotifications()
+                ->where('data->notification_to', 'Admin Request Approval Tab')
+                ->where('data->request_status', 'Pending Approval')
+                ->where('data->barangay_id', $requestId->id)
+                // ->where('data->donation_request_id', $id)
+                ->update(['read_at' => now()]);
+        }
+
         $entry = RequestDonation::find($id);
 
         // Fetch the maximum values dynamically

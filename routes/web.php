@@ -61,5 +61,8 @@ Route::get('/train-predict-flood', [FloodPredictController::class, 'trainAndPred
 Route::get('/train-model-flood', [FloodPredictController::class, 'trainModel']);
 Route::get('/barangay-flood-frequency-update', [FloodPredictController::class, 'updateFloodFrequency']);
 
+Route::get('/donations-chart-data', [App\Http\Controllers\Admin\DashboardController::class, 'donationsChartData']);
+Route::get('/donation-breakdown-chart-data', [App\Http\Controllers\Admin\DashboardController::class, 'donationBreakdownChartData']);
+
 Route::get('{page}/{subs?}', ['uses' => '\App\Http\Controllers\PageController@index'])
     ->where(['page' => '^(((?=(?!admin))(?=(?!\/)).))*$', 'subs' => '.*']);

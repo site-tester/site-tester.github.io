@@ -10,6 +10,7 @@ use App\Models\DonationItem;
 use App\Models\Notification;
 use App\Models\RequestDonation;
 use App\Models\User;
+use App\Notifications\AdminPendingDonationNotification;
 use App\Notifications\DonationReceived;
 use Auth;
 use Illuminate\Http\Request;
@@ -142,7 +143,7 @@ class DonationController extends Controller
     public function store(Request $request)
     {
 
-        $request['anonymous'] = $request['anonymous'] == 1 ? true : false;
+        $anonymous = $request['anonymous'] == 1 ? 1 : 0 ;
         $request['donation_type'] = json_decode($request['donation_type']);
 
         // return response()->json($request->all());
@@ -153,7 +154,7 @@ class DonationController extends Controller
 
             // Save donation
             $donation = Donation::create([
-                'anonymous' => $request['anonymous'],
+                'anonymous' => $anonymous,
                 'donor_id' => Auth::id(),
                 'barangay_id' => $request['barangay'],
                 'type' => json_encode($request['donation_type']),
@@ -211,6 +212,11 @@ class DonationController extends Controller
             }
 
             DB::commit(); // Commit transaction
+
+            $barangay = Barangay::findOrFail($donation->barangay_id);
+            $barangayUser = User::findOrFail($barangay->barangay_rep_id);
+            $barangayUser->notify(new AdminPendingDonationNotification($donation));
+
             return response()->json(['success' => true, 'redirect_url' => route('donation.confirmation.page')]);
 
         } catch (\Exception $e) {
@@ -414,10 +420,10 @@ class DonationController extends Controller
         $data = [
             'id' => $donation->id,
             'created_at' => $donation->created_at,
-            'anonymous' => $donation->anonymous == 1 ? true : false,
-            'name' => $donation->anonymous == 0 ? 'Anonymous' : $donation->donor->name,
-            'contactNumber' => $donation->anonymous == 0 ? null : $donation->donor->profile->contact_number,
-            'address' => $donation->anonymous == 0 ? null : $donation->donor->profile->address,
+            'anonymous' => $donation->anonymous == 1 ? 1 : 0,
+            'name' => $donation->anonymous == 1 ? 'Anonymous' : $donation->donor->name,
+            'contactNumber' => $donation->anonymous == 1 ? 'Anonymous' : $donation->donor->profile->contact_number,
+            'address' => $donation->anonymous == 1 ? 'Anonymous' : $donation->donor->profile->address,
             'barangay' => $donation->barangay->name,
             'dropOffDate' => $donation->donation_date,
             'dropOffTime' => $donation->donation_time,

@@ -47,7 +47,7 @@ Route::group([
     Route::crud('request-donation', 'RequestDonationCrudController');
     Route::crud('disaster-request', 'DisasterReportCrudController');
     Route::crud('disaster-report-verification', 'RequestDonationVerificationCrudController');
-    Route::crud('donation-transfer',  'TransferDonationController');
+    Route::crud('donation-transfer', 'TransferDonationController');
     Route::post('update-verification-status/{id}', [
         'uses' => 'RequestDonationVerificationCrudController@updateStatus',
         'as' => 'update.verification.status',
@@ -68,8 +68,12 @@ Route::group([
         'uses' => 'DonationCrudController@distributeDonation',
         'as' => 'donation.distribute',
     ]);
-    Route::crud('donation-transfer',  'TransferDonationController');
+    Route::crud('transfer-donation', 'TransferDonationController');
 
+    // New Dashboard ChartJs Routes
+    Route::get('donations-chart-data', [App\Http\Controllers\Admin\DashboardController::class, 'donationsChartData']);
+    Route::get('donation-breakdown-chart-data', [App\Http\Controllers\Admin\DashboardController::class, 'donationBreakdownChartData']);
+    Route::get('inventory-data', [App\Http\Controllers\Admin\DashboardController::class, 'getInventoryData']);
 
 
 }); // this should be the absolute last line of this file

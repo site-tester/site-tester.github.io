@@ -58,4 +58,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(UserProfile::class, 'id', 'user_id');
     }
+
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, 'id', 'barangay_rep_id');
+    }
 }

@@ -25,6 +25,7 @@ class Donation extends Model
     // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
+        'anonymous',
         'donor_id',
         'barangay_id',
         'coordinator',

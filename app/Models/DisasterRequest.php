@@ -42,6 +42,7 @@ class DisasterRequest extends Model
         'immediate_needs_nonfood',
         'attachments',
         "date_requested",
+        'status',
     ];
     // protected $hidden = [];
     protected $casts = [

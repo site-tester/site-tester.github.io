@@ -12,6 +12,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -54,59 +55,6 @@ class DonationCrudController extends CrudController
         $show = request()->get('show');
         CRUD::removeButton('reset');
 
-        if ($show == 'Active') {
-            // Apply a filter to the query based on the status
-            CRUD::setEntityNameStrings('Active Donation', 'Active Donations');
-            CRUD::addClause('where', 'status', '!=', 'Pending Approval');
-            $this->data['breadcrumbs'] = [
-                trans('backpack::base.dashboard') => backpack_url('dashboard'),
-                'Active Donations' => false,
-                'Lists' => false,
-            ];
-            $this->crud->removeAllButtons();
-        }
-
-        if ($show == 'Pending') {
-            // Apply a filter to the query based on the status
-            CRUD::setEntityNameStrings('Donation Aprroval', 'Donation Aprrovals');
-            CRUD::addClause('where', 'status', '=', 'Pending Approval');
-            $this->data['breadcrumbs'] = [
-                trans('backpack::base.dashboard') => backpack_url('dashboard'),
-                'Donation Approval' => false,
-                'Lists' => false,
-            ];
-            $this->crud->removeAllButtons();
-        }
-
-
-        // $this->data['overviewData'] = [
-        //     'pendingDonation' => Donation::where('status', 'Pending Approval')->count(),
-        //     'thisDayDonation' => Donation::whereDate('created_at', now()->toDateString())->count(),
-        //     'approvedDonation' => Donation::whereDate('updated_at', now()->toDateString())->where('status', 'Approved')->count(),
-        // ];
-
-        // // Apply custom filters based on query parameters
-        // if (request()->has('status')) {
-        //     $status = request('status');
-        //     if ($status === 'pending') {
-        //         CRUD::addClause('where', 'status', 'Pending Approval');
-        //     } elseif ($status === 'approved') {
-        //         CRUD::addClause('where', 'status', 'Approved');
-        //         CRUD::addClause('whereDate', 'updated_at', now()->toDateString());
-        //     }
-        // }
-
-        // if (request()->has('date')) {
-        //     $date = request('date');
-        //     if ($date === 'today') {
-        //         CRUD::addClause('whereDate', 'created_at', now()->toDateString());
-        //     }
-        // }
-
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
         if (auth()->user()->hasRole('Barangay Representative')) {
             // Get the barangay_id of the authenticated user
             $barangayRepId = auth()->user()->id;
@@ -116,10 +64,39 @@ class DonationCrudController extends CrudController
             CRUD::addClause('where', 'barangay_id', $barangayId->id);
 
         }
+
         if ($show == 'Pending') {
+
+            // Apply a filter to the query based on the status
+            CRUD::setEntityNameStrings('Donation Aprroval', 'Donation Aprrovals');
+            CRUD::addClause('where', 'status', '=', 'Pending Approval');
+            $this->data['breadcrumbs'] = [
+                trans('backpack::base.dashboard') => backpack_url('dashboard'),
+                'Donation Approval' => false,
+                'Lists' => false,
+            ];
+            $this->crud->removeAllButtons();
+
             CRUD::addColumn([
                 'name' => 'id',
                 'label' => 'Donation ID',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    // Check if there is an unread notification related to this donation
+                    $unreadNotification = auth()->user()
+                        ->unreadNotifications()
+                        ->where('data->notification_to', 'Donation Approval Tab')
+                        ->where('data->donation_id', $entry->id)
+                        ->where('data->donation_status', 'Pending Approval')
+                        ->exists();
+
+                    // Add the "new" badge if unread
+                    if ($unreadNotification) {
+                        return $entry->id . ($unreadNotification ? ' <span class="badge bg-success">New</span>' : '');
+                    }
+
+                    return $entry->id;
+                }
             ]);
 
             CRUD::addColumn([
@@ -221,6 +198,27 @@ class DonationCrudController extends CrudController
         }
 
         if ($show == 'Active') {
+
+            // Apply a filter to the query based on the status
+            CRUD::setEntityNameStrings('Active Donation', 'Active Donations');
+            CRUD::addClause('where', 'status', '!=', 'Pending Approval');
+            CRUD::addClause('where', 'status', '!=', 'Distributed');
+            $this->data['breadcrumbs'] = [
+                trans('backpack::base.dashboard') => backpack_url('dashboard'),
+                'Active Donations' => false,
+                'Lists' => false,
+            ];
+            $this->crud->removeAllButtons();
+
+            CRUD::addColumn([
+                'name' => 'id',
+                'label' => 'Donation ID',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    return $entry->id;
+                }
+            ]);
+
             CRUD::addColumn([
                 'name' => 'donation_date',
                 'label' => 'Donation Date'
@@ -332,7 +330,7 @@ class DonationCrudController extends CrudController
                     if ($entry->status == 'Approved') {
                         // Both action buttons are clickable if the status is Pending Approval
                         $receiveButton .= '>';
-                        $distributeButton .= '>';
+                        $distributeButton .= 'style="pointer-events: none;" disabled>';
                     } elseif ($entry->status == 'Distributed') {
                         $distributeButton .= 'style="pointer-events: none;" disabled>';
                         $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;" diabled>';
@@ -350,7 +348,132 @@ class DonationCrudController extends CrudController
                     $viewButton .= '<i class="la la-eye"></i></a>';
 
                     // Return all buttons
-                    return $viewButton . ' ' . $receiveButton .' '. $distributeButton ;
+                    return $viewButton . ' ' . $receiveButton . ' ' . $distributeButton;
+                },
+                'escaped' => false,
+            ]);
+        }
+
+        // History
+        if ($show == 'History') {
+
+            // Apply a filter to the query based on the status
+            CRUD::setEntityNameStrings('Donation History', 'Donations History');
+            CRUD::addClause('where', 'status', '=', 'Distributed');
+            $this->data['breadcrumbs'] = [
+                trans('backpack::base.dashboard') => backpack_url('dashboard'),
+                'Donations History' => false,
+                'Lists' => false,
+            ];
+            $this->crud->removeAllButtons();
+
+            CRUD::addColumn([
+                'name' => 'donation_date',
+                'label' => 'Donation Date'
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'donor_id',
+                'label' => 'Donor Name',
+                'entity' => 'donor',
+                'model' => 'App\Models\User',
+                'attribute' => 'name',
+                'pivot' => false,
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    $donor = Donation::where('id', $entry->id)->firstOrFail();
+                    return $donor->anonymous == 0 ? $donor->donor->name : 'Anonymous';
+                },
+
+            ]);
+            CRUD::addColumn([
+                'name' => 'type',
+                'label' => 'Category',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'approved_by',
+                'label' => 'Approved By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->approved_by ?? 'Pending';
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'received_by',
+                'label' => 'Received By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->received_by ?? 'Pending';
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'distributed_by',
+                'label' => 'Distributed By',
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->distributed_by ?? 'Pending';
+                },
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'status',
+                'label' => 'Status',
+                'wrapper' => [
+                    'element' => 'span',
+                    'class' => function ($crud, $column, $entry, $related_key) {
+                        // Determine the badge class based on the status value
+                        if ($column['text'] == 'Pending Approval') {
+                            return 'badge text-bg-warning'; // Yellow indicates awaiting action
+                        }
+                        if ($column['text'] == 'Approved') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Rejected') {
+                            return 'badge text-bg-danger'; // Yellow indicates a warning
+                        }
+                        if ($column['text'] == 'Received') {
+                            return 'badge text-bg-primary'; // Grey indicates a neutral state (received but not processed yet)
+                        }
+                        if ($column['text'] == 'Distributed') {
+                            return 'badge text-bg-primary'; // Green indicates the process is complete
+                        }
+                        return 'badge badge-default';
+                    },
+                ],
+
+
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'status_approval',
+                'label' => 'Details',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    // Ensure the $entry is not null and the status is set
+                    if (!$entry) {
+                        return ''; // Return an empty string or default HTML
+                    }
+
+                    // Define the button styles based on the current status
+                    $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '" data-bs-toggle="tooltip" title="View Details">';
+                    // Check the current status of the entry and adjust the buttons accordingly
+                    $viewButton .= '<i class="la la-eye"></i></a>';
+
+                    // Return all buttons
+                    return $viewButton;
                 },
                 'escaped' => false,
             ]);
@@ -369,7 +492,8 @@ class DonationCrudController extends CrudController
             if ($donation->status === "Approved") {
                 // Send notification to the donor
                 $donation->donor->notify(new DonationApprovalNotification($donation));
-            };
+            }
+            ;
 
             $donation->save();
 
@@ -400,7 +524,7 @@ class DonationCrudController extends CrudController
         try {
             $donation = Donation::findOrFail($id);
             $donation->distributed_by = $request->input('distributor_name'); // Save the distributor's name
-            $donation->distribution_proof = $request->file('distributor_img')->store('distribution_proofs', 'public'); // Save proof image
+            $donation->proof_document = $request->file('distributor_img')->store('distribution_proofs', 'public'); // Save proof image
             $donation->status = 'Distributed'; // Update status to distributed
 
             $donation->save();
@@ -420,13 +544,6 @@ class DonationCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(DonationRequest::class);
-        // CRUD::setFromDb(); // set fields from db columns.
-
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
-
 
         // Field for Donor
         CRUD::addField([
@@ -520,10 +637,10 @@ class DonationCrudController extends CrudController
             'name' => 'barangay_id',
             'label' => 'Barangay',
             'type' => 'select',
-            'entity' => 'barangay', // The relationship defined in your Donation model
-            'model' => 'App\Models\Barangay', // Model for barangay
-            'attribute' => 'name', // Column to be shown in the select options
-            'pivot' => false, // Not a pivot relationship
+            'entity' => 'barangay',
+            'model' => 'App\Models\Barangay',
+            'attribute' => 'name',
+            'pivot' => false,
         ]);
 
         CRUD::addField([
@@ -539,9 +656,6 @@ class DonationCrudController extends CrudController
             'name' => 'donation_date',
             'label' => 'Appointment Date',
             'type' => 'date',
-            // 'attributes' => [
-            //     'min' => Carbon::now()->format('Y-m-d'),
-            // ]
         ]);
 
         $this->crud->addField([
@@ -557,7 +671,7 @@ class DonationCrudController extends CrudController
                 '03:00 PM - 04:00 PM' => '03:00 PM - 04:00 PM',
             ],
             'allows_null' => false,
-            'value' => $this->crud->getCurrentEntry()->donation_time, // Default or saved value
+            'value' => $this->crud->getCurrentEntry()->donation_time,
         ]);
 
         // Field for Status
@@ -572,10 +686,10 @@ class DonationCrudController extends CrudController
                 'Received' => 'Received',
                 'Distributed' => 'Distributed',
             ],
-            'allows_multiple' => false, // Set to true if you want to allow multiple selections
+            'allows_multiple' => false,
         ]);
 
-        // Coordinator Field Wrapper (hidden initially)
+
         CRUD::addField([
             'name' => 'coordinator',
             'label' => 'Coordinator',
@@ -662,16 +776,21 @@ class DonationCrudController extends CrudController
                     $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate));
                 }
             }
-            // Send notification to the donor if they exist
-            // if ($donor) {
-            //     $donor->notify(new DonorDonationStatusNotification($donationAfterUpdate));
-            // }
         }
         return $response;
     }
 
     public function setupShowOperation()
     {
+        $entry = $this->crud->getCurrentEntry();
+        if ($entry) {
+            Auth::user()->unreadNotifications()
+                ->where('data->notification_to', 'Donation Approval Tab')
+                ->where('data->donation_status', 'Pending Approval')
+                ->where('data->donation_id', $entry->id)
+                ->update(['read_at' => now()]);
+        }
+
         CRUD::setEntityNameStrings('Donation Preview', 'Donation Preview');
         $this->crud->removeAllButtons();
         $this->crud->setColumns([
@@ -746,6 +865,30 @@ class DonationCrudController extends CrudController
                 'type' => 'closure',
                 'function' => function ($entry) {
                     return $entry->distributed_by ?? 'Pending';
+                },
+            ],
+            [
+                'name' => 'proof_document',
+                'label' => 'Distribution Proof',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    // $rawValue = $entry->attachments;
+                    // $rawValue = stripslashes($rawValue);
+                    // $cleanValue = trim($rawValue, '"');
+                    // $decoded = json_decode($cleanValue, true);
+
+                    $value = "<div class='row'>";
+                    // foreach ($decoded as $img_path) {
+                        $value .= " <div class='col-auto'>
+                        <a href='/storage/app/public/{$entry->proof_document}' data-fancybox='gallery'
+                            data-caption='{ $entry->proof_document }'>
+                            <img src='/storage/app/public/{$entry->proof_document}' height='100' />
+                        </a>
+                        </div>";
+                    // }
+
+                    $value .= "</div>";
+                    return $value;
                 },
             ],
             [
@@ -854,7 +997,8 @@ class DonationCrudController extends CrudController
                     'success' => false,
                     'message' => 'Donor not found for this donation.'
                 ]);
-            };
+            }
+            ;
 
             // Update the donation status based on the request
             $entry->status = $request->status;
@@ -863,7 +1007,8 @@ class DonationCrudController extends CrudController
             if ($entry->status === "Approved") {
                 // Send notification to the donor
                 $user->notify(new DonationApprovalNotification($entry));
-            };
+            }
+            ;
 
             // Save the updated donation status
             $entry->save();
