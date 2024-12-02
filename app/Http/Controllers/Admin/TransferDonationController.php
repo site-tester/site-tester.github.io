@@ -56,7 +56,7 @@ class TransferDonationController extends CrudController
             'List' => false,
         ];
 
-
+        CRUD::addClause('where', 'barangay_id', '!=', auth()->user()->barangay->id);
         CRUD::addClause('where', 'status', 'Approved');
         CRUD::setOperationSetting('showEntryCount', false);
         CRUD::setEntityNameStrings('Transfer Disaster Request', 'Transfer Disaster Requests');

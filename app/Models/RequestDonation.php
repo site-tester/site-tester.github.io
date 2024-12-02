@@ -6,12 +6,14 @@ use App\Notifications\DonationRequestNotification;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 class RequestDonation extends Model
 {
     use CrudTrait;
     use HasFactory;
+    use SoftDeletes;
 
     /*
     |--------------------------------------------------------------------------
@@ -88,4 +90,6 @@ class RequestDonation extends Model
             // }
         });
     }
+
+    
 }

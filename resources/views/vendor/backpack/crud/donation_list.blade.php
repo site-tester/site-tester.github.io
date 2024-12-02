@@ -159,8 +159,8 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal" id="approveModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="approveModalLabel">
+        <div class="modal-dialog" role="document" inert="true">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Approve Donation</h5>
@@ -184,317 +184,390 @@
         </div>
     </div>
 
-    <div class="modal" id="receiveModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="rejectModalLabel">
+        <div class="modal-dialog" role="document" inert="true">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Receive Donation</h5>
+                    <h5 class="modal-title">Reject Donation Request</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="receiveForm">
+                    {{-- <p>Please provide
+                        a reason for rejecting this donation request:</p>
+                    <textarea class="form-control" id="rejectReason" rows="3"></textarea> --}}
+                    <form id="rejectForm">
                         <div class="mb-3">
-                            <label for="receiverName" class="form-label">Receiver's Name</label>
-                            <input type="text" class="form-control" id="receiverName" name="receiver_name"
-                                placeholder="Enter Receiver's Name" required>
+                            <p>Please provide a reason for rejecting this donation request:</p>
+                            <textarea class="form-control" id="rejectReason" rows="3"></textarea>
                         </div>
                         <input type="hidden" id="donationId" name="donation_id">
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitReceive">Submit</button>
+                    <button type="button" class="btn btn-danger" id="submitReject">Reject</button>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal" id="distributeModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Distribute Donation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="distributeForm">
-                        <div class="mb-3">
-                            <label for="distributorName" class="form-label">Distributor's Name</label>
-                            <input type="text" class="form-control" id="distributorName" name="distributor_name"
-                                placeholder="Enter Distributor's name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="distributorImg" class="form-label">Distributor Image Proof</label>
-                            <input type="file" class="form-control" id="distributorImg" name="distributor_img"
-                                placeholder="Enter Distributor's name" required>
-                        </div>
-                        <input type="hidden" id="donationId" name="donation_id">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitDistribution">Submit</button>
+
+        <div class="modal fade" id="receiveModal" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="receiveModalLabel">
+            <div class="modal-dialog" role="document" inert="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Receive Donation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="receiveForm">
+                            <div class="mb-3">
+                                <label for="receiverName" class="form-label">Receiver's Name</label>
+                                <input type="text" class="form-control" id="receiverName" name="receiver_name"
+                                    placeholder="Enter Receiver's Name" required>
+                            </div>
+                            <input type="hidden" id="donationId" name="donation_id">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="submitReceive">Submit</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+        <div class="modal fade" id="distributeModal" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="distributeModalLabel">
+            <div class="modal-dialog" role="document" inert="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Distribute Donation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="distributeForm">
+                            <div class="mb-3">
+                                <label for="distributorName" class="form-label">Distributor's Name</label>
+                                <input type="text" class="form-control" id="distributorName" name="distributor_name"
+                                    placeholder="Enter Distributor's name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="distributorImg" class="form-label">Distributor Image Proof</label>
+                                <input type="file" class="form-control" id="distributorImg" name="distributor_img"
+                                    placeholder="Enter Distributor's name" required>
+                            </div>
+                            <input type="hidden" id="donationId" name="donation_id">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="submitDistribution">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endsection
 
-@section('after_styles')
-    {{-- DATA TABLES --}}
-    @basset('https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css')
-    @basset('https://cdn.datatables.net/fixedheader/3.3.1/css/fixedHeader.dataTables.min.css')
-    @basset('https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css')
+    @section('after_styles')
+        {{-- DATA TABLES --}}
+        @basset('https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css')
+        @basset('https://cdn.datatables.net/fixedheader/3.3.1/css/fixedHeader.dataTables.min.css')
+        @basset('https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css')
 
-    {{-- CRUD LIST CONTENT - crud_list_styles stack --}}
-    @stack('crud_list_styles')
-@endsection
+        {{-- CRUD LIST CONTENT - crud_list_styles stack --}}
+        @stack('crud_list_styles')
+    @endsection
 
-@push('after_styles')
-    <style>
-        .modal-backdrop {
-            z-index: 1040 !important;
-        }
+    @push('after_styles')
+        <style>
+            .modal-backdrop {
+                z-index: 1040 !important;
+            }
 
-        .modal {
-            z-index: 1050 !important;
-        }
-    </style>
-@endpush
+            .modal {
+                z-index: 1050 !important;
+            }
+        </style>
+    @endpush
 
-@section('after_scripts')
-    @include('crud::inc.datatables_logic')
+    @section('after_scripts')
+        @include('crud::inc.datatables_logic')
 
-    {{-- CRUD LIST CONTENT - crud_list_scripts stack --}}
-    @stack('crud_list_scripts')
+        {{-- CRUD LIST CONTENT - crud_list_scripts stack --}}
+        @stack('crud_list_scripts')
 
-    <script>
-        document.getElementById('approveModal').addEventListener('show.bs.modal', function() {
-            this.style.display = 'block';
-            document.body.appendChild(this);
-        });
-        document.getElementById('receiveModal').addEventListener('show.bs.modal', function() {
-            this.style.display = 'block';
-            document.body.appendChild(this);
-        });
-        document.getElementById('distributeModal').addEventListener('show.bs.modal', function() {
-            this.style.display = 'block';
-            document.body.appendChild(this);
-        });
+        <script>
+            document.getElementById('approveModal').addEventListener('show.bs.modal', function() {
+                this.style.display = 'block';
+                document.body.appendChild(this);
+            });
+            document.getElementById('rejectModal').addEventListener('show.bs.modal', function() {
+                this.style.display = 'block';
+                document.body.appendChild(this);
+            });
+            document.getElementById('receiveModal').addEventListener('show.bs.modal', function() {
+                this.style.display = 'block';
+                document.body.appendChild(this);
+            });
+            document.getElementById('distributeModal').addEventListener('show.bs.modal', function() {
+                this.style.display = 'block';
+                document.body.appendChild(this);
+            });
 
-        function updateDonationStatus(id, status) {
-            // Send an AJAX request to the server
-            $.ajax({
-                url: '{{ route('update.donation.verification.status', ':id') }}'.replace(':id',
-                    id), // Update URL with the actual entry ID
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}', // CSRF token for security
-                    status: status // The new status to be updated ('Approved' or 'Rejected')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Reload the page to see the updated status (or you can selectively update the button states in the UI)
-                        new Noty({
-                            type: 'success',
-                            text: 'Donation ' + status + '. Reloading in 3 seconds.',
-                            timeout: 3000, // Automatically close after 3 seconds
-                            progressBar: true,
-                        }).show();
+            function updateDonationStatus(id, status) {
+                // Send an AJAX request to the server
+                $.ajax({
+                    url: '{{ route('update.donation.verification.status', ':id') }}'.replace(':id',
+                        id), // Update URL with the actual entry ID
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // CSRF token for security
+                        status: status // The new status to be updated ('Approved' or 'Rejected')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Reload the page to see the updated status (or you can selectively update the button states in the UI)
+                            new Noty({
+                                type: 'success',
+                                text: 'Donation ' + status + '. Reloading in 3 seconds.',
+                                timeout: 3000, // Automatically close after 3 seconds
+                                progressBar: true,
+                            }).show();
 
-                        setTimeout(function() {
-                            location.reload();
-                        }, 3000);
+                            setTimeout(function() {
+                                location.reload();
+                            }, 3000);
 
-                    } else {
-                        // If there's an error updating the status, show an alert
-                        alert('Failed to update status: ' + data.error);
+                        } else {
+                            // If there's an error updating the status, show an alert
+                            alert('Failed to update status: ' + data.error);
+                            new Noty({
+                                type: 'error',
+                                text: 'Failed to update status.',
+                                timeout: 3000,
+                                progressBar: true,
+                            }).show();
+                        }
+                    },
+                    error: function() {
+                        // If the AJAX request fails, show an error message
+                        console.log('AJAX Error:', error);
                         new Noty({
                             type: 'error',
-                            text: 'Failed to update status.',
+                            text: 'An error occurred while updating the status.',
                             timeout: 3000,
                             progressBar: true,
                         }).show();
                     }
-                },
-                error: function() {
-                    // If the AJAX request fails, show an error message
-                    console.log('AJAX Error:', error);
-                    new Noty({
-                        type: 'error',
-                        text: 'An error occurred while updating the status.',
-                        timeout: 3000,
-                        progressBar: true,
-                    }).show();
-                }
-            });
-        }
+                });
+            }
 
-        // function submitApproval(donationId) {
-        //     // Get the input value
-        //     const approvedByInput = document.querySelector(`#approved_by-${donationId}`);
-        //     const approvedBy = approvedByInput.value;
+            // function submitApproval(donationId) {
+            //     // Get the input value
+            //     const approvedByInput = document.querySelector(`#approved_by-${donationId}`);
+            //     const approvedBy = approvedByInput.value;
 
-        //     if (!approvedBy) {
-        //         alert('Please fill in the "Approved By" field.');
-        //         return;
-        //     }
+            //     if (!approvedBy) {
+            //         alert('Please fill in the "Approved By" field.');
+            //         return;
+            //     }
 
-        //     // Perform AJAX request
-        //     fetch(`{{ url('/admin/donation/') }}/${donationId}/approve`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        //             },
-        //             body: JSON.stringify({
-        //                 approved_by: approvedBy
-        //             }),
-        //         })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             if (data.success) {
-        //                 alert(data.message);
-        //                 // Optionally reload the page or refresh the table
-        //                 location.reload();
-        //             } else {
-        //                 alert(data.message || 'An unknown error occurred.');
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //             alert('An error occurred while approving the donation.');
-        //         });
-        // }
+            //     // Perform AJAX request
+            //     fetch(`{{ url('/admin/donation/') }}/${donationId}/approve`, {
+            //             method: 'POST',
+            //             headers: {
+            //                 'Content-Type': 'application/json',
+            //                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            //             },
+            //             body: JSON.stringify({
+            //                 approved_by: approvedBy
+            //             }),
+            //         })
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             if (data.success) {
+            //                 alert(data.message);
+            //                 // Optionally reload the page or refresh the table
+            //                 location.reload();
+            //             } else {
+            //                 alert(data.message || 'An unknown error occurred.');
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error('Error:', error);
+            //             alert('An error occurred while approving the donation.');
+            //         });
+            // }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add event listener to handle modal opening
-            $('#approveModal').on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget); // Button that triggered the modal
-                const donationId = button.data('id'); // Extract the donation ID from data-id attribute
-                $('#approveModal #donationId').val(donationId);
-            });
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add event listener to handle modal opening
+                $('#approveModal').on('show.bs.modal', function(event) {
+                    const button = $(event.relatedTarget); // Button that triggered the modal
+                    const donationId = button.data('id'); // Extract the donation ID from data-id attribute
+                    $('#approveModal #donationId').val(donationId);
+                });
 
-            $('#submitApproval').click(function() {
-                const approverName = $('#approveModal #approverName').val();
-                const donationId = $('#approveDonationId').val();
+                $('#submitApproval').click(function() {
+                    const approverName = $('#approveModal #approverName').val();
+                    const donationId = $('#approveDonationId').val();
 
-                console.log('Donation ID:', donationId);
-                console.log('Approver Name:', approverName);
+                    console.log('Donation ID:', donationId);
+                    console.log('Approver Name:', approverName);
 
-                // Make sure the approver's name is not empty
-                if (!approverName) {
-                    alert('Please enter the approver\'s name');
-                    return;
-                }
-
-                // Send the data via AJAX
-                $.ajax({
-                    url: '/admin/approve-donation/' + donationId, // URL to handle the request
-                    method: 'POST',
-                    data: {
-                        approver_name: approverName,
-                        _token: $('meta[name="csrf-token"]').attr(
-                            'content') // CSRF Token for Laravel
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Donation approved successfully');
-                            $('#approveModal').modal('hide'); // Close the modal
-                            location.reload(); // Reload the page to reflect the changes
-                        } else {
-                            alert('An error occurred. Please try again.');
-                        }
-                    },
-                    error: function() {
-                        alert('Something went wrong!');
+                    // Make sure the approver's name is not empty
+                    if (!approverName) {
+                        alert('Please enter the approver\'s name');
+                        return;
                     }
+
+                    // Send the data via AJAX
+                    $.ajax({
+                        url: '/admin/approve-donation/' + donationId, // URL to handle the request
+                        method: 'POST',
+                        data: {
+                            approver_name: approverName,
+                            _token: $('meta[name="csrf-token"]').attr(
+                                'content') // CSRF Token for Laravel
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Donation approved successfully');
+                                $('#approveModal').modal('hide'); // Close the modal
+                                location.reload(); // Reload the page to reflect the changes
+                            } else {
+                                alert('An error occurred. Please try again.');
+                            }
+                        },
+                        error: function() {
+                            alert('Something went wrong!');
+                        }
+                    });
+                });
+
+                $('#rejectModal').on('show.bs.modal', function(event) {
+                    const button = $(event.relatedTarget); // Button that triggered the modal
+                    const donationId = button.data('id'); // Extract the donation ID from data-id attribute
+                    $('#rejectModal #donationId').val(donationId);
+                });
+
+                $('#submitReject').click(function() {
+                    const rejectionRemarks = $('#rejectModal #rejectReason').val();
+                    const donationId = $('#rejectDonationId').val();
+
+                    console.log('Donation ID:', donationId);
+                    console.log('Rejection Reason:', rejectionRemarks);
+
+                    // Make sure the approver's name is not empty
+                    if (!rejectionRemarks) {
+                        alert('Please enter a reason for rejection');
+                        return;
+                    }
+
+                    // Send the data via AJAX
+                    $.ajax({
+                        url: '/admin/reject-donation/' + donationId, // URL to handle the request
+                        method: 'POST',
+                        data: {
+                            rejection_remarks: rejectionRemarks,
+                            _token: $('meta[name="csrf-token"]').attr(
+                                'content') // CSRF Token for Laravel
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Donation rejected successfully');
+                                $('#rejectModal').modal('hide'); // Close the modal
+                                location.reload(); // Reload the page to reflect the changes
+                            } else {
+                                alert('An error occurred. Please try again.');
+                            }
+                        },
+                        error: function() {
+                            alert('Something went wrong!');
+                        }
+                    });
+                });
+
+                // Receive Modal
+                $('#receiveModal').on('show.bs.modal', function(event) {
+                    const button = $(event.relatedTarget); // Button that triggered the modal
+                    const donationId = button.data('id'); // Extract donation ID from data-id attribute
+                    $('#receiveModal #donationId').val(donationId);
+                });
+
+                $('#submitReceive').click(function() {
+                    const receiverName = $('#receiverName').val();
+                    const donationId = $('#receiveModal #donationId').val();
+
+                    if (!receiverName) {
+                        alert("Please enter the receiver's name.");
+                        return;
+                    }
+
+                    // AJAX request to submit the "Receive Donation" form
+                    $.ajax({
+                        url: '/admin/receive-donation/' + donationId,
+                        method: 'POST',
+                        data: {
+                            receiver_name: receiverName,
+                            _token: $('meta[name="csrf-token"]').attr(
+                                'content') // CSRF token for Laravel
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Donation marked as received successfully.');
+                                $('#receiveModal').modal('hide');
+                                location.reload();
+                            } else {
+                                alert(response.message || 'An error occurred. Please try again.');
+                            }
+                        },
+                        error: function() {
+                            alert('Something went wrong while receiving the donation.');
+                        }
+                    });
+                });
+
+                // Distribute Modal
+                $('#distributeModal').on('show.bs.modal', function(event) {
+                    const button = $(event.relatedTarget); // Button that triggered the modal
+                    const donationId = button.data('id'); // Extract donation ID from data-id attribute
+                    $('#distributeModal #donationId').val(donationId);
+                });
+
+                $('#submitDistribution').click(function() {
+                    const distributorName = $('#distributorName').val();
+                    const distributorImg = $('#distributorImg')[0].files[0];
+                    const donationId = $('#distributeModal #donationId').val();
+
+                    if (!distributorName || !distributorImg) {
+                        alert("Please fill in the distributor's name and upload the image proof.");
+                        return;
+                    }
+
+                    // FormData to send file and other data via AJAX
+                    const formData = new FormData();
+                    formData.append('distributor_name', distributorName);
+                    formData.append('distributor_img', distributorImg);
+                    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
+                    // AJAX request to submit the "Distribute Donation" form
+                    $.ajax({
+                        url: '/admin/distribute-donation/' + donationId,
+                        method: 'POST',
+                        processData: false, // Prevent jQuery from auto-processing the data
+                        contentType: false, // Set the appropriate content type for FormData
+                        data: formData,
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Donation marked as distributed successfully.');
+                                $('#distributeModal').modal('hide');
+                                location.reload();
+                            } else {
+                                alert(response.message || 'An error occurred. Please try again.');
+                            }
+                        },
+                        error: function() {
+                            alert('Something went wrong while distributing the donation.');
+                        }
+                    });
                 });
             });
-
-            // Receive Modal
-            $('#receiveModal').on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget); // Button that triggered the modal
-                const donationId = button.data('id'); // Extract donation ID from data-id attribute
-                $('#receiveModal #donationId').val(donationId);
-            });
-
-            $('#submitReceive').click(function() {
-                const receiverName = $('#receiverName').val();
-                const donationId = $('#receiveModal #donationId').val();
-
-                if (!receiverName) {
-                    alert("Please enter the receiver's name.");
-                    return;
-                }
-
-                // AJAX request to submit the "Receive Donation" form
-                $.ajax({
-                    url: '/admin/receive-donation/' + donationId,
-                    method: 'POST',
-                    data: {
-                        receiver_name: receiverName,
-                        _token: $('meta[name="csrf-token"]').attr(
-                            'content') // CSRF token for Laravel
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Donation marked as received successfully.');
-                            $('#receiveModal').modal('hide');
-                            location.reload();
-                        } else {
-                            alert(response.message || 'An error occurred. Please try again.');
-                        }
-                    },
-                    error: function() {
-                        alert('Something went wrong while receiving the donation.');
-                    }
-                });
-            });
-
-            // Distribute Modal
-            $('#distributeModal').on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget); // Button that triggered the modal
-                const donationId = button.data('id'); // Extract donation ID from data-id attribute
-                $('#distributeModal #donationId').val(donationId);
-            });
-
-            $('#submitDistribution').click(function() {
-                const distributorName = $('#distributorName').val();
-                const distributorImg = $('#distributorImg')[0].files[0];
-                const donationId = $('#distributeModal #donationId').val();
-
-                if (!distributorName || !distributorImg) {
-                    alert("Please fill in the distributor's name and upload the image proof.");
-                    return;
-                }
-
-                // FormData to send file and other data via AJAX
-                const formData = new FormData();
-                formData.append('distributor_name', distributorName);
-                formData.append('distributor_img', distributorImg);
-                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
-                // AJAX request to submit the "Distribute Donation" form
-                $.ajax({
-                    url: '/admin/distribute-donation/' + donationId,
-                    method: 'POST',
-                    processData: false, // Prevent jQuery from auto-processing the data
-                    contentType: false, // Set the appropriate content type for FormData
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Donation marked as distributed successfully.');
-                            $('#distributeModal').modal('hide');
-                            location.reload();
-                        } else {
-                            alert(response.message || 'An error occurred. Please try again.');
-                        }
-                    },
-                    error: function() {
-                        alert('Something went wrong while distributing the donation.');
-                    }
-                });
-            });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection

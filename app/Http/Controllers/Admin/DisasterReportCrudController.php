@@ -36,6 +36,7 @@ class DisasterReportCrudController extends CrudController
         CRUD::setModel(\App\Models\RequestDonation::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/disaster-request');
         CRUD::setEntityNameStrings('Disaster Request', 'Disaster Requests');
+        $this->crud->query->withTrashed();
     }
 
     /**
@@ -50,90 +51,12 @@ class DisasterReportCrudController extends CrudController
 
         if ($show == 'Active') {
             CRUD::addClause('where', 'status', 'Approved');
-        CRUD::addClause('where', 'barangay_id', auth()->user()->barangay->id);
-        CRUD::setOperationSetting('showEntryCount', false);
-
-        CRUD::setEntityNameStrings('Active Disaster Request', 'Active Disaster Requests');
-        $this->crud->removeButtons(['create', 'update']);
-
-        CRUD::addColumn([
-            'name' => 'created_at',
-            'label' => 'Date Requested',
-            'type' => 'date',
-            'format' => 'MMM-DD-YYYY',
-        ]);
-        CRUD::addColumn([
-            'name' => 'barangay_id', // The actual column is named barangay
-            'label' => 'Barangay',
-            // 'type' => 'relationship',
-            'entity' => 'barangay', // relationship is named barangay
-            'attribute' => 'name',
-            'model' => 'App\Models\Barangay',
-        ]);
-        CRUD::addColumn([
-            'name' => 'preffered_donation_type',
-            'label' => 'Donation Type',
-            'type' => 'custom_html',
-            'value' => function ($entry) {
-                $rawValue = $entry->preffered_donation_type;
-                $rawValue = stripslashes($rawValue);
-                $cleanValue = trim($rawValue, '"');
-                $decoded = json_decode($cleanValue, true);
-                $formatted = array_map('ucfirst', $decoded);
-                return implode(', ', $formatted);
-
-            },
-        ]);
-        CRUD::addColumn([
-            'name' => 'disaster_type',
-            'label' => 'Disaster Type',
-            'type' => 'custom_html',
-            'value' => function ($entry) {
-                $rawValue = $entry->disaster_type;
-                $rawValue = stripslashes($rawValue);
-                $cleanValue = trim($rawValue, '"');
-                $decoded = json_decode($cleanValue, true);
-                // Apply ucfirst to each item
-                $formatted = array_map('ucfirst', $decoded);
-                // If not JSON, return as is (with formatting)
-                return implode(', ', $formatted);
-            },
-        ]);
-        CRUD::addColumn([
-            'name' => 'date_requested',
-            'label' => 'Date Requested',
-        ]);
-        CRUD::addColumn([
-            'name' => 'status',
-            'label' => 'Status',
-            'wrapper' => [
-                'element' => 'span',
-                'class' => function ($crud, $column, $entry, $related_key) {
-                    // Determine the badge class based on the status value
-                    if ($column['text'] == 'Approved') {
-                        return 'badge text-bg-success'; // Green indicates approval
-                    }
-                    if ($column['text'] == 'Verified') {
-                        return 'badge text-bg-success'; // Green indicates approval
-                    }
-                    return 'badge badge-default';
-                },
-            ],
-            'type' => 'closure',
-            'function' => function ($entry) {
-                return $entry->status == 'Approved' ? 'Verified' : '';
-            },
-        ]);
-        CRUD::addButtonFromView('line', 'delete', 'custom_delete_button');
-        }
-
-
-        if ($show == 'History') {
             CRUD::addClause('where', 'barangay_id', auth()->user()->barangay->id);
             CRUD::setOperationSetting('showEntryCount', false);
 
-            CRUD::setEntityNameStrings('Request History', 'Requests History');
+            CRUD::setEntityNameStrings('Active Disaster Request', 'Active Disaster Requests');
             $this->crud->removeButtons(['create', 'update']);
+
             CRUD::addColumn([
                 'name' => 'created_at',
                 'label' => 'Date Requested',
@@ -202,6 +125,127 @@ class DisasterReportCrudController extends CrudController
                     return $entry->status == 'Approved' ? 'Verified' : '';
                 },
             ]);
+            CRUD::addButtonFromView('line', 'delete', 'custom_delete_button');
+        }
+
+
+        if ($show == 'History') {
+            $this->crud->query->withTrashed();
+            CRUD::addClause('where', 'barangay_id', auth()->user()->barangay->id);
+            CRUD::setOperationSetting('showEntryCount', false);
+
+            CRUD::setEntityNameStrings('Request History', 'Requests History');
+            $this->crud->removeButtons(['create', 'update', 'delete']);
+            // $this->crud->removeAllButtons();
+            CRUD::addColumn([
+                'name' => 'date_requested',
+                'label' => 'Date Requested',
+                'type' => 'date',
+                'format' => 'MMM-DD-YYYY',
+            ]);
+            CRUD::addColumn([
+                'name' => 'status',
+                'label' => 'Status',
+                'wrapper' => [
+                    'element' => 'span',
+                    'class' => function ($crud, $column, $entry, $related_key) {
+                        // Determine the badge class based on the status value
+                        if ($column['text'] == 'Pending Approval') {
+                            return 'badge text-bg-warning'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Approved') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        if ($column['text'] == 'Verified') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
+                        return 'badge badge-default';
+                    },
+                ],
+                'type' => 'closure',
+                'function' => function ($entry) {
+                    return $entry->status == 'Approved' ? 'Verified' : $entry->status;
+                },
+            ]);
+            CRUD::addColumn([
+                'name' => 'reported_by',
+                'label' => 'Reported By',
+            ]);
+            CRUD::addColumn([
+                'name' => 'barangay_id', // The actual column is named barangay
+                'label' => 'Barangay',
+                // 'type' => 'relationship',
+                'entity' => 'barangay', // relationship is named barangay
+                'attribute' => 'name',
+                'model' => 'App\Models\Barangay',
+            ]);
+
+            CRUD::addColumn([
+                'name' => 'disaster_type',
+                'label' => 'Disaster Type',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->disaster_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    // Apply ucfirst to each item
+                    $formatted = array_map('ucfirst', $decoded);
+                    // If not JSON, return as is (with formatting)
+                    return implode(', ', $formatted);
+                },
+            ]);
+            CRUD::addColumn([
+                'name' => 'caused_by',
+                'label' => 'Cause',
+            ]);
+            CRUD::addColumn([
+                'name' => 'preffered_donation_type',
+                'label' => 'Donation Type',
+                'type' => 'custom_html',
+                'value' => function ($entry) {
+                    $rawValue = $entry->preffered_donation_type;
+                    $rawValue = stripslashes($rawValue);
+                    $cleanValue = trim($rawValue, '"');
+                    $decoded = json_decode($cleanValue, true);
+                    $formatted = array_map('ucfirst', $decoded);
+                    return implode(', ', $formatted);
+
+                },
+            ]);
+            // CRUD::addColumn([
+            //     'name' => 'incident_date',
+            //     'label' => 'Incident Date',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'incident_time',
+            //     'label' => 'Incident Time',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'exact_location',
+            //     'label' => 'Exact Location',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'caused_by',
+            //     'label' => 'Cause',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'vulnerability',
+            //     'label' => 'Vulnerability',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'immediate_needs_food',
+            //     'label' => 'Requested Food',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'immediate_needs_nonfood',
+            //     'label' => 'Requested Non Food',
+            // ]);
+            // CRUD::addColumn([
+            //     'name' => 'immediate_needs_medicine',
+            //     'label' => 'Requested Medicine',
+            // ]);
+
         }
     }
 
@@ -457,6 +501,9 @@ class DisasterReportCrudController extends CrudController
                         if ($column['text'] == 'Approved') {
                             return 'badge text-bg-success'; // Green indicates approval
                         }
+                        if ($column['text'] == 'Verified') {
+                            return 'badge text-bg-success'; // Green indicates approval
+                        }
                         if ($column['text'] == 'Rejected') {
                             return 'badge text-bg-secondary'; // Yellow indicates a warning
                         }
@@ -464,7 +511,8 @@ class DisasterReportCrudController extends CrudController
                     },
                 ],
                 'value' => function ($entry) {
-                    return $entry->status;
+
+                    return $entry->status == 'Approved' ? 'Verified' : $entry->status;
                 },
             ],
             [
@@ -509,7 +557,6 @@ class DisasterReportCrudController extends CrudController
                     $decoded = json_decode($cleanValue, true);
                     $formatted = array_map('ucfirst', $decoded);
                     return implode(', ', $formatted);
-
                 },
             ],
             [
@@ -620,8 +667,9 @@ class DisasterReportCrudController extends CrudController
                     return $value;
                 },
             ],
-
         ]);
 
     }
+
+
 }

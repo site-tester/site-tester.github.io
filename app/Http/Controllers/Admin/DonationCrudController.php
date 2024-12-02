@@ -7,6 +7,7 @@ use App\Models\Barangay;
 use App\Models\Donation;
 use App\Models\User;
 use App\Notifications\DonationApprovalNotification;
+use App\Notifications\DonationRejectedNotification;
 use App\Notifications\DonorDonationStatusNotification;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -59,10 +60,8 @@ class DonationCrudController extends CrudController
             // Get the barangay_id of the authenticated user
             $barangayRepId = auth()->user()->id;
             $barangayId = Barangay::where('barangay_rep_id', $barangayRepId)->first();
-            // dd($barangayId);
             // Add a filter clause to only show donations related to the user's barangay
             CRUD::addClause('where', 'barangay_id', $barangayId->id);
-
         }
 
         if ($show == 'Pending') {
@@ -162,7 +161,8 @@ class DonationCrudController extends CrudController
 
                     // Define the button styles based on the current status
                     $checkButton = '<button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#approveModal" data-id="' . $entry->id . '" ';
-                    $xButton = '<button class="btn btn-danger btn-lg" onclick="updateDonationStatus(' . $entry->id . ', \'Rejected\')" ';
+                    // $xButton = '<button class="btn btn-danger btn-lg" onclick="updateDonationStatus(' . $entry->id . ', \'Rejected\')" ';
+                    $xButton = '<button class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#rejectModal" data-id="' . $entry->id . '" ';
                     $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '">';
 
 
@@ -186,7 +186,7 @@ class DonationCrudController extends CrudController
 
                     // Add the icon HTML to all buttons
                     $checkButton .= '<i class="la la-check-circle"></i></button><input id="approveDonationId" type="hidden" value="' . $entry->id . '">';
-                    $xButton .= '<i class="la la-times-circle"></i></button>';
+                    $xButton .= '<i class="la la-times-circle"></i></button><input id="rejectDonationId" type="hidden" value="' . $entry->id . '">';
                     $viewButton .= '<i class="la la-eye"></i></a>';
 
 
@@ -323,32 +323,40 @@ class DonationCrudController extends CrudController
                     $viewButton = '<a class="btn btn-info btn-lg" href="' . route("donation.show", $entry->id) . '" data-bs-toggle="tooltip" title="View Details">';
                     // Check the current status of the entry and adjust the buttons accordingly
 
-                    $receiveButton = '<button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#receiveModal" data-id="' . $entry->id . '" data-bs-toggle="tooltip" title="Recieve Donation"';
-                    $distributeButton = '<button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#distributeModal" data-id="' . $entry->id . '" data-bs-toggle="tooltip" title="Distribute Donation"';
+                    if ($entry->status != 'Rejected') {
+                        $receiveButton = '<button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#receiveModal" data-id="' . $entry->id . '" data-bs-toggle="tooltip" title="Recieve Donation"';
+                        $distributeButton = '<button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#distributeModal" data-id="' . $entry->id . '" data-bs-toggle="tooltip" title="Distribute Donation"';
 
-                    // Check the current status of the entry and adjust the buttons accordingly
-                    if ($entry->status == 'Approved') {
-                        // Both action buttons are clickable if the status is Pending Approval
-                        $receiveButton .= '>';
-                        $distributeButton .= 'style="pointer-events: none;" disabled>';
-                    } elseif ($entry->status == 'Distributed') {
-                        $distributeButton .= 'style="pointer-events: none;" disabled>';
-                        $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;" diabled>';
-                        // $viewButton .= '>';
-                    } elseif ($entry->status == 'Received') {
-                        // If the status is Rejected, disable the check button
-                        $distributeButton .= '>'; // Grey out check button
-                        $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;pointer-events: none;">';
-                        // $viewButton .= '>';
+                        // Check the current status of the entry and adjust the buttons accordingly
+                        if ($entry->status == 'Approved') {
+                            // Both action buttons are clickable if the status is Pending Approval
+                            $receiveButton .= '>';
+                            $distributeButton .= 'style="pointer-events: none;" disabled>';
+                        } elseif ($entry->status == 'Distributed') {
+                            $distributeButton .= 'style="pointer-events: none;" disabled>';
+                            $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;" diabled>';
+                            // $viewButton .= '>';
+                        } elseif ($entry->status == 'Received') {
+                            // If the status is Rejected, disable the check button
+                            $distributeButton .= '>'; // Grey out check button
+                            $receiveButton .= 'style="background-color: #ccc; border-color: #ccc;pointer-events: none;">';
+                            // $viewButton .= '>';
+                        }
+
+                        // Add the icon HTML to all buttons
+                        $distributeButton .= '<i class="la la-send-o"></i></button>';
+                        $receiveButton .= '<i class="la la-handshake"></i></button>';
+                        $viewButton .= '<i class="la la-eye"></i></a>';
+
+                        // Return all buttons
+                        return $viewButton . ' ' . $receiveButton . ' ' . $distributeButton;
+                    }else{
+                        $viewButton .= '<i class="la la-eye"></i></a>';
+
+                        // Return all buttons
+                        return $viewButton;
                     }
 
-                    // Add the icon HTML to all buttons
-                    $distributeButton .= '<i class="la la-send-o"></i></button>';
-                    $receiveButton .= '<i class="la la-handshake"></i></button>';
-                    $viewButton .= '<i class="la la-eye"></i></a>';
-
-                    // Return all buttons
-                    return $viewButton . ' ' . $receiveButton . ' ' . $distributeButton;
                 },
                 'escaped' => false,
             ]);
@@ -503,6 +511,29 @@ class DonationCrudController extends CrudController
         }
     }
 
+    protected function rejectDonation(Request $request, $id)
+    {
+        \Log::info($request->all());
+        try {
+            $donation = Donation::findOrFail($id);
+            // $donation->rejected_remarks = $request->input('rejection_remarks'); // Save the approver's name
+            $donation->remarks = $request->input('rejection_remarks');
+            $donation->status = 'Rejected'; // Update status to approved
+
+            if ($donation->status === "Rejected") {
+                // Send notification to the donor
+                $donation->donor->notify(new DonationApprovalNotification($donation));
+            }
+            ;
+
+            $donation->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
     public function receiveDonation(Request $request, $id)
     {
         try {
@@ -550,11 +581,11 @@ class DonationCrudController extends CrudController
             'name' => 'donor_id',
             'label' => 'Donor Name',
             'class' => 'rounded',
-            'type' => 'select', // Use select2 for better UX
-            'entity' => 'donor', // The relationship defined in your Donation model
-            'model' => 'App\Models\User', // Model for donor
-            'attribute' => 'name', // Column to be shown in the select options
-            'pivot' => false, // Not a pivot relationship
+            'type' => 'select',
+            'entity' => 'donor',
+            'model' => 'App\Models\User',
+            'attribute' => 'name',
+            'pivot' => false,
             // 'query' => User::where($this->crud->getCurrentEntry()->donor_id)->pluck('name', 'id'),
         ]);
 
@@ -563,10 +594,10 @@ class DonationCrudController extends CrudController
             'name' => 'barangay_id',
             'label' => 'Barangay',
             'type' => 'select',
-            'entity' => 'barangay', // The relationship defined in your Donation model
-            'model' => 'App\Models\Barangay', // Model for barangay
-            'attribute' => 'name', // Column to be shown in the select options
-            'pivot' => false, // Not a pivot relationship
+            'entity' => 'barangay',
+            'model' => 'App\Models\Barangay',
+            'attribute' => 'name',
+            'pivot' => false,
         ]);
 
         CRUD::addField([
@@ -601,7 +632,7 @@ class DonationCrudController extends CrudController
                 'Received' => 'Received',
                 'Distributed' => 'Distributed',
             ],
-            'allows_multiple' => false, // Set to true if you want to allow multiple selections
+            'allows_multiple' => false, 
         ]);
     }
 
@@ -879,7 +910,7 @@ class DonationCrudController extends CrudController
 
                     $value = "<div class='row'>";
                     // foreach ($decoded as $img_path) {
-                        $value .= " <div class='col-auto'>
+                    $value .= " <div class='col-auto'>
                         <a href='/storage/app/public/{$entry->proof_document}' data-fancybox='gallery'
                             data-caption='{ $entry->proof_document }'>
                             <img src='/storage/app/public/{$entry->proof_document}' height='100' />
@@ -1007,6 +1038,11 @@ class DonationCrudController extends CrudController
             if ($entry->status === "Approved") {
                 // Send notification to the donor
                 $user->notify(new DonationApprovalNotification($entry));
+            }
+            ;
+            if ($entry->status === "Rejected") {
+                // Send notification to the donor
+                $user->notify(new DonationRejectedNotification($entry));
             }
             ;
 

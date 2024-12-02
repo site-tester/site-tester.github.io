@@ -197,11 +197,9 @@
                 })
                 .then(data => {
                     // Extract data from the response
-                    console.log('Donation Details:', data);
                     let donationFoodItems = data.foodItems || [];
                     let donationNonFoodItems = data.nonFoodItems || [];
                     let donationMedicineItems = data.medicalItems || [];
-
                     // Start building items HTML
                     let itemsHtml = `<div><h5>ITEMS</h5>`;
 
@@ -299,7 +297,7 @@
                                 <h6>Donation ID: ${data.id}</h6>
                                 <h6>${new Date(data.created_at).toLocaleDateString()}</h6>
                             </div>`;
-                    if (data.anonymous == true) {
+                    if (data.anonymous != true) {
                         detailsHtml += `<div>
                                                 <h5>DONATED BY:</h5>
                                                 <p class="mb-0 pb-0">${data.name}</p>

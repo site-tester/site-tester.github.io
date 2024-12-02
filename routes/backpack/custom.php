@@ -60,6 +60,10 @@ Route::group([
         'uses' => 'DonationCrudController@approveDonation',
         'as' => 'donation.approve',
     ]);
+    Route::post('reject-donation/{id}', [
+        'uses' => 'DonationCrudController@rejectDonation',
+        'as' => 'donation.reject',
+    ]);
     Route::post('receive-donation/{id}', [
         'uses' => 'DonationCrudController@receiveDonation',
         'as' => 'donation.receive',
@@ -71,9 +75,18 @@ Route::group([
     Route::crud('transfer-donation', 'TransferDonationController');
 
     // New Dashboard ChartJs Routes
-    Route::get('donations-chart-data', [App\Http\Controllers\Admin\DashboardController::class, 'donationsChartData']);
-    Route::get('donation-breakdown-chart-data', [App\Http\Controllers\Admin\DashboardController::class, 'donationBreakdownChartData']);
-    Route::get('inventory-data', [App\Http\Controllers\Admin\DashboardController::class, 'getInventoryData']);
+    // Barangay Charts
+    Route::get('total-donation', [App\Http\Controllers\Admin\DashboardController::class, 'totalDonationsChartData']);
+    Route::get('donation-category', [App\Http\Controllers\Admin\DashboardController::class, 'donationCategoryChartData']);
+    Route::get('inventory-stock', [App\Http\Controllers\Admin\DashboardController::class, 'inventoryStockChartData']);
+    Route::get('distributed-donation', [App\Http\Controllers\Admin\DashboardController::class, 'distributedDonationChartData']);
+
+    // Admin Charts
+    Route::get('barangay-requests-data', [App\Http\Controllers\Admin\DashboardController::class, 'getBarangayRequestsData']);
+    Route::get('barangay-vulnerability-data', [App\Http\Controllers\Admin\DashboardController::class, 'getVulnerabilityPrioritizationData']);
+    Route::get('barangay-donations-data', [App\Http\Controllers\Admin\DashboardController::class, 'getTotalDonationsPerBarangay']);
+    Route::get('user-role-counts', [App\Http\Controllers\Admin\DashboardController::class, 'getUserRoleCounts']);
+
 
 
 }); // this should be the absolute last line of this file

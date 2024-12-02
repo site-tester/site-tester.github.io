@@ -413,7 +413,7 @@ class DonationController extends Controller
         $donation = Donation::with(['donationItems', 'donor', 'barangay', 'donationItems'])->findOrFail($id);
         // Separate the items by type
         $foodItems = $donation->donationItems->where('donation_type', 'Food');
-        $nonfoodItems = $donation->donationItems->where('donation_type', 'Non-Food');
+        $nonfoodItems = $donation->donationItems->where('donation_type', 'NonFood');
         $medicineItems = $donation->donationItems->where('donation_type', 'Medical');
 
         // Build the response data
@@ -428,7 +428,7 @@ class DonationController extends Controller
             'dropOffDate' => $donation->donation_date,
             'dropOffTime' => $donation->donation_time,
             'foodItems' => $foodItems->values(),
-            'nonfoodItems' => $nonfoodItems->values(),
+            'nonFoodItems' => $nonfoodItems->values(),
             'medicalItems' => $medicineItems->values(),
             'approvedBy' => $donation->approved_by ?? 'Not Approved', //$donation->approved_by
         ];

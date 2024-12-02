@@ -52,6 +52,12 @@ class RequestDonationVerificationCrudController extends CrudController
         if (auth()->user()->hasRole('Municipal Admin')) {
             $this->crud->removeAllButtons();
             // $this->crud->removeButton('update');
+            $this->crud->query->orderByRaw("
+                CASE
+                    WHEN status = 'Pending Approval' THEN 1
+                    ELSE 2
+                END
+            ")->orderBy('date_requested', 'desc');
         }
         CRUD::addColumn([
             'name' => 'id',

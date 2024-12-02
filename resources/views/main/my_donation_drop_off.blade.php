@@ -552,7 +552,7 @@
                 <p><strong>Donation Date:</strong> ${new Date(data.created_at).toLocaleString()}</p>
                 <p><strong>Donation Status:</strong> ${data.status}</p>
                 <p><strong>Donation Proof:</strong>
-                    ${ data.proof ? `<a href="/storage/app/public/uploads/proofs/${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
+                    ${ data.proof ? `<a href="/storage/app/public/${data.proof}" data-fancybox="proof" class="btn btn-primary btn-sm">View Proof</a>` : ' -' }
                 </p>
                 <p><strong>Donation Remarks:</strong> ${data.remarks ?? ' -'}</p>
                 <p><strong>Donation Items:</strong></p>
